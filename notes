@@ -1,0 +1,24 @@
+
+delete extra fields of phone no in college table - backend
+
+no data validations on college add - frontend
+cards for total no. of working hours for weekly and monthly view - frontend
+show weekend holiday for saturday and sundays for weekly and monthly view - frontend
+change stars to numeric data for managers feedback in performance tab - frontend
+data filter on regularization tab - frontend
+disable delete and upload file buttons on candidates tab - frontend
+validations on talent edit fields - frontend
+add delete option on attendance tab - frontend
+
+
+change deletion of regularization requests to saving them as approved or pending - frontend as well as backend (update - backend completed)
+completion of leave requests table - frontend as well as backend (update - backend completed) 
+create performance alongwith talent
+change office location field from attendance to talent table - backend and frontend (update - backend completed)
+show data only to corresponding reportingManager - backend and frontend 
+    - attendance
+    - regularization
+    - leaves
+    - performance
+
+
