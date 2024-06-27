@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { IoIosClose } from 'react-icons/io'
 import { useSelector } from 'react-redux'
 
-export default function CollegeSidebar({ setShowCollegeSidebar }) {
+export default function InkathonSidebar({ setShowInkathonSidebar }) {
   const [tab, setTab] = useState('')
   const {currentUser} = useSelector(state=>state.user)
 
@@ -19,8 +19,8 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
     <div className='md:w-56'>
       <div className='flex justify-end bg-[#F9FAFB] h-[14px]'>
         <IoIosClose
-          className='hover:cursor-pointer h-6 w-6 mb-0 hover:bg-gray-300'
-          onClick={() => setShowCollegeSidebar(false)}
+          className='hover:cursor-pointer h-6 w-6 mb-0  hover:bg-gray-300'
+          onClick={() => setShowInkathonSidebar(false)}
         />
       </div>
       <Sidebar
@@ -29,25 +29,23 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
       >
         <Sidebar.Items>
           <Sidebar.ItemGroup>
-            <Sidebar.Item as={'div'} label={currentUser.adminCheck? 'Admin':'User'} labelColor='dark'>
-              {currentUser.name}
+              <Sidebar.Item
+                as={'div'}
+                label={currentUser.adminCheck? 'Admin':'User'}
+                labelColor='dark'
+              >
+                {currentUser.name}
+              </Sidebar.Item>
+            <Link to='?tab=inkathon'>
+              <Sidebar.Item as={'div'} active={tab === 'inkathon'}>
+              Inkathon Database
+              </Sidebar.Item>
+            </Link>
+            <Link to='?tab=createinkathon'>
+            <Sidebar.Item as={'div'} active={tab === 'createinkathon'}>
+              Create Inkathon
             </Sidebar.Item>
-            <Link to='?tab=college-and-contact'>
-              <Sidebar.Item as={'div'} active={tab === 'college-and-contact'}>
-                College and contact
-              </Sidebar.Item>
             </Link>
-            <Link to='?tab=candidates'>
-              <Sidebar.Item as={'div'} active={tab === 'candidates'}>
-                Candidates
-              </Sidebar.Item>
-            </Link>
-            <Link to='?tab=alumni'>
-              <Sidebar.Item as={'div'} active={tab === 'alumni'}>
-                Alumni
-              </Sidebar.Item>
-            </Link>
-            
           </Sidebar.ItemGroup>
         </Sidebar.Items>
       </Sidebar>

@@ -17,10 +17,12 @@ import DashHome from '../component/DashHome'
 import  IndividualAssesments  from '../component/Assesments/IndividualAssesments'
 import AcademicInternsAttendance from '../component/AcademicInternsAttendance'
 import IndividualToogleAssesments from '../component/Assesments/IndividuaTooglelAssesment';
-
+import Alumni from '../component/Alumni';
 import EmployeewiseAssignment from '../component/Assignments/EmployeewiseAssignment'
 import FinalAssignmentview from '../component/Assignments/FinalAssignmentview'
 import Perform from '../component/Perform'
+import InkathonDatabase from '../component/Inkathon/InkathonDatabase'
+import CreateInkathon from '../component/Inkathon/CreateInkathon'
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
@@ -56,9 +58,11 @@ export default function Dashboard() {
           {tab === 'attendance-academic' && <AcademicInternsAttendance />}
           {tab === 'assessmenttoogle' && <AssesmentToogle />}
           {tab === 'individualtoogleassesments' && <IndividualToogleAssesments />}
-         
+          {tab === 'alumni' && <Alumni />}
           {tab === 'EmployeewiseAssignment' && <EmployeewiseAssignment />}
           {tab === 'Perform' && <Perform />}
+          {tab === 'inkathon' && <InkathonDatabase />}
+          {tab === 'createinkathon' && <CreateInkathon />}
         </div>
       </div>
     </>

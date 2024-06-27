@@ -38,7 +38,7 @@ function Signin() {
     setIsLoading(true)
     try {
       dispatch(signInStart())
-      const response = await fetch(`${signBaseUrl}/admin/login`, {
+      const response = await fetch(`${signBaseUrl}/security/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
