@@ -24,7 +24,7 @@ function Signin() {
   const [errorMessage, setErrorMessage] = useState('')
   const signBaseUrl = 'http://192.168.0.141:8080'
   const dispatch = useDispatch()
-
+  const basicAuth = 'Basic ' + btoa(email+':'+password);
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -42,13 +42,15 @@ function Signin() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': basicAuth,
         },
         body: new URLSearchParams({
           'email': email,
           'password': password
         }),
-        credentials: 'include'
+        // credentials: 'include'
       })
+
       if (response.ok) {
         const data = await response.json();
         dispatch(signInSuccess(data))
