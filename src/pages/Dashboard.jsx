@@ -8,7 +8,6 @@ import Attendance1 from '../component/attendancecomponents/Attendance1'
 import Regularization from '../component/attendancecomponents/Regularization'
 import DetailedAttendanceView from '../component/attendancecomponents/DetailedAttendanceView'
 import Leave from '../component/attendancecomponents/Leave'
-import AssignmentList from '../component/Assignments/AssignmentList'
 import Assesments from '../component/Assesments/Assesments'
 import AssesmentToogle from '../component/Assesments/AssesmentToogle'
 import { useEffect, useState } from 'react'
@@ -57,6 +56,8 @@ export default function Dashboard() {
           {tab === 'attendance' && <Attendance1 />}
           {tab === 'regularization' && <Regularization />}
           {tab === 'leave' && <Leave />}
+          {tab === 'trainingAttendance' && <TrainingAttendance/>}
+          {tab=== 'trainers' && <Trainers />}
           {tab === 'DetailedAttendanceView' && <DetailedAttendanceView />}
           {tab === 'assessments' && <Assesments />}
           {tab === 'IndividualAssesments' && <IndividualAssesments />}
@@ -67,6 +68,7 @@ export default function Dashboard() {
           )}
 
           {tab === 'EmployeewiseAssignment' && <EmployeewiseAssignment />}
+
           {tab === 'Perform' && <Perform />}
           {tab==='CandidateAssesmentsCombined' && <CandidateAssesmentsCombined/>}
           {tab === 'campus-calendar' && <CampusCalendarView />}
