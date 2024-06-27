@@ -9,7 +9,7 @@ import {
   Progress,
   Alert,
 } from 'flowbite-react'
-import { ImCross } from "react-icons/im";
+import { ImCross } from 'react-icons/im'
 
 import {
   getDownloadURL,
@@ -28,7 +28,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
   const [assignmentDuedate, setAssignmentDuedate] = useState('')
   const [assignmentFile, setAssignmentFile] = useState(null)
   const [assignmentFileName, setAssignmentFileName] = useState(null)
-  const [assignedTo, setAssignedTo] = useState('');
+  const [assignedTo, setAssignedTo] = useState('')
   const [assignmentFileUrl, setAssignmentFileUrl] = useState(null)
   const [assignmentFileUploadProgress, setAssignmentFileUploadProgress] =
     useState(null)
@@ -36,47 +36,46 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     useState(null)
   const [assignmentFileUploading, setAssignmentFileUploading] = useState(false)
   const [talentList, setTalentList] = useState([])
-  const [selectedTalents, setSelectedTalents] = useState([]);
+  const [selectedTalents, setSelectedTalents] = useState([])
   const [FilteredTalentList, setFilteredTalentList] = useState([])
   useEffect(() => {
     if (assignmentFile) {
       handleFileUpload()
     }
-
   }, [assignmentFile])
   useEffect(() => {
     fetchTalentList()
   }, [])
   const technologySkills = {
-    "Java": ["Java", "Spring", "Hibernate"],
-    "React": ["React", "JavaScript", "HTML", "CSS"],
-    "JavaScript": ["JavaScript", "Node.js", "Express.js"],
-    "UI 5": ["UI 5", "SAPUI5", "HTML", "CSS"],
-    "Integration": ["Integration", "API", "Microservices"],
+    Java: ['Java', 'Spring', 'Hibernate'],
+    React: ['React', 'JavaScript', 'HTML', 'CSS'],
+    JavaScript: ['JavaScript', 'Node.js', 'Express.js'],
+    'UI 5': ['UI 5', 'SAPUI5', 'HTML', 'CSS'],
+    Integration: ['Integration', 'API', 'Microservices'],
     // Add SolidWorks, AutoCAD, ANSYS for relevant technologies
-    "Mechanical Engineering": ["SolidWorks", "AutoCAD", "ANSYS"],
-    "Civil Engineering": ["AutoCAD", "Revit", "STAAD.Pro"],
+    'Mechanical Engineering': ['SolidWorks', 'AutoCAD', 'ANSYS'],
+    'Civil Engineering': ['AutoCAD', 'Revit', 'STAAD.Pro'],
     // Add more technologies and their required skills as needed
-};
+  }
 
+  useEffect(() => {
+    if (!assignmentTechnology) return // Exit if technology is not selected
 
-useEffect(() => {
-  if (!assignmentTechnology) return; // Exit if technology is not selected
-
-  const filteredList = talentList.filter(talent => {
-      if (!talent.talentSkills) return false; // Skip talents with no skills
-      const requiredSkills = talent.talentSkills.split(',').map(skill => skill.trim());
-      return requiredSkills.includes(assignmentTechnology);
-  });
-  setFilteredTalentList(filteredList);
-}, [assignmentTechnology, talentList]);
-
-
-
+    const filteredList = talentList.filter(talent => {
+      if (!talent.talentSkills) return false // Skip talents with no skills
+      const requiredSkills = talent.talentSkills
+        .split(',')
+        .map(skill => skill.trim())
+      return requiredSkills.includes(assignmentTechnology)
+    })
+    setFilteredTalentList(filteredList)
+  }, [assignmentTechnology, talentList])
 
   const fetchTalentList = async () => {
     try {
-      const response = await fetch('http://localhost:8080/cpm/talents/alltalent')
+      const response = await fetch(
+        'http://localhost:8080/cpm/talents/alltalent',
+      )
       if (!response.ok) {
         throw new Error('Failed to fetch talent list')
       }
@@ -88,9 +87,7 @@ useEffect(() => {
     }
   }
   const handleselectedtalent = (talent, index) => {
-    const newselectedtalent = selectedTalents.filter((tal, i) => (
-      tal != talent
-    ))
+    const newselectedtalent = selectedTalents.filter((tal, i) => tal != talent)
     setSelectedTalents(newselectedtalent)
   }
   const handleSubmit = async e => {
@@ -104,10 +101,10 @@ useEffect(() => {
       assignmentDuedate,
       assignmentFileName,
       assignmentFileUrl,
-      assignedTo
+      assignedTo,
     }
     console.log(formData)
-    createAssignment(formData);
+    createAssignment(formData)
   }
 
   const handleFileUpload = async () => {
@@ -235,15 +232,15 @@ useEffect(() => {
               required
               size={'sm'}
             >
-               <option>Java</option>
-    <option>React</option>
-    <option>JavaScript</option>
-    <option>UI 5</option>
-    <option>Integration</option>
-    {/* Add SolidWorks, AutoCAD, and ANSYS as options */}
-    <option>SolidWorks</option>
-    <option>AutoCAD</option>
-    <option>ANSYS</option>
+              <option>Java</option>
+              <option>React</option>
+              <option>JavaScript</option>
+              <option>UI 5</option>
+              <option>Integration</option>
+              {/* Add SolidWorks, AutoCAD, and ANSYS as options */}
+              <option>SolidWorks</option>
+              <option>AutoCAD</option>
+              <option>ANSYS</option>
             </Select>
           </div>
           <div>
@@ -265,7 +262,7 @@ useEffect(() => {
             <FileInput
               id='assignmentFile'
               type='file'
-              helperText="PDF(Max size 2 MB)"
+              helperText='PDF(Max size 2 MB)'
               accept='.pdf'
               onChange={handleFileChange}
               required
@@ -286,11 +283,23 @@ useEffect(() => {
               id='assignedTo'
               value={assignedTo}
               onChange={e => {
-                const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
-                const uniqueSelectedValues = selectedValues.filter(value => !selectedTalents.includes(value));
-                const newAssignedTo = uniqueSelectedValues.join(", ");
-                setAssignedTo(prevAssignedTo => prevAssignedTo ? prevAssignedTo + ", " + newAssignedTo : newAssignedTo);
-                setSelectedTalents(prevSelected => [...prevSelected, ...uniqueSelectedValues]);
+                const selectedValues = Array.from(
+                  e.target.selectedOptions,
+                  option => option.value,
+                )
+                const uniqueSelectedValues = selectedValues.filter(
+                  value => !selectedTalents.includes(value),
+                )
+                const newAssignedTo = uniqueSelectedValues.join(', ')
+                setAssignedTo(prevAssignedTo =>
+                  prevAssignedTo
+                    ? prevAssignedTo + ', ' + newAssignedTo
+                    : newAssignedTo,
+                )
+                setSelectedTalents(prevSelected => [
+                  ...prevSelected,
+                  ...uniqueSelectedValues,
+                ])
               }}
               multiple
               size={'sm'}
@@ -304,23 +313,35 @@ useEffect(() => {
 
             {selectedTalents.length > 0 && (
               <div>
-                <label className="block text-sm font-medium text-gray-700">Selected Talents:</label>
-                <div className="mt-2 flex flex-wrap">
+                <label className='block text-sm font-medium text-gray-700'>
+                  Selected Talents:
+                </label>
+                <div className='mt-2 flex flex-wrap'>
                   {selectedTalents.map((talent, index) => (
-                    <span key={index} className="inline-flex items-center px-3 py-1 mr-2 mb-2 rounded-md text-sm font-medium bg-blue-500 text-white">
-                      {talent} <div onClick={() => { handleselectedtalent(talent, index) }} className='ml-2'><ImCross /></div>
+                    <span
+                      key={index}
+                      className='inline-flex items-center px-3 py-1 mr-2 mb-2 rounded-md text-sm font-medium bg-blue-500 text-white'
+                    >
+                      {talent}{' '}
+                      <div
+                        onClick={() => {
+                          handleselectedtalent(talent, index)
+                        }}
+                        className='ml-2'
+                      >
+                        <ImCross />
+                      </div>
                     </span>
                   ))}
                 </div>
               </div>
             )}
 
-
-
-            <div>
-            </div>
+            <div></div>
           </div>
-          <Button type='submit' color={'blue'} size={'sm'}>Create Assignment</Button>
+          <Button type='submit' color={'blue'} size={'sm'}>
+            Create Assignment
+          </Button>
         </form>
       </Modal.Body>
     </Modal>

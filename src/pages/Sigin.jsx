@@ -22,7 +22,7 @@ function Signin() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const signBaseUrl = process.env.BASE_URL
+  const signBaseUrl = 'http://192.168.0.141:8080'
   const dispatch = useDispatch()
 
   const handleSubmit = async e => {
@@ -38,12 +38,16 @@ function Signin() {
     setIsLoading(true)
     try {
       dispatch(signInStart())
-      const response = await fetch(`${signBaseUrl}/admin/login`, {
+      const response = await fetch(`${signBaseUrl}/security/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(formData),
+        body: new URLSearchParams({
+          'email': email,
+          'password': password
+        }),
+        credentials: 'include'
       })
       if (response.ok) {
         const data = await response.json();

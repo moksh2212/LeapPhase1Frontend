@@ -14,13 +14,10 @@ import {
   DialogContent,
   DialogTitle,
   FormHelperText,
-  IconButton,
   Snackbar,
   Tooltip,
 } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
-import CircularProgress from '@mui/material/CircularProgress'
+
 
 //Module completed testing done
 
@@ -137,21 +134,23 @@ const CollegeTable = () => {
   )
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch(`${baseUrl}/admin/viewData`)
-        const data = await response.json()
-        setCollegeList(data)
-      } catch (error) {
-        console.error('Error fetching data:', error)
-        setError(error.message)
-      } finally {
-        setIsLoading(false)
+    setTimeout(() => {
+      const fetchData = async () => {
+        setIsLoading(true)
+        try {
+          const response = await fetch(`${baseUrl}/admin/viewData`)
+          const data = await response.json()
+          setCollegeList(data)
+        } catch (error) {
+          console.error('Error fetching data:', error)
+          setError(error.message)
+        } finally {
+          setIsLoading(false)
+        }
       }
-    }
 
-    fetchData()
+      fetchData()
+    }, 1000)
   }, [])
 
   const createCollege = async newCollege => {
@@ -275,7 +274,6 @@ const CollegeTable = () => {
         accessorKey: 'collegeName',
         header: 'College Name',
         enableEditing: true,
-        enableSorting: false,
         size: 150,
         muiEditTextFieldProps: {
           required: true,
@@ -303,7 +301,6 @@ const CollegeTable = () => {
         header: 'Region',
         editVariant: 'select',
         editSelectOptions: selectRegion,
-        enableSorting: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.region,
@@ -328,7 +325,6 @@ const CollegeTable = () => {
       {
         accessorKey: 'location',
         header: 'Location',
-        enableSorting: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.location,
@@ -353,7 +349,6 @@ const CollegeTable = () => {
         accessorKey: 'state',
         header: 'State',
         editVariant: 'select',
-        enableSorting: false,
         editSelectOptions: indStates,
         muiEditTextFieldProps: {
           required: true,
@@ -405,7 +400,6 @@ const CollegeTable = () => {
       {
         accessorKey: 'tpoName',
         header: 'TPO Contact Name',
-        enableSorting: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.tpoName,
@@ -430,7 +424,6 @@ const CollegeTable = () => {
       {
         accessorKey: 'primaryEmail',
         header: 'TPO Email',
-        enableSorting: false,
         muiEditTextFieldProps: {
           type: 'email',
           required: true,
@@ -456,7 +449,6 @@ const CollegeTable = () => {
       {
         accessorKey: 'primaryContact',
         header: 'Primary Contact',
-        enableSorting: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.primaryContact,
@@ -480,7 +472,6 @@ const CollegeTable = () => {
       {
         accessorKey: 'secondaryContact',
         header: 'Secondary Contact',
-        enableSorting: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.secondaryContact,
@@ -505,7 +496,6 @@ const CollegeTable = () => {
       {
         accessorKey: 'addressLine1',
         header: 'Address Line 1',
-        enableSorting: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.addressLine1,
@@ -530,7 +520,6 @@ const CollegeTable = () => {
       {
         accessorKey: 'addressLine2',
         header: 'Address Line 2',
-        enableSorting: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.addressLine2,
@@ -555,7 +544,6 @@ const CollegeTable = () => {
       {
         accessorKey: 'pinCode',
         header: 'Pin Code',
-        enableSorting: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.pinCode,
@@ -579,7 +567,6 @@ const CollegeTable = () => {
       {
         accessorKey: 'collegeOwner',
         header: 'College Owner',
-        enableSorting: false,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.collegeOwner,
@@ -698,15 +685,20 @@ const CollegeTable = () => {
     isLoading,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
-    enableEditing: true,
+    enableEditing: false,
+    enableRowActions: true,
     onRowSelectionChange: setRowSelection,
 
-    state: { rowSelection },
+    state: { rowSelection, isLoading },
     getRowId: row => row.collegeId,
     muiTableContainerProps: {
       sx: {
         minHeight: '500px',
       },
+    },
+    muiSkeletonProps: {
+      animation: 'pulse',
+      height: 28,
     },
     onCreatingRowCancel: () => setValidationErrors({}),
     onEditingRowCancel: () => setValidationErrors({}),
@@ -856,24 +848,34 @@ const CollegeTable = () => {
       )
     },
 
-    renderRowActions: ({ row, table }) => (
-      <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Tooltip title='Edit'>
-          <IconButton onClick={() => table.setEditingRow(row)}>
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title='Delete'>
-          <IconButton
-            color='error'
-            onClick={() => {
-              setCollegeIdToDelete(row.original.collegeId)
-              setOpenDeleteModal(true)
-            }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+    renderRowActionMenuItems: ({ row, table, closeMenu }) => (
+      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+        <Box className='flex items-center'>
+          <Tooltip title='Edit' className='flex gap-1'>
+            <Button
+              onClick={() => {
+                table.setEditingRow(row)
+                closeMenu()
+              }}
+            >
+              <p className='text-[12px] font-semibold'>Edit</p>
+            </Button>
+          </Tooltip>
+        </Box>
+        <Box className='flex items-center'>
+          <Tooltip title='Delete' className='flex gap-1'>
+            <Button
+              color='error'
+              onClick={() => {
+                setCollegeIdToDelete(row.original.collegeId)
+                setOpenDeleteModal(true)
+                closeMenu()
+              }}
+            >
+              <p className='text-[12px] font-semibold'>Delete</p>
+            </Button>
+          </Tooltip>
+        </Box>
       </Box>
     ),
     renderTopToolbarCustomActions: ({ table }) => {
@@ -888,6 +890,7 @@ const CollegeTable = () => {
             onClick={() => {
               table.setCreatingRow(true)
             }}
+            disabled={selectedRows.length !== 0}
           >
             Create New College
           </Button>
@@ -913,22 +916,17 @@ const CollegeTable = () => {
       <h2 className={`text-2xl text-[#0087D5] font-bold mb-3`}>
         College and Contacts
       </h2>
-      {isLoading && (
-        <div className='flex min-h-[70vh] justify-center items-center'>
-          <CircularProgress className='w-full mx-auto my-auto' />
-        </div>
-      )}
-      {!isLoading && (
-        <MaterialReactTable
-          table={table}
-          updateCollege={updateCollege}
-          createCollege={createCollege}
-        />
-      )}
+
+      <MaterialReactTable
+        table={table}
+        updateCollege={updateCollege}
+        createCollege={createCollege}
+      />
+
       {renderDeleteModal()}
       {renderDeleteRowsModal()}
       <Snackbar
-        open={!!openSnackbar}
+        open={openSnackbar}
         autoHideDuration={5000}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
