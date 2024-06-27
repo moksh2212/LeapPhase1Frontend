@@ -218,8 +218,8 @@ console.log(feedbacksend)
         hide: true,
       },
       {
-        accessorKey: 'employeeName',
-        header: 'Talent Name',
+        accessorKey: 'employeeEmail',
+        header: 'Talent Email',
         enableEditing: false,
         size: 150,
         hide: true,

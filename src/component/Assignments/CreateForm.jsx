@@ -53,10 +53,8 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     "JavaScript": ["JavaScript", "Node.js", "Express.js"],
     "UI 5": ["UI 5", "SAPUI5", "HTML", "CSS"],
     "Integration": ["Integration", "API", "Microservices"],
-    // Add SolidWorks, AutoCAD, ANSYS for relevant technologies
     "Mechanical Engineering": ["SolidWorks", "AutoCAD", "ANSYS"],
     "Civil Engineering": ["AutoCAD", "Revit", "STAAD.Pro"],
-    // Add more technologies and their required skills as needed
 };
 
 
@@ -87,12 +85,11 @@ useEffect(() => {
       console.error('Error fetching talent list:', error)
     }
   }
-  const handleselectedtalent = (talent, index) => {
-    const newselectedtalent = selectedTalents.filter((tal, i) => (
-      tal != talent
-    ))
-    setSelectedTalents(newselectedtalent)
-  }
+  const selectedTalentEmails = selectedTalents.map((talent) => {
+    // Find talent by email in talentList and return email
+    const foundTalent = talentList.find((t) => t.email === talent);
+    return foundTalent ? foundTalent.email : null;
+  });
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -104,8 +101,8 @@ useEffect(() => {
       assignmentDuedate,
       assignmentFileName,
       assignmentFileUrl,
-      assignedTo
-    }
+      assignedTo: selectedTalentEmails.join(', '), // Send email IDs as comma-separated string
+    };
     console.log(formData)
     createAssignment(formData);
   }
@@ -283,24 +280,22 @@ useEffect(() => {
               <Label htmlFor='assignedTo' value='Assigned To' />
             </div>
             <Select
-              id='assignedTo'
-              value={assignedTo}
-              onChange={e => {
-                const selectedValues = Array.from(e.target.selectedOptions, option => option.value);
-                const uniqueSelectedValues = selectedValues.filter(value => !selectedTalents.includes(value));
-                const newAssignedTo = uniqueSelectedValues.join(", ");
-                setAssignedTo(prevAssignedTo => prevAssignedTo ? prevAssignedTo + ", " + newAssignedTo : newAssignedTo);
-                setSelectedTalents(prevSelected => [...prevSelected, ...uniqueSelectedValues]);
-              }}
-              multiple
-              size={'sm'}
-            >
-              {FilteredTalentList.map(talent => (
-                <option key={talent.talentId} value={talent.talentName}>
-                  {talent.talentName}
-                </option>
-              ))}
-            </Select>
+  id='assignedTo'
+  value={assignedTo}
+  onChange={(e) => {
+    const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
+    const uniqueSelectedValues = selectedValues.filter((value) => !selectedTalents.includes(value));
+    setSelectedTalents((prevSelected) => [...prevSelected, ...uniqueSelectedValues]);
+  }}
+  multiple
+  size={'sm'}
+>
+  {FilteredTalentList.map((talent) => (
+    <option key={talent.talentId} value={talent.email}>
+      {talent.talentName} - {talent.email} {/* Display both name and email for clarity */}
+    </option>
+  ))}
+</Select>
 
             {selectedTalents.length > 0 && (
               <div>
