@@ -406,7 +406,6 @@ const Perfromancetable = () => {
       technicalProficiency: values.technicalProficiency,
       proactiveness: values.proactiveness,
       timeliness: values.timeliness,
-      // Assuming 'attendance' should be included as well
     }
  
     console.log('Transformed performanceData:', transformedData)
@@ -427,7 +426,6 @@ const Perfromancetable = () => {
       if (!response.ok) {
         throw new Error('Failed to create performance data')
       }
-      // Assuming setDatax and table.setCreatingRow are defined elsewhere
       setOpenSnackbar('Employee updated successfully!')
       setError(null)
  
@@ -437,7 +435,6 @@ const Perfromancetable = () => {
     }
   }
  
-  //UPDATE action
   const handleSaveUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values)
  
@@ -456,7 +453,6 @@ const Perfromancetable = () => {
       technicalProficiency: values.technicalProficiency,
       proactiveness: values.proactiveness,
       timeliness: values.timeliness,
-      // Assuming 'attendance' should be included as well
     }
  
     console.log('Transformed performanceData:', transformedData)
@@ -468,7 +464,7 @@ const Perfromancetable = () => {
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json', // Set the correct Content-Type header
+            'Content-Type': 'application/json', 
           },
           body: JSON.stringify(transformedData),
         },
@@ -477,7 +473,6 @@ const Perfromancetable = () => {
       if (!response.ok) {
         throw new Error('Failed to create performance data')
       }
-      // Assuming setDatax and table.setCreatingRow are defined elsewhere
       setOpenSnackbar('Employee edited successfully!')
       setError(null)
  
@@ -509,17 +504,14 @@ const Perfromancetable = () => {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-            // Add any additional headers if needed
           },
           body: JSON.stringify(performanceData),
         },
       )
  
       if (response.ok) {
-        // Handle successful deletion
         setOpenDeleteModal(false)
         console.log('Performance deleted successfully')
-        // Perform any additional actions (e.g., update UI)
  
         setDatax(prevData =>
           prevData.filter(row => row.talentId !== performanceData.talentId),

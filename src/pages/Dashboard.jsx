@@ -8,7 +8,6 @@ import Attendance1 from '../component/attendancecomponents/Attendance1'
 import Regularization from '../component/attendancecomponents/Regularization'
 import DetailedAttendanceView from '../component/attendancecomponents/DetailedAttendanceView'
 import Leave from '../component/attendancecomponents/Leave'
-import AssignmentList from '../component/Assignments/AssignmentList'
 import Assesments from '../component/Assesments/Assesments'
 import AssesmentToogle from '../component/Assesments/AssesmentToogle'
 import { useEffect, useState } from 'react'
@@ -21,7 +20,11 @@ import IndividualToogleAssesments from '../component/Assesments/IndividuaTooglel
 import EmployeewiseAssignment from '../component/Assignments/EmployeewiseAssignment'
 import FinalAssignmentview from '../component/Assignments/FinalAssignmentview'
 import Perform from '../component/Perform'
+<<<<<<< HEAD
+import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssesmentsCombined'
+=======
 import CampusCalendarView from '../component/CampusCalendar&InterviewScheduling/CampusCalendarView'
+>>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
@@ -53,6 +56,8 @@ export default function Dashboard() {
           {tab === 'attendance' && <Attendance1 />}
           {tab === 'regularization' && <Regularization />}
           {tab === 'leave' && <Leave />}
+          {tab === 'trainingAttendance' && <TrainingAttendance/>}
+          {tab=== 'trainers' && <Trainers />}
           {tab === 'DetailedAttendanceView' && <DetailedAttendanceView />}
           {tab === 'assessments' && <Assesments />}
           {tab === 'IndividualAssesments' && <IndividualAssesments />}
@@ -63,7 +68,9 @@ export default function Dashboard() {
           )}
 
           {tab === 'EmployeewiseAssignment' && <EmployeewiseAssignment />}
+
           {tab === 'Perform' && <Perform />}
+          {tab==='CandidateAssesmentsCombined' && <CandidateAssesmentsCombined/>}
           {tab === 'campus-calendar' && <CampusCalendarView />}
         </div>
       </div>

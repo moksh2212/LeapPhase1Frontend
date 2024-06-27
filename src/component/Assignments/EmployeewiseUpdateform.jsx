@@ -67,7 +67,7 @@ export function UpdateForm({ openModal, setOpenModal, createAssignment, assnForm
         sendFeedback(sendFeedbackEmail)
         const formData = {
             assignmentWeek,
-            employeeName: assnForm.employeeName,
+            employeeEmail: assnForm.employeeEmail,
             assignmentName,
             assignmentTechnology,
             assignmentDuedate,

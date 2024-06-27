@@ -47,6 +47,29 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     fetchTalentList()
   }, [])
   const technologySkills = {
+<<<<<<< HEAD
+    "Java": ["Java", "Spring", "Hibernate"],
+    "React": ["React", "JavaScript", "HTML", "CSS"],
+    "JavaScript": ["JavaScript", "Node.js", "Express.js"],
+    "UI 5": ["UI 5", "SAPUI5", "HTML", "CSS"],
+    "Integration": ["Integration", "API", "Microservices"],
+    "Mechanical Engineering": ["SolidWorks", "AutoCAD", "ANSYS"],
+    "Civil Engineering": ["AutoCAD", "Revit", "STAAD.Pro"],
+};
+
+
+useEffect(() => {
+  if (!assignmentTechnology) return; // Exit if technology is not selected
+
+  const filteredList = talentList.filter(talent => {
+      if (!talent.talentSkills) return false; // Skip talents with no skills
+      const requiredSkills = talent.talentSkills.split(',').map(skill => skill.trim());
+      return requiredSkills.includes(assignmentTechnology);
+  });
+  setFilteredTalentList(filteredList);
+}, [assignmentTechnology, talentList]);
+
+=======
     Java: ['Java', 'Spring', 'Hibernate'],
     React: ['React', 'JavaScript', 'HTML', 'CSS'],
     JavaScript: ['JavaScript', 'Node.js', 'Express.js'],
@@ -57,6 +80,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     'Civil Engineering': ['AutoCAD', 'Revit', 'STAAD.Pro'],
     // Add more technologies and their required skills as needed
   }
+>>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
 
   useEffect(() => {
     if (!assignmentTechnology) return // Exit if technology is not selected
@@ -86,10 +110,18 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
       console.error('Error fetching talent list:', error)
     }
   }
+<<<<<<< HEAD
+  const selectedTalentEmails = selectedTalents.map((talent) => {
+    // Find talent by email in talentList and return email
+    const foundTalent = talentList.find((t) => t.email === talent);
+    return foundTalent ? foundTalent.email : null;
+  });
+=======
   const handleselectedtalent = (talent, index) => {
     const newselectedtalent = selectedTalents.filter((tal, i) => tal != talent)
     setSelectedTalents(newselectedtalent)
   }
+>>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -101,8 +133,13 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
       assignmentDuedate,
       assignmentFileName,
       assignmentFileUrl,
+<<<<<<< HEAD
+      assignedTo: selectedTalentEmails.join(', '), // Send email IDs as comma-separated string
+    };
+=======
       assignedTo,
     }
+>>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
     console.log(formData)
     createAssignment(formData)
   }
@@ -280,6 +317,24 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
               <Label htmlFor='assignedTo' value='Assigned To' />
             </div>
             <Select
+<<<<<<< HEAD
+  id='assignedTo'
+  value={assignedTo}
+  onChange={(e) => {
+    const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
+    const uniqueSelectedValues = selectedValues.filter((value) => !selectedTalents.includes(value));
+    setSelectedTalents((prevSelected) => [...prevSelected, ...uniqueSelectedValues]);
+  }}
+  multiple
+  size={'sm'}
+>
+  {FilteredTalentList.map((talent) => (
+    <option key={talent.talentId} value={talent.email}>
+      {talent.talentName} - {talent.email} {/* Display both name and email for clarity */}
+    </option>
+  ))}
+</Select>
+=======
               id='assignedTo'
               value={assignedTo}
               onChange={e => {
@@ -310,6 +365,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
                 </option>
               ))}
             </Select>
+>>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
 
             {selectedTalents.length > 0 && (
               <div>
