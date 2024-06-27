@@ -10,6 +10,8 @@ export default function Header() {
   const navigate = useNavigate()
 
 
+  console.log(currentUser);
+
   const handleSignout = async () => {
     try {
       dispatch(signoutSuccess("Signed out successfully"))
@@ -20,7 +22,7 @@ export default function Header() {
 }
   return (
     <>
-      <Navbar fluid rounded className='shadow-md'>
+      <Navbar fluid rounded className='shadow-md sticky top-0 left-0 right-0 z-50'>
         <Navbar.Brand as={'div'}>
           <Link to={'/'}>
             <img
@@ -31,11 +33,11 @@ export default function Header() {
           </Link>
           <span className='self-center whitespace-nowrap text-xl text-gray-700 font-semibold hidden lg:block'>
             {' '}
-            | Campus Management Program
+            | Campus Program Management
           </span>
         </Navbar.Brand>
         <div className='flex md:order-2'>
-          {currentUser && <span className='text-md my-auto mr-2'>{"Hi, " + currentUser.name}</span>}
+          {currentUser && <span className='text-md my-auto mr-2'>{"Hi, " + currentUser.talentName}</span>}
           <Dropdown
             arrowIcon={false}
             inline
@@ -53,7 +55,7 @@ export default function Header() {
                 {currentUser && currentUser.email}
               </span>
             </Dropdown.Header>
-            <Dropdown.Item icon={TbLogout} className='text-red-500 font-medium' onClick={handleSignout}>
+            <Dropdown.Item icon={TbLogout} className='text-red-500 font-medium cursor-pointer z-50' onClick={handleSignout}>
               Sign out
             </Dropdown.Item>
           </Dropdown>

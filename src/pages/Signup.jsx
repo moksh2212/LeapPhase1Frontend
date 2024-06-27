@@ -5,7 +5,7 @@ import axios from 'axios'
 import { Alert, Snackbar } from '@mui/material'
 
 function Signup() {
-  const [name, setName] = useState('')
+  const [talentName, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -16,7 +16,8 @@ function Signup() {
   const [otpVerification, setOtpVerification] = useState(false)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const navigate = useNavigate() 
-  const baseUrl = process.env.BASE_URL
+  // const baseUrl = process.env.BASE_URL
+  const baseUrl = 'http://192.168.0.141:8080'
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -38,19 +39,25 @@ function Signup() {
 
     try {
       const userData = {
-        name,
+        talentName,
         email,
         password,
         inctureId,
       }
       // Make a request to the backend to verify the OTP
-      const response = await fetch(`${baseUrl}/admin/register`, {
+      const response = await fetch(`${baseUrl}/security/register`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
 
-        body: JSON.stringify(userData),
+        body: new URLSearchParams({
+          'email': email,
+          'password': password,
+          'talentName' : talentName,
+          'inctureId' : inctureId
+        }),
+        credentials: 'include'
       })
       if (response.ok) {
         setOpenSnackbar('Account created successfully. Redirecting to signin')
@@ -70,7 +77,7 @@ function Signup() {
   // const requestforotp = async () => {
   //   try {
   //     const userData = {
-  //       name,
+  //       talentName,
   //       email,
   //       password,
   //       mobileNumber: phoneNumber,
@@ -89,7 +96,7 @@ function Signup() {
   //   }
   // };
 
-  const isFormValid = name && email && password && confirmPassword && inctureId
+  const isFormValid = talentName && email && password && confirmPassword && inctureId
 
   return (
     <div className='flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 '>
@@ -123,8 +130,8 @@ function Signup() {
               <TextInput
                 type='text'
                 placeholder='Full Name'
-                id='name'
-                value={name}
+                id='talentName'
+                value={talentName}
                 onChange={e => setName(e.target.value)}
                 required
               />
