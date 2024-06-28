@@ -22,9 +22,8 @@ function Signin() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const signBaseUrl = 'http://192.168.137.200:8080'
+  const signBaseUrl = 'http://192.168.0.141:8080'
   const dispatch = useDispatch()
-  const basicAuth = 'Basic ' + btoa(email+':'+password);
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -35,25 +34,24 @@ function Signin() {
     if (!formData.email || !formData.password) {
       dispatch(signInFailure('All fields are required.'))
     }
+    const token = btoa(`${formData.email}:${formData.password}`);
     setIsLoading(true)
     try {
       dispatch(signInStart())
       const response = await fetch(`${signBaseUrl}/security/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': basicAuth,
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
-        body: new URLSearchParams({
-          'email': email,
-          'password': password
-        }),
+        body: JSON.stringify(formData),
         // credentials: 'include'
       })
 
       if (response.ok) {
+
         const data = await response.json();
-        dispatch(signInSuccess(data))
+        dispatch(signInSuccess({user:data, token:token}))
         navigate('/')
       }
       setTimeout(() => {
