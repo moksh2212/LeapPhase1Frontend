@@ -2,17 +2,25 @@
 import React, { useState } from 'react';
 import {
   Container,
-  Grid,
   Typography,
-  Paper,
   Button,
   Box,
   Badge,
-  TextField,
-  IconButton,
+  Chip,
 } from '@mui/material';
-import { CloudDownload, CloudUpload, CheckCircleOutline, ErrorOutline } from '@mui/icons-material';
+import {
+  CloudDownload,
+  CloudUpload,
+  CheckCircleOutline,
+  ErrorOutline,
+} from '@mui/icons-material';
 import FileBase from 'react-file-base64';
+import {
+  useReactTable,
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+} from '@tanstack/react-table';
 
 const assignments = [
   {
@@ -54,61 +62,112 @@ const AssignmentUser = () => {
     }
   };
 
+  const columnHelper = createColumnHelper();
+
+  const columns = [
+    columnHelper.accessor('title', {
+      header: 'Title',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('dueDate', {
+      header: 'Due Date',
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('download', {
+      header: 'Download',
+      cell: (info) => (
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<CloudDownload />}
+          href={info.row.original.downloadLink}
+        >
+          Download
+        </Button>
+      ),
+    }),
+    columnHelper.accessor('upload', {
+      header: 'Upload',
+      cell: (info) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <FileBase
+            type="file"
+            multiple={false}
+            onDone={(file) => handleFileChange(file, info.row.original.id)}
+          />
+          <Button
+            variant="contained"
+            color="secondary"
+            startIcon={<CloudUpload />}
+            onClick={() => handleFileUpload(info.row.original.id)}
+            sx={{ ml: 2 }}
+          >
+            Upload
+          </Button>
+        </Box>
+      ),
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
+      cell: (info) => (
+        <Chip
+          label={info.getValue()}
+          color={info.getValue() === 'Checked' ? 'success' : 'error'}
+          icon={info.getValue() === 'Checked' ? <CheckCircleOutline /> : <ErrorOutline />}
+        />
+      ),
+    }),
+    columnHelper.accessor('uploadStatus', {
+      header: 'Upload Status',
+      cell: (info) => (
+        <Typography variant="body2" color="textSecondary">
+          {uploadedFiles[info.row.original.id] ? 'File Uploaded' : 'No file uploaded'}
+        </Typography>
+      ),
+    }),
+  ];
+
+  const table = useReactTable({
+    data: assignments,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
-    <Container maxWidth="md" sx={{ mt: 5 }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        Your Assignments
-      </Typography>
-      <Typography variant="h6" align="center" gutterBottom>
+    <Container maxWidth="lg" sx={{ mt: 5 }}>
+      <Typography variant="h5" align="center" gutterBottom>
         Total Assignments: <Badge badgeContent={assignments.length} color="primary" />
       </Typography>
-      <Grid container spacing={4}>
-        {assignments.map((assignment) => (
-          <Grid item xs={12} key={assignment.id}>
-            <Paper elevation={3} sx={{ p: 2 }}>
-              <Typography variant="h6">{assignment.title}</Typography>
-              <Typography variant="body1">Due Date: {assignment.dueDate}</Typography>
-              <Box sx={{ mt: 2 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CloudDownload />}
-                  href={assignment.downloadLink}
+      <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  style={{ borderBottom: '1px solid #ddd', padding: '8px' }}
                 >
-                  Download
-                </Button>
-                <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-                  <FileBase
-                    type="file"
-                    multiple={false}
-                    onDone={(file) => handleFileChange(file, assignment.id)}
-                  />
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<CloudUpload />}
-                    onClick={() => handleFileUpload(assignment.id)}
-                    sx={{ ml: 2 }}
-                  >
-                    Upload File
-                  </Button>
-                </Box>
-                <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                  {uploadedFiles[assignment.id] ? 'File Uploaded' : 'No file uploaded'}
-                </Typography>
-                <Typography variant="body1" sx={{ mt: 2 }}>
-                  Status: {assignment.status === 'Checked' ? (
-                    <CheckCircleOutline color="success" />
-                  ) : (
-                    <ErrorOutline color="error" />
-                  )}
-                  {assignment.status}
-                </Typography>
-              </Box>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  key={cell.id}
+                  style={{ borderBottom: '1px solid #ddd', padding: '8px' }}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </Container>
   );
 };

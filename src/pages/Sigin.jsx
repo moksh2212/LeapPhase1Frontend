@@ -1,5 +1,5 @@
-import { Link,  useNavigate } from 'react-router-dom' // Import useHistory hook
-import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
   TextInput,
   Button,
@@ -7,37 +7,49 @@ import {
   Label,
   Spinner,
   Alert,
-} from 'flowbite-react'
-import { useDispatch } from 'react-redux'
+} from 'flowbite-react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   signInStart,
   signInSuccess,
   signInFailure,
-} from '../redux/user/userSlice'
+} from '../redux/user/userSlice';
 
 function Signin() {
-  const navigate = useNavigate()
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-  const [password, setPassword] = useState('')
-  const [email, setEmail] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
-  const signBaseUrl = 'http://192.168.137.200:8080'
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const { currentUser } = useSelector(state => state.user);
+  const signBaseUrl = 'http://192.168.137.200:8080';
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.roles[1]) {
+        navigate('/dashboard');
+      } else if (currentUser.roles[0]) {
+        navigate('/user');
+      }
+    }
+  }, [currentUser, navigate]);
 
   const handleSubmit = async e => {
-    e.preventDefault()
+    e.preventDefault();
 
     const formData = {
       email: email,
       password: password,
-    }
+    };
     if (!formData.email || !formData.password) {
-      dispatch(signInFailure('All fields are required.'))
+      setErrorMessage('All fields are required.');
+      return;
     }
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      dispatch(signInStart())
+      dispatch(signInStart());
       const response = await fetch(`${signBaseUrl}/security/login`, {
         method: 'POST',
         headers: {
@@ -45,24 +57,22 @@ function Signin() {
         },
         body: new URLSearchParams({
           'email': email,
-          'password': password
+          'password': password,
         }),
-        credentials: 'include'
-      })
+        credentials: 'include',
+      });
       if (response.ok) {
         const data = await response.json();
-        dispatch(signInSuccess(data))
-        navigate('/')
+        dispatch(signInSuccess(data));
+      } else {
+        throw new Error('Invalid email or password. Please try again.');
       }
-      setTimeout(() => {
-        setIsLoading(false)
-        setErrorMessage('Invalid email or password. Please try again.')
-      }, 1500)
     } catch (error) {
-      setErrorMessage(error.message)
-      setIsLoading(false)
+      setErrorMessage(error.message);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
@@ -151,7 +161,7 @@ function Signin() {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
-export default Signin
+export default Signin;
