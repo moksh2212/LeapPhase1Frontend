@@ -67,7 +67,6 @@ export default function Dashboard() {
           {tab === 'EmployeewiseAssignment' && <EmployeewiseAssignment />}
 
           {tab === 'Perform' && <Perform />}
-          {tab==='CandidateAssesmentsCombined' && <CandidateAssesmentsCombined/>}
           {tab === 'campus-calendar' && <CampusCalendarView />}
         </div>
       </div>

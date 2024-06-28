@@ -1,5 +1,5 @@
-import { Link,  useNavigate } from 'react-router-dom' // Import useHistory hook
-import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
   TextInput,
   Button,
@@ -7,13 +7,13 @@ import {
   Label,
   Spinner,
   Alert,
-} from 'flowbite-react'
-import { useDispatch } from 'react-redux'
+} from 'flowbite-react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   signInStart,
   signInSuccess,
   signInFailure,
-} from '../redux/user/userSlice'
+} from '../redux/user/userSlice';
 
 function Signin() {
   const navigate = useNavigate()
@@ -25,19 +25,20 @@ function Signin() {
   const signBaseUrl = 'http://192.168.0.141:8080'
   const dispatch = useDispatch()
   const handleSubmit = async e => {
-    e.preventDefault()
+    e.preventDefault();
 
     const formData = {
       email: email,
       password: password,
-    }
+    };
     if (!formData.email || !formData.password) {
-      dispatch(signInFailure('All fields are required.'))
+      setErrorMessage('All fields are required.');
+      return;
     }
     const token = btoa(`${formData.email}:${formData.password}`);
     setIsLoading(true)
     try {
-      dispatch(signInStart())
+      dispatch(signInStart());
       const response = await fetch(`${signBaseUrl}/security/login`, {
         method: 'POST',
         headers: {
@@ -54,15 +55,12 @@ function Signin() {
         dispatch(signInSuccess({user:data, token:token}))
         navigate('/')
       }
-      setTimeout(() => {
-        setIsLoading(false)
-        setErrorMessage('Invalid email or password. Please try again.')
-      }, 1500)
     } catch (error) {
-      setErrorMessage(error.message)
-      setIsLoading(false)
+      setErrorMessage(error.message);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
@@ -151,7 +149,7 @@ function Signin() {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
-export default Signin
+export default Signin;

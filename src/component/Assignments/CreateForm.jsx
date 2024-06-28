@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import {
   Label,
   TextInput,
@@ -8,41 +8,41 @@ import {
   Select,
   Progress,
   Alert,
-} from 'flowbite-react'
-import { ImCross } from 'react-icons/im'
+} from 'flowbite-react';
+import { ImCross } from 'react-icons/im';
 
 import {
   getDownloadURL,
   getStorage,
   ref,
   uploadBytesResumable,
-} from 'firebase/storage'
+} from 'firebase/storage';
 
-import { app } from '../../firebase.js'
+import { app } from '../../firebase.js';
 
 export function CreateForm({ openModal, setOpenModal, createAssignment }) {
-  const [assignmentWeek, setAssignmentWeek] = useState('')
-  const [assignmentName, setAssignmentName] = useState('')
-  const [maxmarks, setmaxmarks] = useState(0)
-  const [assignmentTechnology, setAssignmentTechnology] = useState('Java')
-  const [assignmentDuedate, setAssignmentDuedate] = useState('')
-  const [assignmentFile, setAssignmentFile] = useState(null)
-  const [assignmentFileName, setAssignmentFileName] = useState(null)
-  const [assignedTo, setAssignedTo] = useState('')
-  const [assignmentFileUrl, setAssignmentFileUrl] = useState(null)
-  const [assignmentFileUploadProgress, setAssignmentFileUploadProgress] =
-    useState(null)
-  const [assignmentFileUploadError, setAssignmentFileUploadError] =
-    useState(null)
-  const [assignmentFileUploading, setAssignmentFileUploading] = useState(false)
-  const [talentList, setTalentList] = useState([])
-  const [selectedTalents, setSelectedTalents] = useState([])
-  const [FilteredTalentList, setFilteredTalentList] = useState([])
+  const [assignmentWeek, setAssignmentWeek] = useState('');
+  const [assignmentName, setAssignmentName] = useState('');
+  const [maxmarks, setMaxMarks] = useState(0);
+  const [assignmentTechnology, setAssignmentTechnology] = useState('Java');
+  const [assignmentDuedate, setAssignmentDuedate] = useState('');
+  const [assignmentFile, setAssignmentFile] = useState(null);
+  const [assignmentFileName, setAssignmentFileName] = useState(null);
+  const [assignedTo, setAssignedTo] = useState('');
+  const [assignmentFileUrl, setAssignmentFileUrl] = useState(null);
+  const [assignmentFileUploadProgress, setAssignmentFileUploadProgress] = useState(null);
+  const [assignmentFileUploadError, setAssignmentFileUploadError] = useState(null);
+  const [assignmentFileUploading, setAssignmentFileUploading] = useState(false);
+  const [talentList, setTalentList] = useState([]);
+  const [selectedTalents, setSelectedTalents] = useState([]);
+  const [filteredTalentList, setFilteredTalentList] = useState([]);
+
   useEffect(() => {
     if (assignmentFile) {
-      handleFileUpload()
+      handleFileUpload();
     }
-  }, [assignmentFile])
+  }, [assignmentFile]);
+
   useEffect(() => {
     fetchTalentList()
   }, [])
@@ -73,17 +73,15 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
 
   const fetchTalentList = async () => {
     try {
-      const response = await fetch(
-        'http://localhost:8080/cpm/talents/alltalent',
-      )
+      const response = await fetch('http://localhost:8080/cpm/talents/alltalent');
       if (!response.ok) {
-        throw new Error('Failed to fetch talent list')
+        throw new Error('Failed to fetch talent list');
       }
-      const data = await response.json()
-      setTalentList(data)
-      console.log('Talent list:', data)
+      const data = await response.json();
+      setTalentList(data);
+      console.log('Talent list:', data);
     } catch (error) {
-      console.error('Error fetching talent list:', error)
+      console.error('Error fetching talent list:', error);
     }
   }
   const handleselectedtalent = (talent, index) => {
@@ -110,224 +108,205 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
   const handleFileUpload = async () => {
     try {
       if (!assignmentFile) {
-        setAssignmentFileUploadError('No file selected')
-        return
+        setAssignmentFileUploadError('No file selected');
+        return;
       }
 
       if (
         !assignmentFile.type.startsWith('application/pdf') ||
         assignmentFile.size > 2 * 1024 * 1024
       ) {
-        setAssignmentFileUploadError(
-          'File must be of type pdf and less than 4mb',
-        )
-        setAssignmentFile(null)
-        setAssignmentFileUrl(null)
-        setAssignmentFileUploadProgress(null)
-        console.log('File must be of type pdf')
-        return
+        setAssignmentFileUploadError('File must be of type pdf and less than 2MB');
+        setAssignmentFile(null);
+        setAssignmentFileUrl(null);
+        setAssignmentFileUploadProgress(null);
+        return;
       }
 
-      setAssignmentFileUploadError(null)
-      setAssignmentFileUploading(true)
-      const storage = getStorage(app)
-      const fileName = assignmentFile.name
-      const storageRef = ref(storage, fileName)
-      const uploadTask = uploadBytesResumable(storageRef, assignmentFile)
+      setAssignmentFileUploadError(null);
+      setAssignmentFileUploading(true);
+      const storage = getStorage(app);
+      const fileName = assignmentFile.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask = uploadBytesResumable(storageRef, assignmentFile);
 
       uploadTask.on(
         'state_changed',
-        snapshot => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          setAssignmentFileUploadProgress(progress.toFixed(0))
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setAssignmentFileUploadProgress(progress.toFixed(0));
         },
-        error => {
-          setAssignmentFileUploadError('Could not upload file')
-          setAssignmentFileUploadProgress(null)
-          setAssignmentFile(null)
-          setAssignmentFileName(null)
-          setAssignmentFileUrl(null)
-          setAssignmentFileUploading(false)
+        (error) => {
+          setAssignmentFileUploadError('Could not upload file');
+          setAssignmentFileUploadProgress(null);
+          setAssignmentFile(null);
+          setAssignmentFileName(null);
+          setAssignmentFileUrl(null);
+          setAssignmentFileUploading(false);
         },
         () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(downloadURL => {
-            setAssignmentFileUploadProgress(null)
-            setAssignmentFileUrl(downloadURL)
-            setAssignmentFileUploading(false)
-            setAssignmentFileUrl(downloadURL)
-
-            console.log(downloadURL)
-          })
-        },
-      )
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            setAssignmentFileUploadProgress(null);
+            setAssignmentFileUrl(downloadURL);
+            setAssignmentFileUploading(false);
+            console.log(downloadURL);
+          });
+        }
+      );
     } catch (error) {
-      setAssignmentFileUploadError('Could not upload Image')
-      console.log(error)
+      setAssignmentFileUploadError('Could not upload file');
+      console.log(error);
     }
-  }
+  };
 
-  const handleFileChange = async e => {
-    setAssignmentFile(e.target.files[0])
-    setAssignmentFileName(e.target.files[0].name)
-  }
+  const handleFileChange = (e) => {
+    setAssignmentFile(e.target.files[0]);
+    setAssignmentFileName(e.target.files[0].name);
+  };
 
   return (
-    <Modal show={openModal} size='md' onClose={() => setOpenModal(false)} popup>
+    <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
       <Modal.Header />
       <Modal.Body>
-        <form onSubmit={handleSubmit} className='flex max-w-md flex-col gap-4'>
+        <form onSubmit={handleSubmit} className="flex max-w-md flex-col gap-4">
           <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='assignmentWeek' value='Assignment Week' />
+            <div className="mb-2 block">
+              <Label htmlFor="assignmentWeek" value="Assignment Week" />
             </div>
             <TextInput
-              id='assignmentWeek'
-              type='text'
-              placeholder='Enter assignment week'
+              id="assignmentWeek"
+              type="text"
+              placeholder="Enter assignment week"
               value={assignmentWeek}
-              onChange={e => setAssignmentWeek(e.target.value)}
+              onChange={(e) => setAssignmentWeek(e.target.value)}
               required
             />
           </div>
           <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='assignmentName' value='Assignment Name' />
+            <div className="mb-2 block">
+              <Label htmlFor="assignmentName" value="Assignment Name" />
             </div>
             <TextInput
-              id='assignmentName'
-              type='text'
-              placeholder='Enter assignment name'
+              id="assignmentName"
+              type="text"
+              placeholder="Enter assignment name"
               value={assignmentName}
-              onChange={e => setAssignmentName(e.target.value)}
+              onChange={(e) => setAssignmentName(e.target.value)}
               required
-              size={'sm'}
+              size="sm"
             />
           </div>
           <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='MaxMarks' value='Max Marks' />
+            <div className="mb-2 block">
+              <Label htmlFor="MaxMarks" value="Max Marks" />
             </div>
             <TextInput
-              id='maxmarks'
-              type='text'
-              placeholder='Enter Max Marks '
+              id="maxmarks"
+              type="text"
+              placeholder="Enter Max Marks"
               value={maxmarks}
-              onChange={e => setmaxmarks(e.target.value)}
+              onChange={(e) => setMaxMarks(e.target.value)}
               required
-              size={'sm'}
+              size="sm"
             />
           </div>
           <div>
-            <div className='mb-2 block'>
-              <Label
-                htmlFor='assignmentTechnology'
-                value='Assignment Technology'
-              />
+            <div className="mb-2 block">
+              <Label htmlFor="assignmentTechnology" value="Assignment Technology" />
             </div>
             <Select
-              id='assignmentTechnology'
+              id="assignmentTechnology"
               value={assignmentTechnology}
-              onChange={e => setAssignmentTechnology(e.target.value)}
+              onChange={(e) => setAssignmentTechnology(e.target.value)}
               required
-              size={'sm'}
+              size="sm"
             >
               <option>Java</option>
               <option>React</option>
               <option>JavaScript</option>
               <option>UI 5</option>
               <option>Integration</option>
-              {/* Add SolidWorks, AutoCAD, and ANSYS as options */}
               <option>SolidWorks</option>
               <option>AutoCAD</option>
               <option>ANSYS</option>
             </Select>
           </div>
           <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='assignmentDuedate' value='Assignment Due Date' />
+            <div className="mb-2 block">
+              <Label htmlFor="assignmentDuedate" value="Assignment Due Date" />
             </div>
             <TextInput
-              id='assignmentDuedate'
-              type='date'
+              id="assignmentDuedate"
+              type="date"
               value={assignmentDuedate}
-              onChange={e => setAssignmentDuedate(e.target.value)}
+              onChange={(e) => setAssignmentDuedate(e.target.value)}
               required
             />
           </div>
           <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='assignmentFile' value='Assignment File' />
+            <div className="mb-2 block">
+              <Label htmlFor="assignmentFile" value="Assignment File" />
             </div>
             <FileInput
-              id='assignmentFile'
-              type='file'
-              helperText='PDF(Max size 2 MB)'
-              accept='.pdf'
+              id="assignmentFile"
+              type="file"
+              helperText="PDF (Max size 2 MB)"
+              accept=".pdf"
               onChange={handleFileChange}
               required
-              size={'sm'}
+              size="sm"
             />
           </div>
           {assignmentFileUploadProgress && (
             <Progress progress={assignmentFileUploadProgress} />
           )}
           {assignmentFileUploadError && (
-            <Alert color={'failure'}>{assignmentFileUploadError}</Alert>
+            <Alert color="failure">{assignmentFileUploadError}</Alert>
           )}
           <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='assignedTo' value='Assigned To' />
+            <div className="mb-2 block">
+              <Label htmlFor="assignedTo" value="Assigned To" />
             </div>
             <Select
               id='assignedTo'
               value={assignedTo}
-              onChange={e => {
+              onChange={(e) => {
                 const selectedValues = Array.from(
                   e.target.selectedOptions,
-                  option => option.value,
-                )
+                  (option) => option.value
+                );
                 const uniqueSelectedValues = selectedValues.filter(
-                  value => !selectedTalents.includes(value),
-                )
-                const newAssignedTo = uniqueSelectedValues.join(', ')
-                setAssignedTo(prevAssignedTo =>
-                  prevAssignedTo
-                    ? prevAssignedTo + ', ' + newAssignedTo
-                    : newAssignedTo,
-                )
-                setSelectedTalents(prevSelected => [
+                  (value) => !selectedTalents.includes(value)
+                );
+                setSelectedTalents((prevSelected) => [
                   ...prevSelected,
                   ...uniqueSelectedValues,
-                ])
+                ]);
               }}
               multiple
-              size={'sm'}
+              size="sm"
             >
-              {FilteredTalentList.map(talent => (
-                <option key={talent.talentId} value={talent.talentName}>
-                  {talent.talentName}
+              {filteredTalentList.map((talent) => (
+                <option key={talent.talentId} value={talent.email}>
+                  {talent.talentName} - {talent.email}
                 </option>
               ))}
             </Select>
-
             {selectedTalents.length > 0 && (
               <div>
-                <label className='block text-sm font-medium text-gray-700'>
+                <label className="block text-sm font-medium text-gray-700">
                   Selected Talents:
                 </label>
-                <div className='mt-2 flex flex-wrap'>
+                <div className="mt-2 flex flex-wrap">
                   {selectedTalents.map((talent, index) => (
                     <span
                       key={index}
-                      className='inline-flex items-center px-3 py-1 mr-2 mb-2 rounded-md text-sm font-medium bg-blue-500 text-white'
+                      className="inline-flex items-center px-3 py-1 mr-2 mb-2 rounded-md text-sm font-medium bg-blue-500 text-white"
                     >
-                      {talent}{' '}
+                      {talent}
                       <div
-                        onClick={() => {
-                          handleselectedtalent(talent, index)
-                        }}
-                        className='ml-2'
+                        onClick={() => handleSelectedTalent(talent)}
+                        className="ml-2 cursor-pointer"
                       >
                         <ImCross />
                       </div>
@@ -336,14 +315,12 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
                 </div>
               </div>
             )}
-
-            <div></div>
           </div>
-          <Button type='submit' color={'blue'} size={'sm'}>
+          <Button type="submit" color="blue" size="sm">
             Create Assignment
           </Button>
         </form>
       </Modal.Body>
     </Modal>
-  )
+  );
 }
