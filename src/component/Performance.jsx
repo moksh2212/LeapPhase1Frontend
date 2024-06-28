@@ -30,7 +30,8 @@ const Perfromancetable = () => {
   const [error, setError] = useState(null)
   const [rowDelete, setRowDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
-  const perBaseUrl = process.env.BASE_URL
+  const perBaseUrl = 'http://192.168.0.141:8080'
+  // const perBaseUrl = process.env.BASE_URL
   useEffect(() => {
     const fetchUsers = async () => {
       try {

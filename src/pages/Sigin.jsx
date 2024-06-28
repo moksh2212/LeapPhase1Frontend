@@ -54,6 +54,7 @@ function Signin() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': basicAuth,
         },
         body: new URLSearchParams({
           'email': email,
