@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
  
 export default function AdminRoutes() {
   const { currentUser } = useSelector(state => state.user)
-  return currentUser && currentUser.roles[0]==='ROLE_ADMIN' ? (
+  return currentUser && currentUser.roles[1]==='ROLE_ADMIN' ? (
   // return currentUser && currentUser.adminCheck ? (
     <Outlet />
   ) : (

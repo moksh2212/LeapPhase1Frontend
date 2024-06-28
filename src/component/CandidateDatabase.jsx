@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 //MRT Imports
 import {
   MaterialReactTable,
@@ -36,8 +36,8 @@ const style = {
   border: '2px solid white',
   boxShadow: 24,
   p: 4,
-  borderRadius: '20px'
-};
+  borderRadius: '20px',
+}
 const NameCell = ({ renderedCellValue }) => {
   return (
     <Box
@@ -101,19 +101,25 @@ DateHeader.propTypes = {
 const Example = () => {
   const [data, setData] = useState([])
   const [validationErrors, setValidationErrors] = useState({})
-  const [hasSelectedRows, setHasSelectedRows] = useState(false);
+  const [hasSelectedRows, setHasSelectedRows] = useState(false)
   const [text, setText] = useState('')
   const phoneRegex = /^[0-9]{10}$/
   const aadhaarRegex = /^[0-9]{12}$/
   const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  const dobRegex = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2}$/;
+  const dobRegex = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2}$/
   const [openSnackbar, setOpenSnackbar] = useState(null)
+
+  const token = useSelector(state => state.user.token)
   useEffect(() => {
     // Make API call to fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/candidates/getAll`)
+        const response = await fetch(`${canBaseUrl}/candidates/getAll`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
         let jsonData = await response.json()
         jsonData = jsonData.slice(0, jsonData.length)
         setData(jsonData)
@@ -242,7 +248,7 @@ const Example = () => {
                 const newValue = e.target.value
                 if (!phoneRegex.test(newValue)) {
                   setValidationErrors(prev => ({
-                    ...prev,                                          
+                    ...prev,
                     [cell.id]: 'Invalid phone number',
                   }))
                 } else {
@@ -374,40 +380,40 @@ const Example = () => {
             header: 'DOB',
             filterVariant: 'date',
             muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-            error: !!validationErrors[cell.id],
-            helperText: validationErrors[cell.id],
-            onChange: (e) => {
-              const newValue = e.target.value;
-              if (!dobRegex.test(newValue)) {
-                setValidationErrors((prev) => ({
-                  ...prev,
-                  [cell.id]: 'Invalid date format. Use DD.MM.YYYY',
-                }));
-              } else {
-                const [day, month, year] = newValue.split('.');
-                const date = dayjs(`${year}-${month}-${day}`);
-                const currentDate = dayjs();
-                const minDate = currentDate.subtract(120, 'years');
-                if (date.isAfter(currentDate)) {
-                  setValidationErrors((prev) => ({
+              error: !!validationErrors[cell.id],
+              helperText: validationErrors[cell.id],
+              onChange: e => {
+                const newValue = e.target.value
+                if (!dobRegex.test(newValue)) {
+                  setValidationErrors(prev => ({
                     ...prev,
-                    [cell.id]: 'Date of birth cannot be in the future.',
-                  }));
-                } else if (date.isBefore(minDate)) {
-                  setValidationErrors((prev) => ({
-                    ...prev,
-                    [cell.id]: 'Date of birth is too far in the past.',
-                  }));
+                    [cell.id]: 'Invalid date format. Use DD.MM.YYYY',
+                  }))
                 } else {
-                  setValidationErrors((prev) => {
-                    const updatedErrors = { ...prev };
-                    delete updatedErrors[cell.id];
-                    return updatedErrors;
-                  });
+                  const [day, month, year] = newValue.split('.')
+                  const date = dayjs(`${year}-${month}-${day}`)
+                  const currentDate = dayjs()
+                  const minDate = currentDate.subtract(120, 'years')
+                  if (date.isAfter(currentDate)) {
+                    setValidationErrors(prev => ({
+                      ...prev,
+                      [cell.id]: 'Date of birth cannot be in the future.',
+                    }))
+                  } else if (date.isBefore(minDate)) {
+                    setValidationErrors(prev => ({
+                      ...prev,
+                      [cell.id]: 'Date of birth is too far in the past.',
+                    }))
+                  } else {
+                    setValidationErrors(prev => {
+                      const updatedErrors = { ...prev }
+                      delete updatedErrors[cell.id]
+                      return updatedErrors
+                    })
+                  }
                 }
-              }
-            },
-          }),
+              },
+            }),
             //render Date as a string
             Header: DateHeader, //custom header markup
             muiFilterTextFieldProps: {
@@ -455,7 +461,6 @@ const Example = () => {
         errors.dob = 'Invalid DOB'
       }
 
-
       if (Object.keys(errors).length) {
         setValidationErrors(errors)
         if (errors.email) {
@@ -470,8 +475,7 @@ const Example = () => {
         } else if (errors.panNumber) {
           alert('Invalid PAN number')
           setText('Invalid PAN number')
-        }
-        else if (errors.dob) {
+        } else if (errors.dob) {
           alert('Invalid dob number')
           setText('Invalid dob number')
         }
@@ -485,6 +489,7 @@ const Example = () => {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
             },
             body: JSON.stringify(values),
           },
@@ -546,8 +551,8 @@ const Example = () => {
       </MenuItem>,
     ],
     renderTopToolbar: ({ table }) => {
-      const [hasSelectedRows, setHasSelectedRows] = useState(false);
-  const [openConvertModal, setOpenConvertModal] = useState(false);
+      const [hasSelectedRows, setHasSelectedRows] = useState(false)
+      const [openConvertModal, setOpenConvertModal] = useState(false)
       const handleDeactivate = () => {
         const confirmed = window.confirm(
           'Are you sure you want to delete the data?',
@@ -559,6 +564,9 @@ const Example = () => {
               `${canBaseUrl}/candidates/${row.getValue('candidateId')}`,
               {
                 method: 'DELETE',
+                headers:{
+                  Authorization: `Basic ${token}`,
+                }
               },
             )
             window.location.reload()
@@ -567,7 +575,7 @@ const Example = () => {
       }
 
       const handleActivate = () => {
-        table.getSelectedRowModel().flatRows.map(async (row) => {
+        table.getSelectedRowModel().flatRows.map(async row => {
           //alert('deactivating ' + row.getValue('name'))
           const response = await fetch(
             `${tanBaseUrl}/cpm/talents/addtalentfromcandidate`,
@@ -575,13 +583,14 @@ const Example = () => {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Basic ${token}`,
               },
               body: JSON.stringify(row.original),
-            }
-          );
-        });
-        setOpenConvertModal(true); // Open the modal
-      };
+            },
+          )
+        })
+        setOpenConvertModal(true) // Open the modal
+      }
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const [selectedFile, setSelectedFile] = useState(null)
       const handleFileChange = event => {
@@ -600,6 +609,9 @@ const Example = () => {
 
           const response = await fetch(`${canBaseUrl}/candidates/upload`, {
             method: 'POST',
+            headers:{
+              Authorization: `Basic ${token}`,
+            },
             body: formData,
           })
           console.log(response)
@@ -614,14 +626,14 @@ const Example = () => {
         }
       }
 
-        // Update the state variable based on the selected rows
-  const selectedRowCount = table.getSelectedRowModel().flatRows.length;
-  useEffect(() => {
-    setHasSelectedRows(selectedRowCount > 0);
-  }, [selectedRowCount]);
+      // Update the state variable based on the selected rows
+      const selectedRowCount = table.getSelectedRowModel().flatRows.length
+      useEffect(() => {
+        setHasSelectedRows(selectedRowCount > 0)
+      }, [selectedRowCount])
 
       return (
-        <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300">
+        <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
           <div className='flex justify-between mb-2 rounded-md'>
             <h2 className={`text-2xl text-[#0087D5] font-bold my-auto p-2`}>
               Candidates
@@ -674,9 +686,9 @@ const Example = () => {
                           onChange={handleFileChange}
                         />
                       </label>
-                    </Button> 
+                    </Button>
                     <Button
-                    style={{marginLeft: '10px'}}
+                      style={{ marginLeft: '10px' }}
                       onClick={handleUpload}
                       color='success'
                       variant='contained'
@@ -690,29 +702,29 @@ const Example = () => {
               </Box>
             </Box>
           </Box>
-           {/* Render the snackbar conditionally */}
-      {hasSelectedRows && (
-        <Snackbar
-          open={hasSelectedRows}
-          message="Rows are selected"
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        />
-      )}
-      <Modal
-        open={openConvertModal}
-        onClose={() => setOpenConvertModal(false)}
-        aria-labelledby="convert-modal-title"
-        aria-describedby="convert-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="convert-modal-title" variant="h6" component="h2">
-            Convert to Talent
-          </Typography>
-          <Typography id="convert-modal-description" sx={{ mt: 2 }}>
-            Successfully converted to Talent.
-          </Typography>
-        </Box>
-      </Modal>
+          {/* Render the snackbar conditionally */}
+          {hasSelectedRows && (
+            <Snackbar
+              open={hasSelectedRows}
+              message='Rows are selected'
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            />
+          )}
+          <Modal
+            open={openConvertModal}
+            onClose={() => setOpenConvertModal(false)}
+            aria-labelledby='convert-modal-title'
+            aria-describedby='convert-modal-description'
+          >
+            <Box sx={style}>
+              <Typography id='convert-modal-title' variant='h6' component='h2'>
+                Convert to Talent
+              </Typography>
+              <Typography id='convert-modal-description' sx={{ mt: 2 }}>
+                Successfully converted to Talent.
+              </Typography>
+            </Box>
+          </Modal>
         </div>
       )
     },
@@ -723,6 +735,7 @@ const Example = () => {
 //Date Picker Imports - these should just be in your Context Provider
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { useSelector } from 'react-redux'
 
 const ExampleWithLocalizationProvider = () => (
   //App.tsx or AppProviders file

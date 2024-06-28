@@ -17,7 +17,7 @@ import {
   Snackbar,
   Tooltip,
 } from '@mui/material'
-
+import { useSelector } from 'react-redux'
 
 //Module completed testing done
 
@@ -83,6 +83,7 @@ const CollegeTable = () => {
   const [selectedRows, setSelectedRows] = useState(null)
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
+  const token = useSelector(state => state.user.token)
   const baseUrl = process.env.BASE_URL
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -138,7 +139,11 @@ const CollegeTable = () => {
       const fetchData = async () => {
         setIsLoading(true)
         try {
-          const response = await fetch(`${baseUrl}/admin/viewData`)
+          const response = await fetch(`${baseUrl}/admin/viewData`, {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          })
           const data = await response.json()
           setCollegeList(data)
         } catch (error) {
@@ -163,6 +168,7 @@ const CollegeTable = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(newCollege),
       })
@@ -192,6 +198,7 @@ const CollegeTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(collegeToUpdate),
         },
@@ -224,6 +231,9 @@ const CollegeTable = () => {
     try {
       const response = await fetch(`${baseUrl}/admin/deleteData/${collegeId}`, {
         method: 'DELETE',
+        headers: {
+          Authorization: `Basic ${token}`,
+        },
       })
 
       if (response.ok) {

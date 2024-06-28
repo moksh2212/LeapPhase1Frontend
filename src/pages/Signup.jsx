@@ -15,9 +15,9 @@ function Signup() {
   const [passwordMatchError, setPasswordMatchError] = useState(false)
   const [otpVerification, setOtpVerification] = useState(false)
   const [openSnackbar, setOpenSnackbar] = useState(null)
-  const navigate = useNavigate() 
+  const navigate = useNavigate()
   // const baseUrl = process.env.BASE_URL
-  const baseUrl = 'http://192.168.0.141:8080'
+  const baseUrl = 'http://192.168.137.200:8080'
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -52,12 +52,12 @@ function Signup() {
         },
 
         body: new URLSearchParams({
-          'email': email,
-          'password': password,
-          'talentName' : talentName,
-          'inctureId' : inctureId
+          email: email,
+          password: password,
+          talentName: talentName,
+          inctureId: inctureId,
         }),
-        credentials: 'include'
+        credentials: 'include',
       })
       if (response.ok) {
         setOpenSnackbar('Account created successfully. Redirecting to signin')
@@ -96,7 +96,8 @@ function Signup() {
   //   }
   // };
 
-  const isFormValid = talentName && email && password && confirmPassword && inctureId
+  const isFormValid =
+    talentName && email && password && confirmPassword && inctureId
 
   return (
     <div className='flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 '>

@@ -24,6 +24,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Pending } from '@mui/icons-material'
+import { useSelector } from 'react-redux'
 
 const CandidateTable = () => {
   const [collegeList, setCollegeList] = useState([])
@@ -152,6 +153,7 @@ const CandidateTable = () => {
   const selectStatus = ['Pending', 'Turned in', 'Turned in Late']
   const selectTechnology = ['Java', 'React', 'UI5', 'Integration']
 
+  const token = useSelector(state => state.user.token)
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -205,7 +207,11 @@ const CandidateTable = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch('http://localhost:3057/admin/viewData')
+        const response = await fetch('http://localhost:3057/admin/viewData', {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
         const data = await response.json()
         setCollegeList(data)
       } catch (error) {
@@ -231,6 +237,7 @@ const CandidateTable = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(newCollege),
         },
@@ -262,6 +269,7 @@ const CandidateTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(collegeToUpdate),
         },
@@ -296,6 +304,9 @@ const CandidateTable = () => {
         `http://localhost:3057/admin/deleteData/${collegeId}`,
         {
           method: 'DELETE',
+          headers:{
+            Authorization: `Basic ${token}`,
+          }
         },
       )
 

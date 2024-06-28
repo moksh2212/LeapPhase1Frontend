@@ -40,6 +40,7 @@ const style = {
   borderRadius: '20px'
 };
 import CircularProgress from '@mui/material/CircularProgress'
+import { useSelector } from 'react-redux';
 
 const AssesmentToogle = () => {
     const navigate = useNavigate();
@@ -56,6 +57,8 @@ const AssesmentToogle = () => {
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
   const tanBaseUrl = process.env.BASE_URL
+
+  const token = useSelector(state=>state.user.token)
   
   const handleToggle = () => {
     // Redirect to the specified URL
@@ -120,7 +123,11 @@ const AssesmentToogle = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${tanBaseUrl}/assessments/assementwiseview`)
+        const response = await fetch(`${tanBaseUrl}/assessments/assementwiseview`, {
+          headers:{
+            Authorization: `Basic ${token}`,
+          }
+        })
         const data = await response.json()
         setTalentList(data)
       } catch (error) {
@@ -144,6 +151,7 @@ const AssesmentToogle = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(newTalent),
       })
@@ -173,6 +181,7 @@ const AssesmentToogle = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(talentToUpdate),
         },
@@ -204,7 +213,11 @@ const AssesmentToogle = () => {
     try {
       const response = await fetch(`${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`, {
         method: 'DELETE',
+        headers:{
+          Authorization: `Basic ${token}`,
+        }
       })
+
   
       if (response.ok) {
         setTalentList(prevTalents =>

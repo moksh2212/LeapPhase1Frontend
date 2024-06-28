@@ -5,6 +5,7 @@ const initialState = {
   error: null,
   loading: false,
   signoutMessage: null,
+  token:null
 }
 
 const userSlice = createSlice({
@@ -16,9 +17,10 @@ const userSlice = createSlice({
       state.error = null
     },
     signInSuccess: (state, action) => {
-      state.currentUser = action.payload
+      state.currentUser = action.payload.user
       state.loading = false
       state.error = null
+      state.token = action.payload.token
     },
     signInFailure: (state, action) => {
       state.loading = false

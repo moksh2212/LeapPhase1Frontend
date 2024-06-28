@@ -31,6 +31,7 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import { GridSearchIcon } from '@mui/x-data-grid'
 import { CreateInterviewerForm } from './InterviewerCreateForm'
 import { UpdateInterviewerForm } from './InterviewerUpdateForm'
+import { useSelector } from 'react-redux'
 
 function Row(props) {
   const { row, selected, onSelectChange } = props
@@ -99,7 +100,9 @@ function Row(props) {
                     row.scheduleDetails.length !== 0 &&
                     row.scheduleDetails.map(project => (
                       <TableRow key={project.scheduleId}>
-                        <TableCell>{project.collegeTPO && project.collegeTPO.collegeName}</TableCell>
+                        <TableCell>
+                          {project.collegeTPO && project.collegeTPO.collegeName}
+                        </TableCell>
                         {/* <TableCell>{project.collegeName}</TableCell> */}
                         <TableCell>{project.pptDate}</TableCell>
                         <TableCell>{project.assessmentDate}</TableCell>
@@ -124,8 +127,6 @@ function Row(props) {
           </Collapse>
         </TableCell>
       </TableRow>
-
-    
     </React.Fragment>
   )
 }
@@ -364,7 +365,7 @@ export default function CollapsibleTable() {
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
   const [selectedInterviewer, setSelectedInteverviewer] = useState({})
 
-  console.log(selected)
+  const token = useSelector(state => state.user.token)
 
   const baseUrl = process.env.BASE_URL
 
@@ -373,7 +374,11 @@ export default function CollapsibleTable() {
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${baseUrl}/api/interviewer/read`)
+        const response = await fetch(`${baseUrl}/api/interviewer/read`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
         if (response.ok) {
           const data = await response.json()
           setInterviewerList(data)
@@ -413,6 +418,7 @@ export default function CollapsibleTable() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(formData),
       })
@@ -475,6 +481,9 @@ export default function CollapsibleTable() {
         `${baseUrl}/api/interviewer/delete/${interviewerId}`,
         {
           method: 'DELETE',
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
         },
       )
 
@@ -507,6 +516,7 @@ export default function CollapsibleTable() {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(formData),
         },
@@ -707,7 +717,7 @@ export default function CollapsibleTable() {
                 />
               </TableCell>
               <TableCell />
-            
+
               <TableCell>
                 <TableSortLabel
                   active={orderBy === 'interviewerName'}
@@ -839,7 +849,10 @@ export default function CollapsibleTable() {
       )}
 
       {isLoading && (
-        <Box sx={{ display: 'flex' }} className='flex h-full items-center justify-center'>
+        <Box
+          sx={{ display: 'flex' }}
+          className='flex h-full items-center justify-center'
+        >
           <CircularProgress />
         </Box>
       )}

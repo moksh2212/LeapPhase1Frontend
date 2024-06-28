@@ -21,6 +21,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import CircularProgress from '@mui/material/CircularProgress'
+import { useSelector } from 'react-redux'
 
 //Module completed testing done
 const baseUrl = "http://192.168.137.38:8080";
@@ -37,6 +38,8 @@ const Trainers = () => {
   const [rowSelection, setRowSelection] = useState({})
   const [selectedRows, setSelectedRows] = useState(null)
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
+
+  const token = useSelector(state=>state.user.token)
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -91,7 +94,13 @@ const Trainers = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${baseUrl}/api/trainers/getAll`)
+        const response = await fetch(`${baseUrl}/api/trainers/getAll`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          }
+        )
         const data = await response.json()
         setTrainerList(data)
       } catch (error) {
@@ -116,6 +125,7 @@ const Trainers = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(newTrainer),
       })
@@ -148,6 +158,7 @@ const Trainers = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(trainerToUpdate),
         },
@@ -182,6 +193,9 @@ const Trainers = () => {
     try {
       const response = await fetch(`${baseUrl}/api/trainers/delete/${trainerId}`, {
         method: 'DELETE',
+        headers:{
+          Authorization: `Basic ${token}`,
+        }
       })
 
       if (response.ok) {

@@ -18,10 +18,11 @@ import {
   useMaterialReactTable,
 } from 'material-react-table'
 import Rating from '@mui/material/Rating'
- 
+
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
- 
+import { useSelector } from 'react-redux'
+
 const Perfromancetable = () => {
   const [validationErrors, setValidationErrors] = useState({})
   const [datax, setDatax] = useState([])
@@ -32,18 +33,24 @@ const Perfromancetable = () => {
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const perBaseUrl = 'http://192.168.0.141:8080'
   // const perBaseUrl = process.env.BASE_URL
+  const token = useSelector(state => state.user.token)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         console.log(`${perBaseUrl}/cpm/performance/getAllPerformance`)
         const response = await fetch(
           `${perBaseUrl}/cpm/performance/getAllPerformance`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          },
         )
         if (!response.ok) {
           throw new Error('Failed to fetch users')
         }
         const data = await response.json()
- 
+
         const formattedData = data.map(item => ({
           talentId: item.talentId,
           fullName: item.talentName,
@@ -65,18 +72,18 @@ const Perfromancetable = () => {
         setIsLoading(true)
       }
     }
- 
+
     fetchUsers()
   }, [])
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
     }
- 
+
     if (error) {
       setError(null)
     }
- 
+
     setOpenSnackbar(false)
   }
   const renderDeleteModal = () => (
@@ -169,7 +176,7 @@ const Perfromancetable = () => {
           let backgroundColor
           let textColor = '#fff' // Default text color
           const value = cell.getValue()
- 
+
           if (value >= 8 && value <= 10) {
             backgroundColor = '#4CAF50' // Green
           } else if (value >= 4 && value <= 6) {
@@ -180,8 +187,7 @@ const Perfromancetable = () => {
           } else {
             backgroundColor = '#F44336' // Red
           }
- 
- 
+
           return (
             <Box
               className='flex items-center justify-center'
@@ -215,7 +221,7 @@ const Perfromancetable = () => {
           let backgroundColor
           let textColor = '#fff' // Default text color
           const value = cell.getValue()
- 
+
           // Assign colors based on ranges
           if (value >= 8 && value <= 10) {
             backgroundColor = '#4CAF50' // Green
@@ -227,7 +233,7 @@ const Perfromancetable = () => {
           } else {
             backgroundColor = '#F44336' // Red
           }
- 
+
           return (
             <Box
               className='flex items-center justify-center'
@@ -261,7 +267,7 @@ const Perfromancetable = () => {
           let backgroundColor
           let textColor = '#fff' // Default text color
           const value = cell.getValue()
- 
+
           // Assign colors based on ranges
           if (value >= 100 && value <= 90) {
             backgroundColor = '#4CAF50' // Green
@@ -273,7 +279,7 @@ const Perfromancetable = () => {
           } else {
             backgroundColor = '#F44336' // Red
           }
- 
+
           return (
             <Box
               className='flex items-center justify-center'
@@ -309,11 +315,7 @@ const Perfromancetable = () => {
             }),
         },
         Cell: ({ cell }) => {
-          return (
-            <div className='ml-10'>
-              {cell.getValue()}
-            </div>
-          )
+          return <div className='ml-10'>{cell.getValue()}</div>
         },
       },
       {
@@ -332,11 +334,7 @@ const Perfromancetable = () => {
             }),
         },
         Cell: ({ cell }) => {
-          return (
-            <div className='ml-10'>
-              {cell.getValue()}
-            </div>
-          )
+          return <div className='ml-10'>{cell.getValue()}</div>
         },
       },
       {
@@ -355,11 +353,7 @@ const Perfromancetable = () => {
             }),
         },
         Cell: ({ cell }) => {
-          return  (
-            <div className='ml-10'>
-              {cell.getValue()}
-            </div>
-          )
+          return <div className='ml-10'>{cell.getValue()}</div>
         },
       },
       {
@@ -377,17 +371,13 @@ const Perfromancetable = () => {
             }),
         },
         Cell: ({ cell }) => {
-          return  (
-            <div className='ml-10'>
-              {cell.getValue()}
-            </div>
-          )
+          return <div className='ml-10'>{cell.getValue()}</div>
         },
       },
     ],
     [validationErrors],
   )
- 
+
   const handleCreateUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values)
     if (Object.values(newValidationErrors).some(error => error)) {
@@ -396,7 +386,7 @@ const Perfromancetable = () => {
       return
     }
     setValidationErrors({})
- 
+
     const transformedData = {
       talentId: values.talentId,
       assignmentScore: values.assignmentScore,
@@ -407,7 +397,7 @@ const Perfromancetable = () => {
       proactiveness: values.proactiveness,
       timeliness: values.timeliness,
     }
- 
+
     console.log('Transformed performanceData:', transformedData)
     setError(null)
     setOpenSnackbar(null)
@@ -418,31 +408,32 @@ const Perfromancetable = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Set the correct Content-Type header
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(transformedData),
         },
       )
- 
+
       if (!response.ok) {
         throw new Error('Failed to create performance data')
       }
       setOpenSnackbar('Employee updated successfully!')
       setError(null)
- 
+
       table.setCreatingRow(null)
     } catch (error) {
       setError(error.message)
     }
   }
- 
+
   const handleSaveUser = async ({ values, table }) => {
     const newValidationErrors = validateUser(values)
- 
+
     if (Object.values(newValidationErrors).some(error => error)) {
       setValidationErrors(newValidationErrors)
       return
     }
- 
+
     setValidationErrors({})
     const transformedData = {
       talentId: values.talentId,
@@ -454,7 +445,7 @@ const Perfromancetable = () => {
       proactiveness: values.proactiveness,
       timeliness: values.timeliness,
     }
- 
+
     console.log('Transformed performanceData:', transformedData)
     setError(null)
     setOpenSnackbar(null)
@@ -464,24 +455,26 @@ const Perfromancetable = () => {
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json', 
+            'Content-Type': 'application/json',
+
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(transformedData),
         },
       )
- 
+
       if (!response.ok) {
         throw new Error('Failed to create performance data')
       }
       setOpenSnackbar('Employee edited successfully!')
       setError(null)
- 
+
       table.setEditingRow(null)
     } catch (error) {
       setError(error.message)
     }
   }
- 
+
   const handleDelete = async () => {
     const performanceData = {
       talentId: rowDelete.original.talentId,
@@ -504,15 +497,17 @@ const Perfromancetable = () => {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
+
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(performanceData),
         },
       )
- 
+
       if (response.ok) {
         setOpenDeleteModal(false)
         console.log('Performance deleted successfully')
- 
+
         setDatax(prevData =>
           prevData.filter(row => row.talentId !== performanceData.talentId),
         )
@@ -525,7 +520,7 @@ const Perfromancetable = () => {
       setIsLoading(false)
     }
   }
- 
+
   const table = useMaterialReactTable({
     columns,
     data: datax,
@@ -540,7 +535,7 @@ const Perfromancetable = () => {
     },
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: handleSaveUser,
- 
+
     // Custom renderEditRowDialogContent
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
@@ -583,7 +578,7 @@ const Perfromancetable = () => {
       </Box>
     ),
   })
- 
+
   return (
     <div className='flex flex-col gap-5 w-full m-6 overflow-x-auto'>
       <h2 className={`text-3xl text-[#0087D5] font-bold`}>PERFORMANCE</h2>
@@ -604,7 +599,7 @@ const Perfromancetable = () => {
           {openSnackbar}
         </Alert>
       </Snackbar>
- 
+
       <Snackbar
         open={error}
         autoHideDuration={2000}
@@ -624,13 +619,13 @@ const Perfromancetable = () => {
     </div>
   )
 }
- 
+
 //CREATE hook (post new user to api)
- 
+
 const Performance = () => <Perfromancetable />
- 
+
 export default Performance
- 
+
 const validateRequired = value => {
   if (value === undefined || value === null) {
     return false
@@ -646,36 +641,36 @@ const validateRequired = value => {
   }
   return true
 }
- 
+
 function validateUser(user) {
   if (!user) return { error: 'User object is undefined or null' }
- 
+
   const errors = {}
- 
+
   if (!validateRequired(user.punctuality)) {
     errors.punctuality = 'Punctuality is Required'
   } else if (user.punctuality < 1 || user.punctuality > 5) {
     errors.punctuality = 'Punctuality must be between 1 and 5'
   }
- 
+
   if (!validateRequired(user.technicalProficiency)) {
     errors.technicalProficiency = 'Technical Proficiency is Required'
   } else if (user.technicalProficiency < 1 || user.technicalProficiency > 5) {
     errors.technicalProficiency =
       'Technical Proficiency must be between 1 and 5'
   }
- 
+
   if (!validateRequired(user.proactiveness)) {
     errors.proactiveness = 'Proactiveness is Required'
   } else if (user.proactiveness < 1 || user.proactiveness > 5) {
     errors.proactiveness = 'Proactiveness must be between 1 and 5'
   }
- 
+
   if (!validateRequired(user.timeliness)) {
     errors.timeliness = 'Timeliness is Required'
   } else if (user.timeliness < 1 || user.timeliness > 5) {
     errors.timeliness = 'Timeliness must be between 1 and 5'
   }
- 
+
   return errors
 }

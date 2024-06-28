@@ -12,6 +12,7 @@ import moment from 'moment';
 import {
   MaterialReactTable,
   useMaterialReactTable,
+  MRT_EditActionButtons,
   MRT_GlobalFilterTextField,
   MRT_ToggleFiltersButton,
 } from 'material-react-table';
@@ -22,15 +23,15 @@ import {
   Box,
   Button,
   ButtonGroup,
-  ListItemIcon,
-  MenuItem,
-  Typography,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   lighten,
   Snackbar,
   Alert,
 } from '@mui/material';
 
-const baseUrl =  process.env.BASE_URL;
+const baseUrl = "http://192.168.137.132:8080";
 
 const AcademicInternsAttendance = () => {
   const [data, setData] = useState([]);
@@ -50,10 +51,9 @@ const AcademicInternsAttendance = () => {
   useEffect(() => {
     // Make API call to fetch data
     const fetchData = async () => {  
-      //console.log(`http://localhost:8080/cpm/attendance/getAttendanceByDate?date=${value.format('YYYY-MM-DD')}`)
       try {
         const response = await fetch(
-          `${baseUrl}/api/attendance/getAttendanceByDate?date=${value.format('DD/MM/YYYY')}`,
+          `${baseUrl}/getAttendanceByDate?date=${value.format('MM/DD/YYYY')}`,
         )
         let jsonData = await response.json()
         setData(jsonData)
@@ -61,7 +61,6 @@ const AcademicInternsAttendance = () => {
       } catch (error) {
         console.error('Error fetching data:', error)
       }
-      // location.reload();
     }
  
     fetchData()
@@ -83,45 +82,51 @@ const AcademicInternsAttendance = () => {
           },
           {
             accessorKey: 'fullName',
-            id: 'fullName',
             header: 'Name',
-            enableEditing: false,
+            enableEditing: true,
             enableColumnFilter: false,
             size: 100,
           },
-
           {
             accessorKey: 'email',
             filterVariant: 'autocomplete',
             enableColumnFilter: false,
-            enableEditing: false,
+            enableEditing: true,
             header: 'Email',
             size: 100,
           },
-          {
-            accessorKey: 'joinTime',
-            header: 'Join Time',
-            enableColumnFilter: false,
-            size: 100,
-          },
-          {
-            accessorKey: 'leaveTime',
-            header: 'Leave Time',
-            enableColumnFilter: false,
-            size: 100,
-          },
+          
           {
             accessorKey: 'date',
             enableClickToCopy: true,
             enableColumnFilter: false,
-            enableEditing: false,
+            enableEditing: true,
             filterVariant: 'autocomplete',
             header: 'Date',
             size: 100,
           },
           {
-            accessorKey: 'durationMinutes',
-            header: 'Duration(in Minutes)',
+            accessorKey: 'meetingDuration',
+            enableEditing:true,
+            header: 'Meeting Duration',
+            size: 150,
+          },
+          {
+            accessorKey: 'inMeetingDuration',
+            enableEditing:true,
+            header: 'Attended Time',
+            size: 150,
+          },
+          {
+            accessorKey: 'meetingTitle',
+            enableEditing:true,
+            header: 'Skill',
+            size: 150,
+          },
+          {
+            accessorKey: 'role',
+            enableEditing:true,
+            header: 'Role',
             size: 150,
           },
           {
@@ -139,21 +144,6 @@ const AcademicInternsAttendance = () => {
     [],
   )
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(`${baseUrl}/api/attendance`);
-  //       const jsonData = await response.json();
-  //       setData(jsonData);
-  //       console.log(jsonData); // Log the fetched data
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
@@ -170,7 +160,7 @@ const AcademicInternsAttendance = () => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch(`${baseUrl}/api/attendance/upload`, {
+      const response = await fetch(`${baseUrl}/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -196,6 +186,57 @@ const AcademicInternsAttendance = () => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+const createAttendance = async newAttendance => {
+
+    try {
+  const response = await fetch(`${baseUrl}/addInternAttendance`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newAttendance),
+      })
+      if (response.ok) {
+        const data = await response.json();
+        setSnackbarMessage('Attendance added successfully.');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
+          window.location.reload();
+          
+      }
+    } catch (error) {
+      console.error('Error creating new attendance:', error);
+      setSnackbarMessage('Error creating new attendance.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    } 
+  }
+
+  const handleSaveRow = async ({ exitEditingMode, row, values }) => {
+      try {
+        const response = await fetch(`${baseUrl}/updateAttendanceById/${values.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update');
+        } else {
+          setSnackbarMessage('Edited successfully.');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
+        }
+        exitEditingMode(); // required to exit editing mode and close modal
+      } catch (error) {
+        console.error('Error updating data:', error);
+        setSnackbarMessage('Error updating data.');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      }
+  };
 
   const table = useMaterialReactTable({
     columns,
@@ -217,7 +258,6 @@ const AcademicInternsAttendance = () => {
         right: ['mrt-row-actions'],
       },
     },
-    
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
     muiSearchTextFieldProps: {
@@ -230,72 +270,42 @@ const AcademicInternsAttendance = () => {
       shape: 'rounded',
       variant: 'outlined',
     },
-    onEditingRowSave: async ({ table, values }) => {
-      try {
-        const response = await fetch(`${baseUrl}/api/attendance/updateAttendanceById/${values.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(values),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to update');
-        } else {
-          setSnackbarMessage('Edited successfully.');
-          setSnackbarSeverity('success');
-          setSnackbarOpen(true);
-        }
-
-        table.setEditingRow(null);
-      } catch (error) {
-        console.error('Error updating data:', error);
-        setSnackbarMessage('Error updating data.');
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
-      }
+    onEditingRowSave: handleSaveRow,
+    onCreatingRowSave:async ({ values }) => {
+      await createAttendance(values)
     },
-    renderRowActionMenuItems: ({ closeMenu, row }) => [
-      // <MenuItem
-      //   key={0}
-      //   onClick={() => {
-      //     closeMenu()
-      //   }}
-      //   sx={{ m: 0 }}
-      // >
-      //   {/* <ListItemIcon>
-      //     <AccountCircle />
-      //   </ListItemIcon> */}
-      // </MenuItem>,
-      // <MenuItem
-      //   key={1}
-      //   onClick={() => {
-      //     closeMenu()
-      //   }}
-      //   sx={{ m: 0 }}
-      // >
-      //   {/* <ListItemIcon>
-         
-      //   </ListItemIcon> */}
-      // </MenuItem>,
-    ],
-    renderTopToolbar: ({ table }) => {
-      const handleDeactivate = () => {
-        table.getSelectedRowModel().flatRows.map((row) => {
-          setSnackbarMessage(`Deactivating ${row.getValue('talentName')}`);
-          setSnackbarSeverity('info');
-          setSnackbarOpen(true);
-        });
-      };
+    renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
+      return (
+        <>
+          <DialogTitle variant='h5' sx={{ textAlign: 'center' }}>
+            Create Attendance
+          </DialogTitle>
+          <DialogContent
+            sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+          >
+            {internalEditComponents.map((component, index) => (
+              <div key={index}>{component}</div>
+            ))}
 
+          </DialogContent>
+          <DialogActions>
+            <MRT_EditActionButtons
+              variant='text'
+              table={table}
+              row={row}
+            />
+          </DialogActions>
+        </>
+      )
+    },
+    renderTopToolbar: ({ table }) => {
       return (
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
           <div className='flex justify-between mb-2 bg-[#F9FAFB] rounded-md'>
             <h2 className={`text-3xl text-[#0087D5] font-bold my-auto p-2`}>
-              Academic Intern Attendance
+              Training Attendance
             </h2>
-
+            
             <div className='my-auto mr-2'>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                 <ButtonGroup>
@@ -326,7 +336,14 @@ const AcademicInternsAttendance = () => {
               </Box>
             </div>
           </div>
-
+          <Button
+            variant='contained'
+            onClick={() => {
+              table.setCreatingRow(true);
+            }}
+          >
+            Create New Attendance
+          </Button>
           <Box
             sx={theme => ({
               backgroundColor: lighten(theme.palette.background.default, 0.05),
@@ -343,7 +360,7 @@ const AcademicInternsAttendance = () => {
                     label='Select Date'
                     value={value}
                     onChange={newValue => setValue(newValue)}
-                    format='DD/MM/YYYY'
+                    format='MM/DD/YYYY'
                   />
                 </DemoContainer>
               </LocalizationProvider>

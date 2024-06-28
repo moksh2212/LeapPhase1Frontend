@@ -32,14 +32,14 @@ function App() {
            
           </Route>
 
-          <Route element = {<UserRoutes/>}>
+          {/* <Route element = {<UserRoutes/>}>
         
             <Route path={'/user'} element={<DashboardUser />} />
             <Route path={'/attendance'} element={<Attendance />} />
             <Route path={'/performance'} element={<PerformanceUser />} />
             <Route path={'/skills'} element={<Skills />} />
             <Route path={'/assignments'} element={<AssignmentUser />} />
-          </Route>
+          </Route> */}
         </Routes>
         
       </div>
