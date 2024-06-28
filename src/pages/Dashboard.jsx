@@ -20,11 +20,8 @@ import Alumni from '../component/Alumni';
 import EmployeewiseAssignment from '../component/Assignments/EmployeewiseAssignment'
 import FinalAssignmentview from '../component/Assignments/FinalAssignmentview'
 import Perform from '../component/Perform'
-<<<<<<< HEAD
 import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssesmentsCombined'
-=======
 import CampusCalendarView from '../component/CampusCalendar&InterviewScheduling/CampusCalendarView'
->>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
 import InkathonDatabase from '../component/Inkathon/InkathonDatabase'
 import CreateInkathon from '../component/Inkathon/CreateInkathon'
 export default function Dashboard() {
