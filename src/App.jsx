@@ -28,12 +28,10 @@ function App() {
 
           <Route element={<AdminRoutes />}>
             <Route path={'/'} element={<Home />} />
-            <Route path={'/dashboard'} element={<Dashboard />} />
-           
+            <Route path={'/dashboard'} element={<Dashboard />} />          
           </Route>
 
-          <Route element = {<UserRoutes/>}>
-        
+          <Route element = {<UserRoutes/>}>        
             <Route path={'/user'} element={<DashboardUser />} />
             <Route path={'/attendance'} element={<Attendance />} />
             <Route path={'/performance'} element={<PerformanceUser />} />
