@@ -44,19 +44,32 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
   }, [assignmentFile]);
 
   useEffect(() => {
-    fetchTalentList();
-  }, []);
+    fetchTalentList()
+  }, [])
+  const technologySkills = {
+    Java: ['Java', 'Spring', 'Hibernate'],
+    React: ['React', 'JavaScript', 'HTML', 'CSS'],
+    JavaScript: ['JavaScript', 'Node.js', 'Express.js'],
+    'UI 5': ['UI 5', 'SAPUI5', 'HTML', 'CSS'],
+    Integration: ['Integration', 'API', 'Microservices'],
+    // Add SolidWorks, AutoCAD, ANSYS for relevant technologies
+    'Mechanical Engineering': ['SolidWorks', 'AutoCAD', 'ANSYS'],
+    'Civil Engineering': ['AutoCAD', 'Revit', 'STAAD.Pro'],
+    // Add more technologies and their required skills as needed
+  }
 
   useEffect(() => {
-    if (!assignmentTechnology) return;
+    if (!assignmentTechnology) return // Exit if technology is not selected
 
-    const filteredList = talentList.filter((talent) => {
-      if (!talent.talentSkills) return false;
-      const requiredSkills = talent.talentSkills.split(',').map((skill) => skill.trim());
-      return requiredSkills.includes(assignmentTechnology);
-    });
-    setFilteredTalentList(filteredList);
-  }, [assignmentTechnology, talentList]);
+    const filteredList = talentList.filter(talent => {
+      if (!talent.talentSkills) return false // Skip talents with no skills
+      const requiredSkills = talent.talentSkills
+        .split(',')
+        .map(skill => skill.trim())
+      return requiredSkills.includes(assignmentTechnology)
+    })
+    setFilteredTalentList(filteredList)
+  }, [assignmentTechnology, talentList])
 
   const fetchTalentList = async () => {
     try {
@@ -70,20 +83,13 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     } catch (error) {
       console.error('Error fetching talent list:', error);
     }
-  };
-
-  const selectedTalentEmails = selectedTalents.map((talent) => {
-    const foundTalent = talentList.find((t) => t.email === talent);
-    return foundTalent ? foundTalent.email : null;
-  });
-
-  const handleSelectedTalent = (talent) => {
-    const newSelectedTalent = selectedTalents.filter((t) => t !== talent);
-    setSelectedTalents(newSelectedTalent);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  }
+  const handleselectedtalent = (talent, index) => {
+    const newselectedtalent = selectedTalents.filter((tal, i) => tal != talent)
+    setSelectedTalents(newselectedtalent)
+  }
+  const handleSubmit = async e => {
+    e.preventDefault()
 
     const formData = {
       assignmentWeek,
@@ -93,12 +99,11 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
       assignmentDuedate,
       assignmentFileName,
       assignmentFileUrl,
-      assignedTo: selectedTalentEmails.join(', '),
-    };
-
-    console.log(formData);
-    createAssignment(formData);
-  };
+      assignedTo,
+    }
+    console.log(formData)
+    createAssignment(formData)
+  }
 
   const handleFileUpload = async () => {
     try {
@@ -263,7 +268,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
               <Label htmlFor="assignedTo" value="Assigned To" />
             </div>
             <Select
-              id="assignedTo"
+              id='assignedTo'
               value={assignedTo}
               onChange={(e) => {
                 const selectedValues = Array.from(

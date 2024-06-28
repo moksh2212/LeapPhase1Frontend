@@ -14,6 +14,7 @@ import {
   Box,
 } from '@mui/material'
 import WarningIcon from '@mui/icons-material/Warning'
+import { useSelector } from 'react-redux'
 
 export function UpdateScheduleForm({
   openModal,
@@ -202,6 +203,8 @@ export function UpdateScheduleForm({
   const [conflictDialogOpen, setConflictDialogOpen] = useState(false)
   const [conflictingDates, setConflictingDates] = useState([])
 
+  const token = useSelector(state=>state.user.token)
+
   const baseUrl = process.env.BASE_URL
 
   const checkDateConflicts = (formData, currentCollegeName) => {
@@ -298,7 +301,11 @@ export function UpdateScheduleForm({
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${baseUrl}/admin/viewData`)
+        const response = await fetch(`${baseUrl}/admin/viewData`, {
+          headers:{
+            Authorization: `Basic ${token}`,
+          }
+        })
         const data = await response.json()
         setCollegeList(data)
       } catch (error) {
@@ -317,7 +324,11 @@ export function UpdateScheduleForm({
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${baseUrl}/api/interviewer/read`)
+        const response = await fetch(`${baseUrl}/api/interviewer/read`, {
+          headers:{
+            Authorization: `Basic ${token}`,
+          }
+        })
         if (response.ok) {
           const data = await response.json()
           setInterviewerList(data)

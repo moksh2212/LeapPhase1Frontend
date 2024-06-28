@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 import { CreateScheduleForm } from './CreateScheduleForm'
 import { UpdateScheduleForm } from './UpdateScheduleForm'
+import { useSelector } from 'react-redux'
 
 //Module completed testing done
 
@@ -274,6 +275,8 @@ const CampusCalendarTable = () => {
   const [openUpdateForm, setOpenUpdateForm] = useState(false)
   const [scheduleToUpdate, setScheduleToUpdate] = useState({})
 
+  const token = useSelector(state=>state.user.token)
+
   const baseUrl = process.env.BASE_URL
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -313,7 +316,7 @@ const CampusCalendarTable = () => {
     >
       <DialogTitle>Delete Schedules</DialogTitle>
       <DialogContent>
-        <p>Are you sure you want to delete selected schedules?</p>
+        <p>Are you sure you want to delete selected schedule(s)?</p>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => setOpenDeleteRowsModal(false)}>Cancel</Button>
@@ -329,7 +332,12 @@ const CampusCalendarTable = () => {
       const fetchData = async () => {
         setIsLoading(true)
         try {
-          const response = await fetch(`${baseUrl}/api/interviewschedule/read`)
+          const response = await fetch(`${baseUrl}/api/interviewschedule/read`,{
+            headers:
+            {
+              Authorization: `Basic ${token}`,
+            }
+          })
           if (response.ok) {
             const data = await response.json()
             setScheduleList(data)
@@ -367,6 +375,7 @@ const CampusCalendarTable = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(newSchedule),
       })
@@ -399,6 +408,7 @@ const CampusCalendarTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(scheduleToUpdate),
         },
@@ -435,6 +445,9 @@ const CampusCalendarTable = () => {
         `${baseUrl}/api/interviewschedule/delete/${scheduleId}`,
         {
           method: 'DELETE',
+          headers:{
+            Authorization: `Basic ${token}`,
+          }
         },
       )
 

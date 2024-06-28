@@ -1,7 +1,7 @@
 import { Tabs } from 'antd'
 import CampusCalendarTable from './CampusCalendarTable'
 import InterviewerTable from './InterviewerTable'
-import CollegeCalendarView from './TempCal'
+import CollegeCalendarView from './CalendarView'
 
 
 const { TabPane } = Tabs

@@ -16,26 +16,14 @@ import {
 } from '../redux/user/userSlice';
 
 function Signin() {
-  const navigate = useNavigate();
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const { currentUser } = useSelector(state => state.user);
-  const signBaseUrl = 'http://192.168.137.200:8080';
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (currentUser) {
-      if (currentUser.roles[1]) {
-        navigate('/dashboard');
-      } else if (currentUser.roles[0]) {
-        navigate('/user');
-      }
-    }
-  }, [currentUser, navigate]);
-
+  const navigate = useNavigate()
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const signBaseUrl = 'http://192.168.0.141:8080'
+  const dispatch = useDispatch()
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -47,26 +35,25 @@ function Signin() {
       setErrorMessage('All fields are required.');
       return;
     }
-    setIsLoading(true);
+    const token = btoa(`${formData.email}:${formData.password}`);
+    setIsLoading(true)
     try {
       dispatch(signInStart());
       const response = await fetch(`${signBaseUrl}/security/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': basicAuth,
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
-        body: new URLSearchParams({
-          'email': email,
-          'password': password,
-        }),
-        credentials: 'include',
-      });
+        body: JSON.stringify(formData),
+        // credentials: 'include'
+      })
+
       if (response.ok) {
+
         const data = await response.json();
-        dispatch(signInSuccess(data));
-      } else {
-        throw new Error('Invalid email or password. Please try again.');
+        dispatch(signInSuccess({user:data, token:token}))
+        navigate('/')
       }
     } catch (error) {
       setErrorMessage(error.message);

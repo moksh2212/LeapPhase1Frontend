@@ -22,6 +22,7 @@ import {
 } from '@mui/material'
 import { addDays, subDays, format } from 'date-fns'
 import WarningIcon from '@mui/icons-material/Warning'
+import { useSelector } from 'react-redux'
 
 
 export function CreateScheduleForm({
@@ -206,6 +207,8 @@ export function CreateScheduleForm({
 
   const baseUrl = process.env.BASE_URL
 
+  const token = useSelector(state=>state.user.token)
+
   const checkDateConflicts = formData => {
     const newDates = [
       { date: formData.pptDate, type: 'Pre Placement Talk' },
@@ -297,7 +300,11 @@ export function CreateScheduleForm({
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${baseUrl}/api/interviewer/read`)
+        const response = await fetch(`${baseUrl}/api/interviewer/read`, {
+          headers:{
+            Authorization: `Basic ${token}`,
+          }
+        })
         if (response.ok) {
           const data = await response.json()
           setInterviewerList(data)

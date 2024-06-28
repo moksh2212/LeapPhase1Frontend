@@ -40,6 +40,7 @@ const style = {
   borderRadius: '20px'
 };
 import CircularProgress from '@mui/material/CircularProgress'
+import { useSelector } from 'react-redux';
 
 const TalentTable = () => {
   let navigate = useNavigate();
@@ -56,6 +57,7 @@ const TalentTable = () => {
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
   const tanBaseUrl = process.env.BASE_URL
+  const token = useSelector(state=>state.user.token)
   const handleToggle = () => {
     navigate('/dashboard?tab=assessmenttoogle');
   };
@@ -118,7 +120,11 @@ const TalentTable = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`)
+        const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`, {
+          headers:{
+            Authorization: `Basic ${token}`,
+          }
+        })
         const data = await response.json()
         setTalentList(data)
       } catch (error) {
@@ -142,6 +148,7 @@ const TalentTable = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(newTalent),
       })
@@ -171,6 +178,7 @@ const TalentTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(talentToUpdate),
         },
@@ -202,6 +210,9 @@ const TalentTable = () => {
     try {
       const response = await fetch(`${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`, {
         method: 'DELETE',
+        headers:{
+          Authorization: `Basic ${token}`,
+        }
       })
   
       if (response.ok) {

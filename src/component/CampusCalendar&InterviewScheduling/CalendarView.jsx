@@ -2,6 +2,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 
 const localizer = momentLocalizer(moment)
@@ -137,6 +138,8 @@ const CollegeCalendarView = () => {
 
   const baseUrl = process.env.BASE_URL
 
+  const token = useSelector(state=>state.user.token)
+
   const handleEventClick = event => {
     setSelectedEvent(event)
     setShowEventPopup(true)
@@ -147,7 +150,11 @@ const CollegeCalendarView = () => {
     setTimeout(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch(`${baseUrl}/api/interviewschedule/read`)
+          const response = await fetch(`${baseUrl}/api/interviewschedule/read`, {
+            headers:{
+              Authorization: `Basic ${token}`,
+            }
+          })
           if (response.ok) {
             const data = await response.json()
             setScheduleList(data)

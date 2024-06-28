@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AccountCircle } from '@mui/icons-material';
-import { Link } from 'react-router-dom'; // Import Link
+import { AccountCircle } from '@mui/icons-material'
+import { Link } from 'react-router-dom' // Import Link
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -22,17 +22,33 @@ import {
   Snackbar,
 } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
-const baseUrl = process.env.BASE_URL
-const updateAssessment = async AssesmentToUpdate => {
+import { useSelector } from 'react-redux'
+
+const IndividualToogleAssesments = () => {
+  const [talentList, setTalentList] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [validationErrors, setValidationErrors] = useState({})
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
+  const [error, setError] = useState()
+
+  const [talentIdToDelete, setTalentIdToDelete] = useState(null)
+  const [openSnackbar, setOpenSnackbar] = useState(null)
+  const [rowSelection, setRowSelection] = useState({})
+  const [selectedRows, setSelectedRows] = useState([])
+  const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
+  const baseUrl = process.env.BASE_URL
+  const token = useSelector(state=>state.user.token)
+  const updateAssessment = async AssesmentToUpdate => {
     try {
-        const urlParams = new URLSearchParams(window.location.search)
-        const talentId = urlParams.get('talentId')
+      const urlParams = new URLSearchParams(window.location.search)
+      const talentId = urlParams.get('talentId')
       const response = await fetch(
         `${baseUrl}/assessments/updateassessment/${AssesmentToUpdate.assessmentId}/${talentId}`,
         {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(AssesmentToUpdate),
         },
@@ -49,23 +65,10 @@ const updateAssessment = async AssesmentToUpdate => {
       }
     } catch (error) {
       console.error('Error updating talent:', error)
-    } finally {
-    }
+    } 
   }
-const IndividualToogleAssesments = () => {
-  const [talentList, setTalentList] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [validationErrors, setValidationErrors] = useState({})
-  const [openDeleteModal, setOpenDeleteModal] = useState(false)
-  const [error, setError] = useState()
+ 
 
-  const [talentIdToDelete, setTalentIdToDelete] = useState(null)
-  const [openSnackbar, setOpenSnackbar] = useState(null)
-  const [rowSelection, setRowSelection] = useState({})
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
-
-  
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -126,8 +129,15 @@ const IndividualToogleAssesments = () => {
       setIsLoading(true)
       try {
         const urlParams = new URLSearchParams(window.location.search)
-const assessmentId = urlParams.get('assesmentid')
-        const response = await fetch(`${baseUrl}/assessments/assessment/${assessmentId}`)
+        const assessmentId = urlParams.get('assesmentid')
+        const response = await fetch(
+          `${baseUrl}/assessments/assessment/${assessmentId}`,
+          {
+            headers:{
+              Authorization: `Basic ${token}`,
+            }
+          }
+        )
         const data = await response.json()
         setTalentList(data)
       } catch (error) {
@@ -136,7 +146,6 @@ const assessmentId = urlParams.get('assesmentid')
       } finally {
         setIsLoading(false)
       }
-
     }
     fetchData()
   }, [])
@@ -147,13 +156,17 @@ const assessmentId = urlParams.get('assesmentid')
     setOpenSnackbar(null)
 
     try {
-      const response = await fetch(`${baseUrl}assessments/viewassessment/${talentId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${baseUrl}assessments/viewassessment/${talentId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
+          },
+          body: JSON.stringify(newTalent),
         },
-        body: JSON.stringify(newTalent),
-      })
+      )
       if (response.ok) {
         setError(null)
         const data = await response.json()
@@ -174,10 +187,16 @@ const assessmentId = urlParams.get('assesmentid')
     setError(null)
     setOpenSnackbar(null)
     try {
-      const response = await fetch(`${baseUrl}/cpm/talents/deletetalent/${talentId}`, {
-        method: 'DELETE',
-      })
-  
+      const response = await fetch(
+        `${baseUrl}/cpm/talents/deletetalent/${talentId}`,
+        {
+          method: 'DELETE',
+          headers:{
+            Authorization: `Basic ${token}`,
+          }
+        },
+      )
+
       if (response.ok) {
         setTalentList(prevTalents =>
           prevTalents.filter(talent => talent.talentId !== talentId),
@@ -217,52 +236,52 @@ const assessmentId = urlParams.get('assesmentid')
   const columns = useMemo(
     () => [
       {
-        id: 'talent', 
+        id: 'talent',
         columns: [
           {
-            accessorKey: 'talentId', 
+            accessorKey: 'talentId',
             header: 'Talent Id',
             enableEditing: false,
             size: 100,
           },
           {
-            accessorKey: 'location', 
+            accessorKey: 'location',
             header: 'Location',
             enableEditing: false,
             size: 100,
           },
           {
-            accessorKey: 'score', 
+            accessorKey: 'score',
             header: 'Scores',
             enableEditing: false,
             size: 100,
           },
           {
-            accessorKey: 'assessmentSkill', 
+            accessorKey: 'assessmentSkill',
             header: 'Assessment Skill',
             enableEditing: false,
             size: 100,
           },
           {
-            accessorKey: 'location', 
+            accessorKey: 'location',
             header: 'Location',
             enableEditing: false,
             size: 100,
-          },    
+          },
           {
-            accessorKey: 'attempts', 
+            accessorKey: 'attempts',
             header: 'Attempts',
             enableEditing: true,
             size: 100,
           },
           {
-            accessorKey: 'comments', 
+            accessorKey: 'comments',
             header: 'Log',
             enableEditing: true,
             size: 100,
           },
           {
-            accessorKey: 'assessmentDate', 
+            accessorKey: 'assessmentDate',
             header: 'Assessment Date',
             enableEditing: false,
             size: 100,
@@ -304,54 +323,49 @@ const assessmentId = urlParams.get('assesmentid')
     enableEditing: true,
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: async ({ values, table }) => {
-        console.log("Editing row save function called 1");
-        const errors = {}
-    
-        // Object.entries(values).forEach(([key, value]) => {
-        //   const temp = value ? value.toString().trim() : '' // Add a null check here
-        //   const rule = validationRules[key]
-    
-        //   if (rule) {
-        //     if (rule.required && temp.length === 0) {
-        //       errors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} field cannot be empty`
-        //     } else if (rule.pattern && !rule.pattern.test(value)) {
-        //       errors[key] = rule.message
-        //     }
-        //   }
-        // // })
-        // console.log("Editing row save function called 2");
-    
-        // if (Object.keys(errors).length > 0) {
-        //   console.log("Editing row save function called 3");
-  
-        //   setValidationErrors(errors)
-        //   return
-        // }
-        // console.log("Editing row save function called 4");
-    
-        setValidationErrors({})
-        await updateAssessment(values)
-        table.setEditingRow(null)
-      },
-  })
+      console.log('Editing row save function called 1')
+      const errors = {}
 
-    
+      // Object.entries(values).forEach(([key, value]) => {
+      //   const temp = value ? value.toString().trim() : '' // Add a null check here
+      //   const rule = validationRules[key]
+
+      //   if (rule) {
+      //     if (rule.required && temp.length === 0) {
+      //       errors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} field cannot be empty`
+      //     } else if (rule.pattern && !rule.pattern.test(value)) {
+      //       errors[key] = rule.message
+      //     }
+      //   }
+      // // })
+      // console.log("Editing row save function called 2");
+
+      // if (Object.keys(errors).length > 0) {
+      //   console.log("Editing row save function called 3");
+
+      //   setValidationErrors(errors)
+      //   return
+      // }
+      // console.log("Editing row save function called 4");
+
+      setValidationErrors({})
+      await updateAssessment(values)
+      table.setEditingRow(null)
+    },
+  })
 
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
-      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>
-        ScoreCard 
-      </h2><br></br><br></br>
+      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>ScoreCard</h2>
+      <br></br>
+      <br></br>
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
           <CircularProgress className='w-full mx-auto my-auto' />
         </div>
       )}
       {!isLoading && (
-        <MaterialReactTable
-          table={table}
-          createTalent={createTalent}
-        />
+        <MaterialReactTable table={table} createTalent={createTalent} />
       )}
       {renderDeleteModal()}
       {renderDeleteRowsModal()}
@@ -387,7 +401,6 @@ const assessmentId = urlParams.get('assesmentid')
           {error}
         </Alert>
       </Snackbar>
-      
     </div>
   )
 }
