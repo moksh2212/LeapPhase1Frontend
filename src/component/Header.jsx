@@ -5,22 +5,33 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { signoutSuccess } from '../redux/user/userSlice'
 export default function Header() {
   const path = useLocation().pathname
-  const {currentUser} = useSelector(state=>state.user);
+  const { currentUser } = useSelector(state => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const signBaseUrl = 'http://192.168.0.141:8080'
 
   const handleSignout = async () => {
     try {
-      dispatch(signoutSuccess("Signed out successfully"))
-      navigate('/signin')
+      const response = await fetch(`${signBaseUrl}/security/logout`, {
+        method: 'POST',
+      })
+
+      if (response.ok) {
+        dispatch(signoutSuccess('Signed out successfully'))
+        navigate('/signin')
+      }
     } catch (error) {
-        console.log(error.message)
+      console.log(error.message)
     }
-}
+  }
   return (
     <>
-      <Navbar fluid rounded className='shadow-md'>
+      <Navbar
+        fluid
+        rounded
+        className='shadow-md sticky top-0 left-0 right-0 z-50'
+      >
         <Navbar.Brand as={'div'}>
           <Link to={'/'}>
             <img
@@ -31,11 +42,15 @@ export default function Header() {
           </Link>
           <span className='self-center whitespace-nowrap text-xl text-gray-700 font-semibold hidden lg:block'>
             {' '}
-            | Campus Management Program
+            | Campus Program Management
           </span>
         </Navbar.Brand>
         <div className='flex md:order-2'>
-          {currentUser && <span className='text-md my-auto mr-2'>{"Hi, " + currentUser.name}</span>}
+          {currentUser && (
+            <span className='text-md my-auto mr-2'>
+              {'Hi, ' + currentUser.talentName}
+            </span>
+          )}
           <Dropdown
             arrowIcon={false}
             inline
@@ -48,12 +63,18 @@ export default function Header() {
             }
           >
             <Dropdown.Header>
-              <span className='block text-sm'>{currentUser && currentUser.inctureId}</span>
+              <span className='block text-sm'>
+                {currentUser && currentUser.inctureId}
+              </span>
               <span className='block truncate text-sm font-medium'>
                 {currentUser && currentUser.email}
               </span>
             </Dropdown.Header>
-            <Dropdown.Item icon={TbLogout} className='text-red-500 font-medium' onClick={handleSignout}>
+            <Dropdown.Item
+              icon={TbLogout}
+              className='text-red-500 font-medium cursor-pointer z-50'
+              onClick={handleSignout}
+            >
               Sign out
             </Dropdown.Item>
           </Dropdown>

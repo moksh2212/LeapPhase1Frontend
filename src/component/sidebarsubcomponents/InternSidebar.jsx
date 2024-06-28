@@ -34,7 +34,7 @@ export default function InternSidebar({ setShowInternSidebar }) {
                 label={currentUser.adminCheck? 'Admin':'User'}
                 labelColor='dark'
               >
-                {currentUser.name}
+                {currentUser.talentName}
               </Sidebar.Item>
             <Link to='?tab=attendance-academic'>
               <Sidebar.Item as={'div'} active={tab === 'attendance-academic'}>

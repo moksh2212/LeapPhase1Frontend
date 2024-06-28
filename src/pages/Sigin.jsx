@@ -22,9 +22,9 @@ function Signin() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const signBaseUrl = process.env.BASE_URL
+  const signBaseUrl = 'http://192.168.137.200:8080'
   const dispatch = useDispatch()
-
+  const basicAuth = 'Basic ' + btoa(email+':'+password);
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -41,10 +41,16 @@ function Signin() {
       const response = await fetch(`${signBaseUrl}/security/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': basicAuth,
         },
-        body: JSON.stringify(formData),
+        body: new URLSearchParams({
+          'email': email,
+          'password': password
+        }),
+        // credentials: 'include'
       })
+
       if (response.ok) {
         const data = await response.json();
         dispatch(signInSuccess(data))

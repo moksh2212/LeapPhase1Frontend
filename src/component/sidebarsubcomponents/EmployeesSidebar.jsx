@@ -30,7 +30,7 @@ export default function EmployeesSidebar({ setShowEmployeesSidebar }) {
         <Sidebar.Items>
           <Sidebar.ItemGroup>
             <Sidebar.Item as={'div'} label={currentUser.adminCheck? 'Admin':'User'} labelColor='dark'>
-              {currentUser.name}
+              {currentUser.talentName}
             </Sidebar.Item>
             <Link to='/dashboard?tab=attendance'>
               <Sidebar.Item as={'div'} active={tab === 'attendance'}>

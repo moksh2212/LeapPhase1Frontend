@@ -30,11 +30,16 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
         <Sidebar.Items>
           <Sidebar.ItemGroup>
             <Sidebar.Item as={'div'} label={currentUser.adminCheck? 'Admin':'User'} labelColor='dark'>
-              {currentUser.name}
+              {currentUser.talentName}
             </Sidebar.Item>
             <Link to='?tab=college-and-contact'>
               <Sidebar.Item as={'div'} active={tab === 'college-and-contact'}>
                 College and contact
+              </Sidebar.Item>
+            </Link>
+            <Link to='?tab=campus-calendar'>
+              <Sidebar.Item as={'div'} active={tab === 'campus-calendar'}>
+                Campus Calendar
               </Sidebar.Item>
             </Link>
             <Link to='?tab=candidates'>
