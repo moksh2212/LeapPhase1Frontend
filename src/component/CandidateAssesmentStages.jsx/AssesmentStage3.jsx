@@ -284,7 +284,7 @@ setValidationErrors({})
           arr.push(row.original);
         });
         const response = await fetch(
-          `${tanBaseUrl}/cpm2/assessment/selectLevelFour`,
+          `${tanBaseUrl}/cpm2/assessment/selectLevelThree`,
           {
             method: 'POST',
             headers: {

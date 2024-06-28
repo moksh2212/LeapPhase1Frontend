@@ -47,7 +47,6 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     fetchTalentList()
   }, [])
   const technologySkills = {
-<<<<<<< HEAD
     "Java": ["Java", "Spring", "Hibernate"],
     "React": ["React", "JavaScript", "HTML", "CSS"],
     "JavaScript": ["JavaScript", "Node.js", "Express.js"],
@@ -69,18 +68,6 @@ useEffect(() => {
   setFilteredTalentList(filteredList);
 }, [assignmentTechnology, talentList]);
 
-=======
-    Java: ['Java', 'Spring', 'Hibernate'],
-    React: ['React', 'JavaScript', 'HTML', 'CSS'],
-    JavaScript: ['JavaScript', 'Node.js', 'Express.js'],
-    'UI 5': ['UI 5', 'SAPUI5', 'HTML', 'CSS'],
-    Integration: ['Integration', 'API', 'Microservices'],
-    // Add SolidWorks, AutoCAD, ANSYS for relevant technologies
-    'Mechanical Engineering': ['SolidWorks', 'AutoCAD', 'ANSYS'],
-    'Civil Engineering': ['AutoCAD', 'Revit', 'STAAD.Pro'],
-    // Add more technologies and their required skills as needed
-  }
->>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
 
   useEffect(() => {
     if (!assignmentTechnology) return // Exit if technology is not selected
@@ -110,18 +97,11 @@ useEffect(() => {
       console.error('Error fetching talent list:', error)
     }
   }
-<<<<<<< HEAD
   const selectedTalentEmails = selectedTalents.map((talent) => {
     // Find talent by email in talentList and return email
     const foundTalent = talentList.find((t) => t.email === talent);
     return foundTalent ? foundTalent.email : null;
   });
-=======
-  const handleselectedtalent = (talent, index) => {
-    const newselectedtalent = selectedTalents.filter((tal, i) => tal != talent)
-    setSelectedTalents(newselectedtalent)
-  }
->>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -133,13 +113,8 @@ useEffect(() => {
       assignmentDuedate,
       assignmentFileName,
       assignmentFileUrl,
-<<<<<<< HEAD
       assignedTo: selectedTalentEmails.join(', '), // Send email IDs as comma-separated string
     };
-=======
-      assignedTo,
-    }
->>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
     console.log(formData)
     createAssignment(formData)
   }
@@ -317,7 +292,6 @@ useEffect(() => {
               <Label htmlFor='assignedTo' value='Assigned To' />
             </div>
             <Select
-<<<<<<< HEAD
   id='assignedTo'
   value={assignedTo}
   onChange={(e) => {
@@ -334,38 +308,6 @@ useEffect(() => {
     </option>
   ))}
 </Select>
-=======
-              id='assignedTo'
-              value={assignedTo}
-              onChange={e => {
-                const selectedValues = Array.from(
-                  e.target.selectedOptions,
-                  option => option.value,
-                )
-                const uniqueSelectedValues = selectedValues.filter(
-                  value => !selectedTalents.includes(value),
-                )
-                const newAssignedTo = uniqueSelectedValues.join(', ')
-                setAssignedTo(prevAssignedTo =>
-                  prevAssignedTo
-                    ? prevAssignedTo + ', ' + newAssignedTo
-                    : newAssignedTo,
-                )
-                setSelectedTalents(prevSelected => [
-                  ...prevSelected,
-                  ...uniqueSelectedValues,
-                ])
-              }}
-              multiple
-              size={'sm'}
-            >
-              {FilteredTalentList.map(talent => (
-                <option key={talent.talentId} value={talent.talentName}>
-                  {talent.talentName}
-                </option>
-              ))}
-            </Select>
->>>>>>> 3d9b6a6a1e827621a70280f8bc0fd65fb11935c5
 
             {selectedTalents.length > 0 && (
               <div>
