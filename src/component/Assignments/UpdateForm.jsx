@@ -17,6 +17,7 @@ import {
 } from 'firebase/storage'
 
 import { app } from '../../firebase.js'
+import { useSelector } from 'react-redux'
 
 export function UpdateForm({ openModal, setOpenModal, createAssignment, assnForm, }) {
   const [assignmentWeek, setAssignmentWeek] = useState(assnForm.assignmentWeek);
@@ -35,7 +36,8 @@ export function UpdateForm({ openModal, setOpenModal, createAssignment, assnForm
   const [assignmentFileUploading, setAssignmentFileUploading] = useState(false)
   const [talentList, setTalentList] = useState([])
   const [selectedTalents, setSelectedTalents] = useState([]);
-  
+  const token = useSelector(state => state.user.token)
+
   useEffect(() => {
     if (assignmentFile) {
       handleFileUpload()
@@ -48,7 +50,11 @@ export function UpdateForm({ openModal, setOpenModal, createAssignment, assnForm
 
   const fetchTalentList = async () => {
     try {
-      const response = await fetch('http://localhost:8080/cpm/talents/alltalent')
+      const response = await fetch('http://localhost:8080/cpm/talents/alltalent', {
+        headers: {
+          Authorization: `Basic ${token}`,
+        },
+      })
       if (!response.ok) {
         throw new Error('Failed to fetch talent list')
       }

@@ -29,6 +29,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { CreateForm } from './CreateForm'
+import { useSelector } from 'react-redux'
 
 
 import { Link } from 'react-router-dom'
@@ -49,6 +50,8 @@ const EmployeewiseAssignment = () => {
   const [rowToEdit, setRowToEdit] = useState(false)
 const [feedbacksend, setfeedbacksend] = useState(true)
   const baseUrl =  process.env.BASE_URL
+  const token = useSelector(state => state.user.token)
+
 console.log(feedbacksend)
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -103,7 +106,11 @@ console.log(feedbacksend)
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${baseUrl}/employee-assignments/getall`)
+        const response = await fetch(`${baseUrl}/employee-assignments/getall`,{
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
         const data = await response.json()
         setAssnList(data)
       } catch (error) {
@@ -133,6 +140,8 @@ console.log(feedbacksend)
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
+
           },
           body: JSON.stringify(formData),
         },
@@ -166,6 +175,10 @@ console.log(feedbacksend)
         `${baseUrl}/employee-assignments/delete/${assignmentId}`,
         {
           method: 'DELETE',
+
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
         },
       )
 

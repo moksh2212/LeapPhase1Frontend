@@ -17,6 +17,7 @@ import {
   lighten,
 } from '@mui/material'
 
+import { useSelector } from 'react-redux'
 
 
 
@@ -88,6 +89,7 @@ const AssesTable = () => {
   const [text, setText] = useState('')
   const [open, setOpen] = useState(false);
 
+  const token = useSelector(state => state.user.token)
 
 
   const handleClose = (event, reason) => {
@@ -100,7 +102,11 @@ const AssesTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`);
+        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        });
         let jsonData = await response.json();
 
         jsonData = jsonData.filter(assessment => assessment && assessment.assessmentLevelFour);
@@ -316,6 +322,8 @@ const AssesTable = () => {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(values),
           },
@@ -369,6 +377,8 @@ const AssesTable = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(arr),
           }
