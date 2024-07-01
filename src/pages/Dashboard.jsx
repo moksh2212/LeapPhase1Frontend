@@ -20,10 +20,10 @@ import IndividualToogleAssesments from '../component/Assesments/IndividuaTooglel
 import EmployeewiseAssignment from '../component/Assignments/EmployeewiseAssignment'
 import FinalAssignmentview from '../component/Assignments/FinalAssignmentview'
 import Perform from '../component/Perform'
-import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssesmentsCombined'
 import CampusCalendarView from '../component/CampusCalendar&InterviewScheduling/CampusCalendarView'
-import Trainers from '../component/Trainers'
+import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssesmentsCombined'
 import TrainingAttendance from '../component/attendancecomponents/TrainingAttendance'
+import Trainers from '../component/Trainers'
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
@@ -70,6 +70,7 @@ export default function Dashboard() {
 
           {tab === 'Perform' && <Perform />}
           {tab === 'campus-calendar' && <CampusCalendarView />}
+          {tab === 'candidate-assesment' && <CandidateAssesmentsCombined />}
         </div>
       </div>
     </>

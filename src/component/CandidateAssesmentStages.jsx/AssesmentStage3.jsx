@@ -3,6 +3,8 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
+import { useSelector } from 'react-redux'
+
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -16,8 +18,8 @@ import {
   lighten,
 } from '@mui/material';
 
-const canBaseUrl = process.env.BASE_URL;
-const tanBaseUrl = process.env.BASE_URL;
+const canBaseUrl = process.env.BASE_URL2;
+const tanBaseUrl = process.env.BASE_URL2;
 
 
 const NameCell = ({ renderedCellValue }) => {
@@ -85,6 +87,7 @@ const AssesTable = () => {
   const [data, setData] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
   const [open, setOpen] = useState(false);
+  const token = useSelector(state => state.user.token)
 
 
   const handleClose = (event, reason) => {
@@ -98,7 +101,11 @@ const AssesTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`);
+        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`,{
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        });
         let jsonData = await response.json();
 
         jsonData = jsonData.filter(assessment => assessment && assessment.assessmentLevelThree);
@@ -242,6 +249,8 @@ setValidationErrors({})
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(values),
           },
@@ -284,11 +293,13 @@ setValidationErrors({})
           arr.push(row.original);
         });
         const response = await fetch(
-          `${tanBaseUrl}/cpm2/assessment/selectLevelFour`,
+          `${tanBaseUrl}/cpm2/assessment/selectLevelThree`,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(arr),
           }

@@ -22,8 +22,7 @@ import {
   TextField,
   Tooltip,
 } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
+import { useSelector } from 'react-redux'
 import { CreateForm } from './CreateForm'
 
 import { UpdateForm } from './UpdateForm'
@@ -43,6 +42,7 @@ const Assignment = () => {
   const [openUpdateAssnForm, setOpenUpdateAssnForm] = useState(false)
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
   const [rowToEdit, setRowToEdit] = useState(false)
+  const token = useSelector(state => state.user.token)
 
   const baseUrl =  process.env.BASE_URL2
 
@@ -99,7 +99,11 @@ const Assignment = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${baseUrl}/assignments/ReadAll`)
+        const response = await fetch(`${baseUrl}/assignments/ReadAll`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
         const data = await response.json()
         setAssnList(data)
       } catch (error) {
@@ -124,6 +128,7 @@ const Assignment = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(formData),
       })
@@ -155,6 +160,8 @@ const Assignment = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
+
           },
           body: JSON.stringify(formData),
         },
@@ -188,7 +195,11 @@ const Assignment = () => {
         `${baseUrl}/assignments/Delete/${assignmentId}`,
         {
           method: 'DELETE',
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
         },
+        
       )
 
       if (response.ok) {

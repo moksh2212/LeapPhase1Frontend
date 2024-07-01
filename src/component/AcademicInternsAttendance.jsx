@@ -1,12 +1,12 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { AccountCircle } from '@mui/icons-material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Link } from 'react-router-dom';
-import dayjs from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import moment from 'moment';
+import React, { useState, useMemo, useEffect } from 'react'
+import { AccountCircle } from '@mui/icons-material'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { Link } from 'react-router-dom'
+import dayjs from 'dayjs'
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import moment from 'moment'
 
 // MRT Imports
 import {
@@ -15,8 +15,8 @@ import {
   MRT_EditActionButtons,
   MRT_GlobalFilterTextField,
   MRT_ToggleFiltersButton,
-} from 'material-react-table';
-import PropTypes from 'prop-types';
+} from 'material-react-table'
+import PropTypes from 'prop-types'
 
 // Material UI Imports
 import {
@@ -29,32 +29,45 @@ import {
   lighten,
   Snackbar,
   Alert,
-} from '@mui/material';
+} from '@mui/material'
+import { useSelector } from 'react-redux'
 
-// const baseUrl = "http://192.168.0.141:8080";
-const baseUrl = process.env.BASE_URL2
+const baseUrl = 'http://192.168.0.141:8080'
 
 const AcademicInternsAttendance = () => {
-  const [data, setData] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [data, setData] = useState([])
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success')
+  const token = useSelector(state => state.user.token)
 
-  const currentDate = new Date().toLocaleDateString('en-IN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).split('/').reverse().join('-');
+  const currentDate = new Date()
+    .toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    .split('/')
+    .reverse()
+    .join('-')
 
-  const [value, setValue] = useState(dayjs(currentDate));
-  
+  const [value, setValue] = useState(dayjs(currentDate))
+
   useEffect(() => {
     // Make API call to fetch data
-    const fetchData = async () => {  
+    const fetchData = async () => {
       try {
         const response = await fetch(
-          `${baseUrl}/cpm/api/attendance/getAttendanceByDate?date=${value.format('MM/DD/YYYY')}`,
+          `${baseUrl}/cpm/api/attendance/getAttendanceByDate?date=${value.format(
+            'MM/DD/YYYY',
+          )}`, // Place the URL here
+          {
+            headers: {
+              Authorization: `Basic ${token}`, // Assuming 'Bearer' token type; change if necessary
+              'Content-Type': 'application/json',
+            },
+          },
         )
         let jsonData = await response.json()
         setData(jsonData)
@@ -63,7 +76,7 @@ const AcademicInternsAttendance = () => {
         console.error('Error fetching data:', error)
       }
     }
- 
+
     fetchData()
   }, [value])
 
@@ -96,7 +109,7 @@ const AcademicInternsAttendance = () => {
             header: 'Email',
             size: 100,
           },
-          
+
           {
             accessorKey: 'date',
             enableClickToCopy: true,
@@ -108,25 +121,25 @@ const AcademicInternsAttendance = () => {
           },
           {
             accessorKey: 'meetingDuration',
-            enableEditing:true,
+            enableEditing: true,
             header: 'Meeting Duration',
             size: 150,
           },
           {
             accessorKey: 'inMeetingDuration',
-            enableEditing:true,
+            enableEditing: true,
             header: 'Attended Time',
             size: 150,
           },
           {
             accessorKey: 'meetingTitle',
-            enableEditing:true,
+            enableEditing: true,
             header: 'Skill',
             size: 150,
           },
           {
             accessorKey: 'role',
-            enableEditing:true,
+            enableEditing: true,
             header: 'Role',
             size: 150,
           },
@@ -145,99 +158,108 @@ const AcademicInternsAttendance = () => {
     [],
   )
 
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
+  const handleFileChange = event => {
+    setSelectedFile(event.target.files[0])
+  }
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setSnackbarMessage('Please select a file.');
-      setSnackbarSeverity('warning');
-      setSnackbarOpen(true);
-      return;
+      setSnackbarMessage('Please select a file.')
+      setSnackbarSeverity('warning')
+      setSnackbarOpen(true)
+      return
     }
 
-    const formData = new FormData();
-    formData.append('file', selectedFile);
+    const formData = new FormData()
+    formData.append('file', selectedFile)
 
     try {
       const response = await fetch(`${baseUrl}/cpm/api/attendance/upload`, {
         method: 'POST',
         body: formData,
-      });
+        headers: {
+          Authorization: `Basic ${token}`,
+        },
+      })
 
       if (response.ok) {
-        setSnackbarMessage('File uploaded successfully.');
-        setSnackbarSeverity('success');
-        setSnackbarOpen(true);
-        window.location.reload();
+        setSnackbarMessage('File uploaded successfully.')
+        setSnackbarSeverity('success')
+        setSnackbarOpen(true)
+        window.location.reload()
       } else {
-        setSnackbarMessage('Failed to upload file.');
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
+        setSnackbarMessage('Failed to upload file.')
+        setSnackbarSeverity('error')
+        setSnackbarOpen(true)
       }
     } catch (error) {
-      console.error('Error uploading file:', error);
-      setSnackbarMessage('Error uploading file.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
+      console.error('Error uploading file:', error)
+      setSnackbarMessage('Error uploading file.')
+      setSnackbarSeverity('error')
+      setSnackbarOpen(true)
     }
-  };
+  }
 
   const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-const createAttendance = async newAttendance => {
-
+    setSnackbarOpen(false)
+  }
+  const createAttendance = async newAttendance => {
     try {
-  const response = await fetch(`${baseUrl}/cpm/api/attendance/addInternAttendance`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${baseUrl}/cpm/api/attendance/addInternAttendance`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
+          },
+          body: JSON.stringify(newAttendance),
         },
-        body: JSON.stringify(newAttendance),
-      })
+      )
       if (response.ok) {
-        const data = await response.json();
-        setSnackbarMessage('Attendance added successfully.');
-          setSnackbarSeverity('success');
-          setSnackbarOpen(true);
-          window.location.reload();
-          
+        const data = await response.json()
+        setSnackbarMessage('Attendance added successfully.')
+        setSnackbarSeverity('success')
+        setSnackbarOpen(true)
+        window.location.reload()
       }
     } catch (error) {
-      console.error('Error creating new attendance:', error);
-      setSnackbarMessage('Error creating new attendance.');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
-    } 
+      console.error('Error creating new attendance:', error)
+      setSnackbarMessage('Error creating new attendance.')
+      setSnackbarSeverity('error')
+      setSnackbarOpen(true)
+    }
   }
 
   const handleSaveRow = async ({ exitEditingMode, row, values }) => {
-      try {
-        const response = await fetch(`${baseUrl}/cpm/api/attendance/updateAttendanceById/${values.id}`, {
+    try {
+      const response = await fetch(
+        `${baseUrl}/cpm/api/attendance/updateAttendanceById/${values.id}`,
+        {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(values),
-        });
+        },
+      )
 
-        if (!response.ok) {
-          throw new Error('Failed to update');
-        } else {
-          setSnackbarMessage('Edited successfully.');
-          setSnackbarSeverity('success');
-          setSnackbarOpen(true);
-        }
-        exitEditingMode(); // required to exit editing mode and close modal
-      } catch (error) {
-        console.error('Error updating data:', error);
-        setSnackbarMessage('Error updating data.');
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
+      if (!response.ok) {
+        throw new Error('Failed to update')
+      } else {
+        setSnackbarMessage('Edited successfully.')
+        setSnackbarSeverity('success')
+        setSnackbarOpen(true)
       }
-  };
+      exitEditingMode() // required to exit editing mode and close modal
+    } catch (error) {
+      console.error('Error updating data:', error)
+      setSnackbarMessage('Error updating data.')
+      setSnackbarSeverity('error')
+      setSnackbarOpen(true)
+    }
+  }
 
   const table = useMaterialReactTable({
     columns,
@@ -252,7 +274,7 @@ const createAttendance = async newAttendance => {
     enableRowSelection: true,
     enableCellActions: true,
     initialState: {
-      showColumnFilters: true,
+      showColumnFilters: false,
       showGlobalFilter: true,
       columnPinning: {
         left: ['mrt-row-expand', 'mrt-row-select'],
@@ -272,7 +294,7 @@ const createAttendance = async newAttendance => {
       variant: 'outlined',
     },
     onEditingRowSave: handleSaveRow,
-    onCreatingRowSave:async ({ values }) => {
+    onCreatingRowSave: async ({ values }) => {
       await createAttendance(values)
     },
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
@@ -287,14 +309,9 @@ const createAttendance = async newAttendance => {
             {internalEditComponents.map((component, index) => (
               <div key={index}>{component}</div>
             ))}
-
           </DialogContent>
           <DialogActions>
-            <MRT_EditActionButtons
-              variant='text'
-              table={table}
-              row={row}
-            />
+            <MRT_EditActionButtons variant='text' table={table} row={row} />
           </DialogActions>
         </>
       )
@@ -304,9 +321,9 @@ const createAttendance = async newAttendance => {
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
           <div className='flex justify-between mb-2 bg-[#F9FAFB] rounded-md'>
             <h2 className={`text-3xl text-[#0087D5] font-bold my-auto p-2`}>
-              Training Attendance
+              Academic Interns Attendance
             </h2>
-            
+
             <div className='my-auto mr-2'>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                 <ButtonGroup>
@@ -340,7 +357,7 @@ const createAttendance = async newAttendance => {
           <Button
             variant='contained'
             onClick={() => {
-              table.setCreatingRow(true);
+              table.setCreatingRow(true)
             }}
           >
             Create New Attendance
@@ -374,23 +391,30 @@ const createAttendance = async newAttendance => {
         </div>
       )
     },
-  });
+  })
 
   return (
     <>
       <MaterialReactTable table={table} />
+      {/* <div className='h-screen flex items-center justify-center'>
+        <h1 className='text-4xl font-medium'>Under Development</h1>
+      </div> */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          sx={{ width: '100%' }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
     </>
-  );
-};
+  )
+}
 
-export default AcademicInternsAttendance;
+export default AcademicInternsAttendance

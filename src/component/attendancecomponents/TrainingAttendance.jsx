@@ -30,6 +30,7 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material'
+import { useSelector } from 'react-redux'
 
 const baseUrl = 'http://192.168.0.141:8080'
 
@@ -39,6 +40,7 @@ const TrainingAttendance = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const [snackbarSeverity, setSnackbarSeverity] = useState('success')
+  const token = useSelector(state => state.user.token)
 
   const currentDate = new Date()
     .toLocaleDateString('en-IN', {
@@ -59,7 +61,13 @@ const TrainingAttendance = () => {
         const response = await fetch(
           `${baseUrl}/cpm/api/attendance/getAttendanceByDate?date=${value.format(
             'MM/DD/YYYY',
-          )}`,
+          )}`, // Place the URL here
+          {
+            headers: {
+              Authorization: `Basic ${token}`, // Assuming 'Bearer' token type; change if necessary
+              'Content-Type': 'application/json',
+            },
+          },
         )
         let jsonData = await response.json()
         setData(jsonData)
@@ -169,6 +177,9 @@ const TrainingAttendance = () => {
       const response = await fetch(`${baseUrl}/cpm/api/attendance/upload`, {
         method: 'POST',
         body: formData,
+        headers: {
+          Authorization: `Basic ${token}`,
+        },
       })
 
       if (response.ok) {
@@ -200,6 +211,7 @@ const TrainingAttendance = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(newAttendance),
         },
@@ -227,6 +239,7 @@ const TrainingAttendance = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(values),
         },
