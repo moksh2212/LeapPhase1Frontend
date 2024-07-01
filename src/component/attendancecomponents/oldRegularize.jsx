@@ -7,6 +7,7 @@ import {
   Button, Grid, Typography, Paper, Table, TableContainer, TableHead, TableRow,
   TableCell, TableBody, Snackbar, Alert
 } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 const RegularizeRequestTable = ({ requests, onApprove, onReject, isPendingTab}) => {
   const [selectedRequest] = useState(null);
@@ -107,8 +108,7 @@ const Regularize = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [tabValue, setTabValue] = useState(0); // State for managing active tab
-  const API_URL=process.env.BASE_URL
-
+  const API_URL='http://192.168.0.141:8080'
   useEffect(() => {
     fetchRegularizeRequests();
   }, []);

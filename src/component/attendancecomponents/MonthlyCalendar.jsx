@@ -30,7 +30,7 @@ const MonthlyCalendar = () => {
  
     const [attendanceData, setAttendanceData] = useState([]);
  
-    const perBaseUrl = process.env.BASE_URL
+    const perBaseUrl = 'http://192.168.0.141:8080'
  
     useEffect(() => {
  

@@ -31,7 +31,8 @@ import {
   Alert,
 } from '@mui/material';
 
-const baseUrl = "http://192.168.137.132:8080";
+// const baseUrl = "http://192.168.0.141:8080";
+const baseUrl = process.env.BASE_URL2
 
 const AcademicInternsAttendance = () => {
   const [data, setData] = useState([]);
@@ -53,7 +54,7 @@ const AcademicInternsAttendance = () => {
     const fetchData = async () => {  
       try {
         const response = await fetch(
-          `${baseUrl}/getAttendanceByDate?date=${value.format('MM/DD/YYYY')}`,
+          `${baseUrl}/cpm/api/attendance/getAttendanceByDate?date=${value.format('MM/DD/YYYY')}`,
         )
         let jsonData = await response.json()
         setData(jsonData)
@@ -160,7 +161,7 @@ const AcademicInternsAttendance = () => {
     formData.append('file', selectedFile);
 
     try {
-      const response = await fetch(`${baseUrl}/upload`, {
+      const response = await fetch(`${baseUrl}/cpm/api/attendance/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -189,7 +190,7 @@ const AcademicInternsAttendance = () => {
 const createAttendance = async newAttendance => {
 
     try {
-  const response = await fetch(`${baseUrl}/addInternAttendance`, {
+  const response = await fetch(`${baseUrl}/cpm/api/attendance/addInternAttendance`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -214,7 +215,7 @@ const createAttendance = async newAttendance => {
 
   const handleSaveRow = async ({ exitEditingMode, row, values }) => {
       try {
-        const response = await fetch(`${baseUrl}/updateAttendanceById/${values.id}`, {
+        const response = await fetch(`${baseUrl}/cpm/api/attendance/updateAttendanceById/${values.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

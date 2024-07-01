@@ -31,7 +31,7 @@ export default function InternSidebar({ setShowInternSidebar }) {
           <Sidebar.ItemGroup>
               <Sidebar.Item
                 as={'div'}
-                label={currentUser.adminCheck? 'Admin':'User'}
+                label={currentUser.roles.includes('ROLE_ADMIN')? 'Admin':'User'}
                 labelColor='dark'
               >
                 {currentUser.talentName}

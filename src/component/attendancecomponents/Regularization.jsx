@@ -105,7 +105,7 @@ const Regularize = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [tabValue, setTabValue] = useState(0); // State for managing active tab
-  const API_URL=process.env.BASE_URL
+  const API_URL='http://192.168.0.141:8080'
 
   useEffect(() => {
     fetchRegularizeRequests();

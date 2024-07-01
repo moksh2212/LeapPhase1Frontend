@@ -44,7 +44,7 @@ const Assignment = () => {
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
   const [rowToEdit, setRowToEdit] = useState(false)
 
-  const baseUrl =  process.env.BASE_URL
+  const baseUrl =  process.env.BASE_URL2
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {

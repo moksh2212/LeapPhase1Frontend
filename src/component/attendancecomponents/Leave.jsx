@@ -7,6 +7,7 @@ import {
   TableCell, TableBody, Dialog, DialogTitle, DialogContent, DialogActions,
   DialogContentText, Snackbar, Alert
 } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 const LeaveRequestTable = ({ requests, onApprove, onReject, isPendingTab}) => {
   const [selectedRequest, setSelectedRequest] = useState(null);
@@ -128,15 +129,21 @@ const Leave = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [tabValue, setTabValue] = useState(0); // State for managing active tab
-  const API_URL=process.env.BASE_URL
-
+  const API_URL="http://192.168.0.141:8080"
+  const token = useSelector(state=>state.user.token)
   useEffect(() => {
     fetchLeaveRequests();
   }, []);
  
   const fetchLeaveRequests = async () => {
     try {
-      const response = await fetch(`${API_URL}/cpm/leaves/getAll`);
+      const response = await fetch(`${API_URL}/cpm/leaves/getAll`,
+        {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        }
+      );
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Failed to fetch leave requests: ${errorText}`);
@@ -154,6 +161,7 @@ const Leave = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify({ status: 'Approved' }),
       });
@@ -181,6 +189,7 @@ const Leave = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify({ status: 'Declined' }),
       });

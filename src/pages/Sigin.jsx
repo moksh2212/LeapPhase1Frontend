@@ -24,6 +24,9 @@ function Signin() {
   const [errorMessage, setErrorMessage] = useState('')
   const signBaseUrl = 'http://192.168.0.141:8080'
   const dispatch = useDispatch()
+
+
+  
   const handleSubmit = async e => {
     e.preventDefault();
 
@@ -53,7 +56,15 @@ function Signin() {
 
         const data = await response.json();
         dispatch(signInSuccess({user:data, token:token}))
-        navigate('/')
+        if (data.roles && data.roles.includes('ROLE_USER') && !data.roles.includes('ROLE_ADMIN')) {
+          navigate('/user');
+        } else {
+          navigate('/');
+        }
+      }
+
+      else{
+        dispatch(signInFailure());
       }
     } catch (error) {
       setErrorMessage(error.message);

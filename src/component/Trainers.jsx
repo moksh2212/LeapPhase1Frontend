@@ -24,7 +24,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux'
 
 //Module completed testing done
-const baseUrl = "http://192.168.137.38:8080";
+const baseUrl = "http://192.168.0.141:8080";
 const Trainers = () => {
   const [trainerList, setTrainerList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
