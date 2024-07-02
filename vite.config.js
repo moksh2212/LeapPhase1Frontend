@@ -7,7 +7,7 @@ export default defineConfig({
   define: {
     'process.env.BASE_URL': '"http://localhost:3058"',
 
-    'process.env.BASE_URL2': '"http://192.168.0.141:8080"'
+    'process.env.BASE_URL2': '"http://192.168.0.147:8080"'
 
   }
 })

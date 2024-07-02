@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom'
 export default function Home() {
   return (
     <>
-      <div className='flex flex-col m-5 lg:flex-row'>
-        <div className='flex-1 mt-2'>
+      <div className='flex flex-col m-5 lg:flex-row' style={{ height: 'calc(100vh - 84px)' }}>
+        <div className='flex flex-1 mt-2 items-center justify-center'>
           <img src='cover.svg' alt='Cover' />
         </div>
         <div className='flex flex-col items-center justify-center w-full gap-3 flex-1 my-auto'>
