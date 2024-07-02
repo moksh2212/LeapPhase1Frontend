@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { FaHome, FaUsers } from 'react-icons/fa'
+import { FaHome, FaTrophy, FaUsers } from 'react-icons/fa'
 
 import { FaDatabase, FaUserGraduate } from 'react-icons/fa6'
 
 import CollegeSidebar from './sidebarsubcomponents/CollegeSidebar'
 import EmployeesSidebar from './sidebarsubcomponents/EmployeesSidebar'
 import InternSidebar from './sidebarsubcomponents/InternSidebar'
+import InkathonSidebar from './sidebarsubcomponents/InkathonSidebar'
 import { Link } from 'react-router-dom'
 
 export default function DashSidebar() {
@@ -13,11 +14,13 @@ export default function DashSidebar() {
   const [showCollegeSidebar, setShowCollegeSidebar] = useState(false)
   const [showEmployeeSidebar, setShowEmployeeSidebar] = useState(false)
   const [showInternSidebar, setShowInternSidebar] = useState(false)
+  const [showInkathonSidebar, setShowInkathonSidebar] = useState(false)
 
   const [homeActive, setHomeActive] = useState(true)
   const [collegeActive, setCollegeActive] = useState(false)
   const [employeeActive, setEmployeeActive] = useState(false)
   const [internActive, setInternActive] = useState(false)
+  const [inkathonActive, setInkathonActive] = useState(false)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
@@ -38,10 +41,12 @@ export default function DashSidebar() {
             setShowCollegeSidebar(false)
             setShowInternSidebar(false)
             setShowEmployeeSidebar(false)
+            setShowInkathonSidebar(false)
             setHomeActive(true)
             setCollegeActive(false)
             setEmployeeActive(false)
             setInternActive(false)
+            setInkathonActive(false)
           }}
         >
           <Link to={'/dashboard?tab=home'}>
@@ -58,10 +63,12 @@ export default function DashSidebar() {
             setShowCollegeSidebar(!showCollegeSidebar)
             setShowEmployeeSidebar(false)
             setShowInternSidebar(false)
+            setShowInkathonSidebar(false)
             setCollegeActive(true)
             setHomeActive(false)
             setEmployeeActive(false)
             setInternActive(false)
+            setInkathonActive(false)
           }}
         >
           <FaDatabase className='w-6 h-6 sm:h-8 sm:w-8 mx-auto' />
@@ -76,15 +83,18 @@ export default function DashSidebar() {
             setShowEmployeeSidebar(!showEmployeeSidebar)
             setShowInternSidebar(false)
             setShowCollegeSidebar(false)
+            setShowInkathonSidebar(false)
             setCollegeActive(false)
             setHomeActive(false)
             setEmployeeActive(true)
             setInternActive(false)
+            setInkathonActive(false)
           }}
         >
           <FaUsers className=' w-6 h-6 sm:h-8 sm:w-8 mx-auto' />
           <span className='text-xs font-semibold'>Employees</span>
         </div>
+        
 
         <div
           className={`${
@@ -94,15 +104,39 @@ export default function DashSidebar() {
             setShowInternSidebar(!showInternSidebar)
             setShowEmployeeSidebar(false)
             setShowCollegeSidebar(false)
+            setShowInkathonSidebar(false)
             setCollegeActive(false)
             setHomeActive(false)
             setEmployeeActive(false)
             setInternActive(true)
+            setInkathonActive(false)
           }}
         >
           <FaUserGraduate className='w-6 h-6 sm:h-8 sm:w-8 mx-auto' />
           <span className='text-xs font-semibold text-center'>
             Academic Interns
+          </span>
+        </div>
+
+        <div
+          className={`${
+            inkathonActive ? 'bg-gray-200' : 'null'
+          }   flex flex-col items-center justify-center p-1 text-gray-500 hover:cursor-pointer h-16`}
+          onClick={() => {
+            setShowInkathonSidebar(!showInkathonSidebar)
+            setShowEmployeeSidebar(false)
+            setShowCollegeSidebar(false)
+            setShowInternSidebar(false)
+            setCollegeActive(false)
+            setHomeActive(false)
+            setEmployeeActive(false)
+            setInternActive(false)
+            setInkathonActive(true)
+          }}
+        >
+          <FaTrophy className='w-6 h-6 sm:h-8 sm:w-8 mx-auto' />
+          <span className='text-xs font-semibold text-center'>
+            Inkathon
           </span>
         </div>
       </div>
@@ -115,6 +149,9 @@ export default function DashSidebar() {
       )}
       {showInternSidebar && (
         <InternSidebar setShowInternSidebar={setShowInternSidebar} />
+      )}
+      {showInkathonSidebar && (
+        <InkathonSidebar setShowInkathonSidebar={setShowInkathonSidebar} />
       )}
     </>
   )

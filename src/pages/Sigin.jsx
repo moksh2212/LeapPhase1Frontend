@@ -39,6 +39,7 @@ function Signin() {
       return;
     }
     const token = btoa(`${formData.email}:${formData.password}`);
+    console.log(token);
     setIsLoading(true)
     try {
       dispatch(signInStart());
