@@ -54,7 +54,7 @@ export default function WeeklyCalendar() {
   const [rowsPerPage, setRowsPerPage] = useState(7)
   const [startDate, setStartDate] = useState(new Date())
   const [attendanceData, setAttendanceData] = useState([])
-  const perBaseUrl = process.env.BASE_URL
+  const perBaseUrl = process.env.BASE_URL2
   const token = useSelector(state=>state.user.token)
   useEffect(() => {
     const fetchAttendanceData = async () => {

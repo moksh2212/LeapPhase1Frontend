@@ -27,7 +27,7 @@ import {
 } from '@mui/material'
 import { useSelector } from 'react-redux'
 
-const attd = 'http://192.168.0.141:8080'
+const attd = process.env.BASE_URL2
 const Attendance1 = ({ employees }) => {
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -40,7 +40,7 @@ const Attendance1 = ({ employees }) => {
   const handleModalClose = () => {
     setModalOpen(false)
   }
-  
+
   const [data, setData] = useState([])
   const currentDate = new Date()
     .toLocaleDateString('en-IN', {
@@ -170,7 +170,7 @@ const Attendance1 = ({ employees }) => {
     enableRowSelection: true,
     enableCellActions: true,
     initialState: {
-      showColumnFilters: true,
+      showColumnFilters: false,
       showGlobalFilter: true,
       columnPinning: {
         left: ['mrt-row-expand', 'mrt-row-select'],
@@ -218,7 +218,7 @@ const Attendance1 = ({ employees }) => {
 
       return (
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
-          <div className='flex justify-between mb-2 bg-[#F9FAFB] rounded-md'>
+          <div className='flex justify-between mb-2 rounded-md'>
             <h2 className={`text-3xl text-[#0087D5] font-bold my-auto p-2`}>
               Attendance
             </h2>
