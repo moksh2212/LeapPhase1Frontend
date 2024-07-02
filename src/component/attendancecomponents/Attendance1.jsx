@@ -1,12 +1,11 @@
-import React, { useState, useMemo,useEffect } from 'react';
-import { AccountCircle } from '@mui/icons-material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Link } from 'react-router-dom'; // Import Link
-import dayjs from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
+import React, { useState, useMemo, useEffect } from 'react'
+import { AccountCircle } from '@mui/icons-material'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { Link } from 'react-router-dom' // Import Link
+import dayjs from 'dayjs'
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 
 //import {data } from makeData
 //MRT Imports
@@ -15,8 +14,8 @@ import {
   useMaterialReactTable,
   MRT_GlobalFilterTextField,
   MRT_ToggleFiltersButton,
-} from 'material-react-table';
-import PropTypes from 'prop-types';
+} from 'material-react-table'
+import PropTypes from 'prop-types'
 //Material UI Imports
 import {
   Box,
@@ -25,56 +24,50 @@ import {
   MenuItem,
   Typography,
   lighten,
-} from '@mui/material';
+} from '@mui/material'
+import { useSelector } from 'react-redux'
 
-const attd=process.env.BASE_URL
+const attd = 'http://192.168.0.141:8080'
 const Attendance1 = ({ employees }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-   
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const token = useSelector(state => state.user.token)
+
   const handleModalOpen = () => {
-    setModalOpen(true);
-  };
+    setModalOpen(true)
+  }
 
   const handleModalClose = () => {
-    setModalOpen(false);
-  };
-  // const [data,setData] = useState([])
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const date = '2024-05-10'
-  //       const response = await axios.get(`http://172.20.10.3:8080/cpm/attendance/getAttendanceByDate`, {
-  //       params: {
-  //         date,
-  //       },
-  //     });
-  //       setAttendanceData(response.data);
-  //       setLoading(false);
-  //     }
-  //     catch (error) {
-  //       setError(error);
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []); 
-  const [data, setData] = useState([])
-  const currentDate = new Date().toLocaleDateString('en-IN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).split('/').reverse().join('-');
+    setModalOpen(false)
+  }
   
-  const [value, setValue] = React.useState(dayjs(currentDate)); 
+  const [data, setData] = useState([])
+  const currentDate = new Date()
+    .toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+    .split('/')
+    .reverse()
+    .join('-')
+
+  const [value, setValue] = React.useState(dayjs(currentDate))
   useEffect(() => {
     // Make API call to fetch data
-    const fetchData = async () => {  
+    const fetchData = async () => {
       //console.log(`http://localhost:8080/cpm/attendance/getAttendanceByDate?date=${value.format('YYYY-MM-DD')}`)
       try {
         const response = await fetch(
-          `${attd}/cpm/attendance/getAttendanceByDate?date=${value.format('YYYY-MM-DD')}`,
+          `${attd}/cpm/attendance/getAttendanceByDate?date=${value.format(
+            'YYYY-MM-DD',
+          )}`,
           //`${attd}/cpm/attendance/getAllAttendanceWRTrm?date=${value.format('YYYY-MM-DD')}&rm=${currentUser.name}`
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          },
         )
         let jsonData = await response.json()
         setData(jsonData)
@@ -84,16 +77,16 @@ const Attendance1 = ({ employees }) => {
       }
       // location.reload();
     }
- 
+
     fetchData()
   }, [value])
   const columns = useMemo(
     () => [
       {
-        id: 'attendance', 
+        id: 'attendance',
         columns: [
           {
-            accessorKey: 'talentId', 
+            accessorKey: 'talentId',
             header: 'Employee Id',
             enableColumnFilter: false,
             size: 100,
@@ -162,8 +155,8 @@ const Attendance1 = ({ employees }) => {
         ],
       },
     ],
-    []
-  ); //hook
+    [],
+  ) //hook
 
   const table = useMaterialReactTable({
     columns,
@@ -197,64 +190,62 @@ const Attendance1 = ({ employees }) => {
       variant: 'outlined',
     },
 
-    renderRowActionMenuItems: ({ closeMenu ,row}) => [
+    renderRowActionMenuItems: ({ closeMenu, row }) => [
       <MenuItem
         key={0}
         onClick={() => {
-          handleModalOpen();
-          closeMenu();
+          handleModalOpen()
+          closeMenu()
         }}
         sx={{ m: 0 }}
       >
         <ListItemIcon>
           <AccountCircle />
         </ListItemIcon>
-        <Link to={`/dashboard?tab=DetailedAttendanceView&talentId=${row.original.talentId}`}>
-          <Typography variant="inherit">Attendance Details</Typography>
+        <Link
+          to={`/dashboard?tab=DetailedAttendanceView&talentId=${row.original.talentId}`}
+        >
+          <Typography variant='inherit'>Attendance Details</Typography>
         </Link>
       </MenuItem>,
     ],
     renderTopToolbar: ({ table }) => {
       const handleDeactivate = () => {
-        table.getSelectedRowModel().flatRows.map((row) => {
-          alert('deactivating ' + row.getValue('talentName'));
-        });
-      };
-      
-      
+        table.getSelectedRowModel().flatRows.map(row => {
+          alert('deactivating ' + row.getValue('talentName'))
+        })
+      }
+
       return (
-        <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300">
-          <div className="flex justify-between mb-2 bg-[#F9FAFB] rounded-md">
+        <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
+          <div className='flex justify-between mb-2 bg-[#F9FAFB] rounded-md'>
             <h2 className={`text-3xl text-[#0087D5] font-bold my-auto p-2`}>
               Attendance
             </h2>
 
-            <div className="my-auto mr-2">
+            <div className='my-auto mr-2'>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-              <Link to='/dashboard?tab=trainingAttendance'>
-              <Button
-            color='primary'
-            variant='contained'
-            >Training Attendance</Button>
-            </Link>
+                <Link to='/dashboard?tab=trainingAttendance'>
+                  <Button color='primary' variant='contained'>
+                    Training Attendance
+                  </Button>
+                </Link>
                 <Link to='/dashboard?tab=regularization'>
-
                   <Button
-                    color="primary"
+                    color='primary'
                     // disabled={!table.getIsSomeRowsSelected()}
                     // onClick={handleActivate}
-                    variant="contained"
+                    variant='contained'
                   >
                     Regularization Requests
                   </Button>
                 </Link>
                 <Link to='/dashboard?tab=leave'>
-
                   <Button
-                    color="success"
+                    color='success'
                     // disabled={!table.getIsSomeRowsSelected()}
                     // onClick={handleActivate}
-                    variant="contained"
+                    variant='contained'
                   >
                     Leave Requests
                   </Button>
@@ -262,10 +253,9 @@ const Attendance1 = ({ employees }) => {
               </Box>
             </div>
           </div>
-          
-       
+
           <Box
-            sx={(theme) => ({
+            sx={theme => ({
               backgroundColor: lighten(theme.palette.background.default, 0.05),
               display: 'flex',
               gap: '0.5rem',
@@ -273,18 +263,19 @@ const Attendance1 = ({ employees }) => {
               justifyContent: 'space-between',
             })}
           >
-            <div className="my-auto mr-2">
-
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-  <DemoContainer components={['DatePicker', 'DatePicker']}>
-    <DatePicker
-      label="Select Date"
-      value={value}
-      onChange={(newValue) =>{ setValue(newValue)}}
-      format="YYYY-MM-DD" // Set the format here
-    />
-  </DemoContainer>
-</LocalizationProvider>
+            <div className='my-auto mr-2'>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={['DatePicker', 'DatePicker']}>
+                  <DatePicker
+                    label='Select Date'
+                    value={value}
+                    onChange={newValue => {
+                      setValue(newValue)
+                    }}
+                    format='YYYY-MM-DD' // Set the format here
+                  />
+                </DemoContainer>
+              </LocalizationProvider>
             </div>
             <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <MRT_GlobalFilterTextField table={table} />
@@ -292,20 +283,18 @@ const Attendance1 = ({ employees }) => {
             </Box>
           </Box>
         </div>
-      );
+      )
     },
-  });
+  })
 
   return (
     <>
-
       {/* Render the table once data is fetched */}
-     
-        <>
-          <MaterialReactTable table={table} />
-        </>
-      
+
+      <>
+        <MaterialReactTable table={table} />
+      </>
     </>
-  );
-};
-export default Attendance1;
+  )
+}
+export default Attendance1

@@ -25,8 +25,8 @@ import { AccountCircle, Send } from '@mui/icons-material'
 
 //Mock Data
 //import { data } from './makeData';
-const canBaseUrl = process.env.BASE_URL
-const tanBaseUrl = process.env.BASE_URL
+const canBaseUrl = process.env.BASE_URL2
+const tanBaseUrl = process.env.BASE_URL2
 const style = {
   position: 'absolute',
   left: '50%',

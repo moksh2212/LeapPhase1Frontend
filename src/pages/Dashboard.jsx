@@ -20,8 +20,10 @@ import Alumni from '../component/Alumni';
 import EmployeewiseAssignment from '../component/Assignments/EmployeewiseAssignment'
 import FinalAssignmentview from '../component/Assignments/FinalAssignmentview'
 import Perform from '../component/Perform'
-import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssesmentsCombined'
 import CampusCalendarView from '../component/CampusCalendar&InterviewScheduling/CampusCalendarView'
+import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssesmentsCombined'
+import TrainingAttendance from '../component/attendancecomponents/TrainingAttendance'
+import Trainers from '../component/Trainers'
 import InkathonDatabase from '../component/Inkathon/InkathonDatabase'
 import CreateInkathon from '../component/Inkathon/CreateInkathon'
 import TeamTabInkathon from '../component/Inkathon/TeamTabInkathon'
@@ -73,6 +75,7 @@ export default function Dashboard() {
           {tab === 'teamtabinkathon' && <TeamTabInkathon />}
           {tab==='CandidateAssesmentsCombined' && <CandidateAssesmentsCombined/>}
           {tab === 'campus-calendar' && <CampusCalendarView />}
+          {tab === 'candidate-assesment' && <CandidateAssesmentsCombined />}
         </div>
       </div>
     </>

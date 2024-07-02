@@ -2,11 +2,20 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { useSelector } from 'react-redux'
  
 export default function AdminRoutes() {
-  const { currentUser } = useSelector(state => state.user)
-  return currentUser && currentUser.roles[1]==='ROLE_ADMIN' ? (
-  // return currentUser && currentUser.adminCheck ? (
-    <Outlet />
-  ) : (
-    <Navigate to='/signin' />
-  )
+  const { currentUser } = useSelector(state => state.user);
+
+  if (!currentUser) {
+    return <Navigate to="/signin" />;
+  }
+
+  if (currentUser.roles.includes('ROLE_ADMIN') ) {
+    return <Outlet />;
+  }
+
+  if (currentUser.roles.includes('ROLE_USER') && !currentUser.roles.includes('ROLE_ADMIN')) {
+    return <Navigate to="/user" />;
+  }
+
+
+  return <Navigate to="/signin" />;
 }

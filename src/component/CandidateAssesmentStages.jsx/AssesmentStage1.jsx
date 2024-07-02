@@ -3,6 +3,8 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
+import { useSelector } from 'react-redux'
+
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -22,8 +24,8 @@ import {
 
 
 
-const canBaseUrl = process.env.BASE_URL
-const tanBaseUrl = process.env.BASE_URL
+const canBaseUrl = process.env.BASE_URL2
+const tanBaseUrl = process.env.BASE_URL2
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -97,11 +99,17 @@ const AssesTable = () => {
 
     setOpen(false);
   };
+  const token = useSelector(state => state.user.token)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`${canBaseUrl}/cpm2/assessment/
-getAllAssessments`)
+getAllAssessments`, {
+  headers: {
+    Authorization: `Basic ${token}`,
+  },
+})
         let jsonData = await response.json()
         jsonData = jsonData.slice(0, jsonData.length)
         let arr=[]
@@ -253,6 +261,8 @@ getAllAssessments`)
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(arr),
           }
@@ -281,6 +291,10 @@ getAllAssessments`)
           const response = await fetch(`${canBaseUrl}/cpm2/assessment/upload`, {
             method: 'POST',
             body: formData,
+          }, {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
           })
           console.log(response)
           if (response.ok) {

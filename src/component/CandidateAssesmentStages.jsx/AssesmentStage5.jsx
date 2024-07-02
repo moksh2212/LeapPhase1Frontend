@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
+import { useSelector } from 'react-redux'
 
 import {
   MaterialReactTable,
@@ -20,8 +21,8 @@ import {
 
 
 
-const canBaseUrl = process.env.BASE_URL
-const tanBaseUrl = process.env.BASE_URL
+const canBaseUrl = process.env.BASE_URL2
+const tanBaseUrl = process.env.BASE_URL2
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -88,6 +89,7 @@ const AssesTable = () => {
   const [text, setText] = useState('')
   const [open, setOpen] = useState(false);
 
+  const token = useSelector(state => state.user.token)
 
 
   const handleClose = (event, reason) => {
@@ -100,7 +102,11 @@ const AssesTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`);
+        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        });
         let jsonData = await response.json();
   
         // Filter out any assessments that are null
@@ -226,6 +232,8 @@ const AssesTable = () => {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(values),
           },
@@ -277,6 +285,8 @@ const AssesTable = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(arr),
           }
