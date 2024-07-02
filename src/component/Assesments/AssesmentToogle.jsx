@@ -61,7 +61,6 @@ const AssesmentToogle = () => {
   const token = useSelector(state=>state.user.token)
   
   const handleToggle = () => {
-    // Redirect to the specified URL
     navigate('/dashboard?tab=assessments');
   };
   const handleClose = (event, reason) => {

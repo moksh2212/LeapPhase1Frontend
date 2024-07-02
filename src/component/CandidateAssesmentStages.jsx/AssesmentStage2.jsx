@@ -480,13 +480,13 @@ const AssesTable = () => {
             />
           )}
           {open && (
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}   anchorOrigin={{ vertical: 'top', horizontal: 'right' }}  
+>
               <Alert
                 onClose={handleClose}
                 severity="success"
                 variant="filled"
                 sx={{ width: '100%' }}
-                anchorOrigin={{ vertical: "top", horizontal: "top" }}
               >
                 {table.getSelectedRowModel().rows.length === 1
                   ? `${table.getSelectedRowModel().rows.length} candidate selected successfully for stage 3`

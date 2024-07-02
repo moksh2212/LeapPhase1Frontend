@@ -108,27 +108,27 @@ const AssesTable = () => {
           },
         });
         let jsonData = await response.json();
-  
+
         // Filter out any assessments that are null
         jsonData = jsonData.filter(assessment => assessment && assessment.assessmentLevelFive);
-  
+
         // Extract only the assessmentLevelTwo data
         const arr = jsonData.map(assessment => assessment.assessmentLevelFive);
-  
+
         setData(arr);
-        console.log(jsonData); 
+        console.log(jsonData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-  
+
     fetchData();
   }, []);
   const validate = (values) => {
     const errors = {};
     const requiredFields = [
       'hrScore',
-      
+
     ];
 
     requiredFields.forEach((key) => {
@@ -155,22 +155,28 @@ const AssesTable = () => {
         id: 'candidate',
         header: 'Candidate',
         columns: [
-            {
-                accessorKey: 'levelFiveId',
-                header: 'level',
-                size: 100,
-                enableEditing: false,
-                isVisible: false,
-              },
+          {
+            accessorKey: 'levelFiveId',
+            header: 'level',
+            size: 100,
+            enableEditing: false,
+            isVisible: false,
+          },
+          {
+            accessorKey: 'email',
+            header: 'Email',
+            size: 100,
+            enableEditing: false,
+          },
           {
             accessorKey: 'candidateName',
             header: 'Candiate Name',
             size: 100,
             enableEditing: false,
           },
-        
+
           {
-            accessorKey: 'hrScore', 
+            accessorKey: 'hrScore',
             header: 'HR Score',
             enableSorting: true,
             enableColumnFilter: true,
@@ -187,8 +193,8 @@ const AssesTable = () => {
               },
             }),
           },
-          
-          
+
+
 
         ],
       },
@@ -198,7 +204,7 @@ const AssesTable = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data, 
+    data,
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     enableGrouping: true,
@@ -226,7 +232,7 @@ const AssesTable = () => {
 
       try {
         const response = await fetch(
-            `${canBaseUrl}/cpm2/assessment
+          `${canBaseUrl}/cpm2/assessment
 /updateLevelFive`,
           {
             method: 'PUT',
@@ -272,11 +278,11 @@ const AssesTable = () => {
     renderTopToolbar: ({ table }) => {
       const [hasSelectedRows, setHasSelectedRows] = useState(false);
 
-      const handleActivate = async() => {
-        let arr=[];
-        table.getSelectedRowModel().flatRows.map( (row) => {
-         arr.push(row.original);
-     
+      const handleActivate = async () => {
+        let arr = [];
+        table.getSelectedRowModel().flatRows.map((row) => {
+          arr.push(row.original);
+
         });
         const response = await fetch(
           `${tanBaseUrl}/cpm2/assessment
@@ -295,7 +301,7 @@ const AssesTable = () => {
           ...row,
           selectedForNextStage: arr.some(selectedRow => selectedRow.id === row.id)
         })));
-        setOpen(true); 
+        setOpen(true);
       };
 
 
@@ -327,17 +333,17 @@ const AssesTable = () => {
             </Box>
             <Box>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-             
+
                 <Button
                   color='success'
-                  disabled={table.getSelectedRowModel().rows.length===0}
+                  disabled={table.getSelectedRowModel().rows.length === 0}
                   onClick={handleActivate}
                   variant='contained'
                 >
-                 Final Selected
+                  Final Selected
                 </Button>
                 <div>
-               
+
                 </div>
               </Box>
             </Box>
@@ -349,17 +355,17 @@ const AssesTable = () => {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             />
           )}
-        {  open &&  <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert
-          onClose={handleClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: '100%' }}
-          anchorOrigin={{ vertical: "top", horizontal: "top" }}
-        >
-         {table.getSelectedRowModel().rows.length===1?`${table.getSelectedRowModel().rows.length} candiadate selected successfully  `:`${table.getSelectedRowModel().rows.length} candiadates selected successfully ` } 
-         </Alert>
-      </Snackbar>}
+          {open && <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert
+              onClose={handleClose}
+              severity="success"
+              variant="filled"
+              sx={{ width: '100%' }}
+            >
+              {table.getSelectedRowModel().rows.length === 1 ? `${table.getSelectedRowModel().rows.length} candiadate selected successfully  ` : `${table.getSelectedRowModel().rows.length} candiadates selected successfully `}
+            </Alert>
+          </Snackbar>}
         </div>
       )
     },
