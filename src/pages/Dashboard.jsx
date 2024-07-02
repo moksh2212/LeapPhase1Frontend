@@ -15,8 +15,8 @@ import Header from '../component/Header'
 import DashHome from '../component/DashHome'
 import IndividualAssesments from '../component/Assesments/IndividualAssesments'
 import AcademicInternsAttendance from '../component/AcademicInternsAttendance'
-import IndividualToogleAssesments from '../component/Assesments/IndividuaTooglelAssesment'
-
+import IndividualToogleAssesments from '../component/Assesments/IndividuaTooglelAssesment';
+import Alumni from '../component/Alumni';
 import EmployeewiseAssignment from '../component/Assignments/EmployeewiseAssignment'
 import FinalAssignmentview from '../component/Assignments/FinalAssignmentview'
 import Perform from '../component/Perform'
@@ -24,6 +24,10 @@ import CampusCalendarView from '../component/CampusCalendar&InterviewScheduling/
 import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssesmentsCombined'
 import TrainingAttendance from '../component/attendancecomponents/TrainingAttendance'
 import Trainers from '../component/Trainers'
+import InkathonDatabase from '../component/Inkathon/InkathonDatabase'
+import CreateInkathon from '../component/Inkathon/CreateInkathon'
+import TeamTabInkathon from '../component/Inkathon/TeamTabInkathon'
+
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
@@ -62,13 +66,14 @@ export default function Dashboard() {
           {tab === 'IndividualAssesments' && <IndividualAssesments />}
           {tab === 'attendance-academic' && <AcademicInternsAttendance />}
           {tab === 'assessmenttoogle' && <AssesmentToogle />}
-          {tab === 'individualtoogleassesments' && (
-            <IndividualToogleAssesments />
-          )}
-
+          {tab === 'individualtoogleassesments' && (<IndividualToogleAssesments />)}
+          {tab === 'alumni' && <Alumni />}
           {tab === 'EmployeewiseAssignment' && <EmployeewiseAssignment />}
-
           {tab === 'Perform' && <Perform />}
+          {tab === 'inkathon' && <InkathonDatabase />}
+          {tab === 'createinkathon' && <CreateInkathon />}
+          {tab === 'teamtabinkathon' && <TeamTabInkathon />}
+          {tab==='CandidateAssesmentsCombined' && <CandidateAssesmentsCombined/>}
           {tab === 'campus-calendar' && <CampusCalendarView />}
           {tab === 'candidate-assesment' && <CandidateAssesmentsCombined />}
         </div>

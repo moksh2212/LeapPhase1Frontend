@@ -75,7 +75,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
 
   const fetchTalentList = async () => {
     try {
-      const response = await fetch('http://192.168.0.141:8080/cpm/talents/alltalent', {
+      const response = await fetch('http://192.168.0.147:8080/cpm/talents/alltalent', {
         headers: {
           Authorization: `Basic ${token}`,
         },
@@ -111,6 +111,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
       assignmentFileName,
       assignmentFileUrl,
       assignedTo: selectedTalentEmails.join(', '), 
+      mentorAssigned:"mokshthakran80299@gmail.com"
         }
     console.log(formData)
     createAssignment(formData)
@@ -203,6 +204,19 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
               placeholder="Enter assignment name"
               value={assignmentName}
               onChange={(e) => setAssignmentName(e.target.value)}
+              required
+              size="sm"
+            />
+          </div>
+          <div>
+            <div className="mb-2 block">
+              <Label htmlFor="assignmentName" value="Trainer Name" />
+            </div>
+            <TextInput
+              id="TrainerName"
+              type="text"
+              placeholder="Enter Trainer name"
+              value={"Abhimanyu Kaushik "}
               required
               size="sm"
             />

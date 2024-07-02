@@ -148,11 +148,11 @@ const Perfromancetable = () => {
                 <div
                   key={index}
                   style={{
-                    border: '1px solid #61DBFB', // Light blue border
+                    border: '1px solid #61DBFB', 
                     padding: '0.25rem 0.5rem',
                     margin: '0.25rem',
                     borderRadius: '0.25rem',
-                    backgroundColor: '#E3F2FD', // Light blue background
+                    backgroundColor: '#E3F2FD',
                   }}
                 >
                   {skill}
@@ -169,21 +169,21 @@ const Perfromancetable = () => {
         size: 300,
         headerProps: {
           style: {
-            textAlign: 'center', // Center align header value
+            textAlign: 'center', 
           },
         },
         Cell: ({ cell }) => {
           let backgroundColor
-          let textColor = '#fff' // Default text color
+          let textColor = '#fff' 
           const value = cell.getValue()
 
-          if (value >= 8 && value <= 10) {
+          if (value >= 90) {
             backgroundColor = '#4CAF50' // Green
-          } else if (value >= 4 && value <= 6) {
+          } else if (value >= 60) {
             backgroundColor = '#2196F3' // Blue
-          } else if (value >= 2 && value <= 3) {
+          } else if (value >= 40) {
             backgroundColor = '#FFEB3B' // Yellow
-            textColor = '#000' // Black text for yellow background
+            textColor = '#000' // Black text color for better contrast
           } else {
             backgroundColor = '#F44336' // Red
           }
@@ -193,8 +193,7 @@ const Perfromancetable = () => {
               className='flex items-center justify-center'
               component='span'
               sx={{
-                backgroundColor,
-                color: textColor,
+                color: backgroundColor,
                 borderRadius: '0.25rem',
                 width: '100%',
                 maxWidth: '9ch',
@@ -223,13 +222,13 @@ const Perfromancetable = () => {
           const value = cell.getValue()
 
           // Assign colors based on ranges
-          if (value >= 8 && value <= 10) {
+          if (value >= 90) {
             backgroundColor = '#4CAF50' // Green
-          } else if (value >= 4 && value <= 6) {
+          } else if (value >= 60) {
             backgroundColor = '#2196F3' // Blue
-          } else if (value >= 2 && value <= 3) {
+          } else if (value >= 40) {
             backgroundColor = '#FFEB3B' // Yellow
-            textColor = '#000' // Black text for yellow background
+            textColor = '#000' // Black text color for better contrast
           } else {
             backgroundColor = '#F44336' // Red
           }
@@ -239,8 +238,7 @@ const Perfromancetable = () => {
               className='flex items-center justify-center'
               component='span'
               sx={{
-                backgroundColor,
-                color: textColor,
+                color: backgroundColor,
                 borderRadius: '0.25rem',
                 width: '100%',
                 maxWidth: '9ch',
@@ -268,14 +266,12 @@ const Perfromancetable = () => {
           let textColor = '#fff' // Default text color
           const value = cell.getValue()
 
-          // Assign colors based on ranges
-          if (value >= 100 && value <= 90) {
+          if (value >= 90) {
             backgroundColor = '#4CAF50' // Green
-          } else if (value >= 60 && value <= 89) {
+          } else if (value >= 60) {
             backgroundColor = '#2196F3' // Blue
-          } else if (value >= 40 && value <= 59) {
+          } else if (value >= 40) {
             backgroundColor = '#FFEB3B' // Yellow
-            textColor = '#000' // Black text for yellow background
           } else {
             backgroundColor = '#F44336' // Red
           }
@@ -285,8 +281,8 @@ const Perfromancetable = () => {
               className='flex items-center justify-center'
               component='span'
               sx={{
-                backgroundColor,
-                color: textColor,
+                
+                color: backgroundColor,
                 borderRadius: '0.25rem',
                 width: '100%',
                 maxWidth: '9ch',

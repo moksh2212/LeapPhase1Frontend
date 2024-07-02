@@ -36,7 +36,7 @@ const IndividualToogleAssesments = () => {
   const [rowSelection, setRowSelection] = useState({})
   const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
-  const baseUrl = process.env.BASE_URL
+  const baseUrl = process.env.BASE_URL2
   const token = useSelector(state=>state.user.token)
   const updateAssessment = async AssesmentToUpdate => {
     try {

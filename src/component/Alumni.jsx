@@ -18,9 +18,8 @@ import {
 } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
-import { useSelector } from 'react-redux'
 
-const TalentTable = () => {
+const Alumni = () => {
   const [talentList, setTalentList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
@@ -33,9 +32,7 @@ const TalentTable = () => {
   const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
-  const tanBaseUrl = process.env.BASE_URL2
-
-  const token = useSelector(state=>state.user.token)
+  const tanBaseUrl = process.env.BASE_URL
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -56,11 +53,6 @@ const TalentTable = () => {
     try {
       const response = await fetch(
         `${tanBaseUrl}/cpm/talents/viewmarksheet/${talentId}`,
-        {
-          headers:{
-            Authorization: `Basic ${token}`
-          }
-        }
       )
       if (!response.ok) {
         throw new Error('Failed to fetch marksheet')
@@ -80,9 +72,6 @@ const TalentTable = () => {
       const response = await fetch(`${tanBaseUrl}/cpm/talents/uploadmarksheet/${talentId}`, {
         method: 'PUT',
         body: formData,
-        headers:{
-          Authorization: `Basic ${token}`
-        }
       });
   
       if (!response.ok) {
@@ -176,12 +165,7 @@ const TalentTable = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`,{
-          headers:{
-            Authorization: `Basic ${token}`
-          }
-          }
-        )
+        const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`)
         const data = await response.json()
         setTalentList(data)
       } catch (error) {
@@ -234,8 +218,6 @@ const TalentTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`
-
           },
           body: JSON.stringify(talentToUpdate),
         },
@@ -314,14 +296,16 @@ const TalentTable = () => {
         id: 'talent',
         columns: [
           {
-            accessorKey: 'talentId',
+            accessorKey: 'talentId',   
             header: 'Talent Id',
             enableEditing: false,
+            enableGlobalFilter: false,
             size: 100,
           },
           {
             accessorKey: 'talentName',
             header: 'Name',
+            enableGlobalFilter: false,
             enableSorting: false,
             size: 100,
             muiEditTextFieldProps: {
@@ -348,6 +332,7 @@ const TalentTable = () => {
           {
             accessorKey: 'collegeName',
             header: 'College Name',
+            enableGlobalFilter: true,
             enableSorting: false,
             size: 100,
             muiEditTextFieldProps: {
@@ -374,6 +359,7 @@ const TalentTable = () => {
           {
             accessorKey: 'department',
             filterVariant: 'select',
+            enableGlobalFilter: false,
             header: 'Branch',
             enableSorting: false,
             size: 100,
@@ -402,6 +388,7 @@ const TalentTable = () => {
             accessorKey: 'email',
             enableClickToCopy: true,
             filterVariant: 'autocomplete',
+            enableGlobalFilter: false,
             header: 'Email',
             enableSorting: false,
             size: 100,
@@ -430,6 +417,7 @@ const TalentTable = () => {
             accessorKey: 'phoneNumber', //accessorKey used to define `data` column. `id` gets set to accessorKey automatically
             enableColumnFilter: false,
             header: 'Phone Number',
+            enableGlobalFilter: false,
             enableSorting: false,
             size: 100,
             muiEditTextFieldProps: {
@@ -457,6 +445,7 @@ const TalentTable = () => {
             accessorKey: 'alternateNumber', //accessorKey used to define `data` column. `id` gets set to accessorKey automatically
             header: 'Alt Phone Number',
             enableColumnFilter: false,
+            enableGlobalFilter: false,
             enableSorting: false,
             size: 100,
             muiEditTextFieldProps: {
@@ -483,6 +472,7 @@ const TalentTable = () => {
             accessorKey: 'tenthPercent', //hey a simple column for once
             header: 'Tenth Percent',
             filterVariant: 'range',
+            enableGlobalFilter: false,
             size: 100,
             muiEditTextFieldProps: {
               required: true,
@@ -509,6 +499,7 @@ const TalentTable = () => {
             accessorKey: 'twelthPercent', //hey a simple column for once
             header: 'Twelth Percent',
             filterVariant: 'range',
+            enableGlobalFilter: false,
             size: 100,
             muiEditTextFieldProps: {
               required: true,
@@ -535,11 +526,13 @@ const TalentTable = () => {
             accessorKey: 'cgpaMasters', //hey a simple column for once
             header: 'CGPA M',
             filterVariant: 'range',
+            enableGlobalFilter: false,
             size: 100,
           },
           {
             accessorKey: 'cgpaUndergrad', //hey a simple column for once
             header: 'CGPA U',
+            enableGlobalFilter: false,
             filterVariant: 'range',
             size: 100,
             muiEditTextFieldProps: {
@@ -566,12 +559,14 @@ const TalentTable = () => {
           {
             accessorKey: 'marksheet',
             header: 'Marksheet',
+            enableGlobalFilter: false,
             size: 100,
             Cell: MarksheetCell,
           },
           {
             accessorKey: 'officeLocation', //hey a simple column for once
             header: 'Office Location',
+            enableGlobalFilter: false,
             filterVariant: 'autocomplete',
             enableSorting: false,
             size: 100,
@@ -600,6 +595,7 @@ const TalentTable = () => {
             accessorKey: 'currentLocation', //hey a simple column for once
             header: 'Current Location',
             filterVariant: 'autocomplete',
+            enableGlobalFilter: false,
             enableSorting: false,
             size: 100,
             muiEditTextFieldProps: {
@@ -626,6 +622,7 @@ const TalentTable = () => {
           {
             accessorKey: 'permanentAddress', //hey a simple column for once
             header: 'Permanent Address',
+            enableGlobalFilter: false,
             enableSorting: false,
             size: 100,
             muiEditTextFieldProps: {
@@ -652,6 +649,7 @@ const TalentTable = () => {
           {
             accessorKey: 'panNumber', //hey a simple column for once
             header: 'Pan Number',
+            enableGlobalFilter: false,
             enableSorting: false,
             size: 100,
             muiEditTextFieldProps: {
@@ -678,6 +676,7 @@ const TalentTable = () => {
           {
             accessorKey: 'aadhaarNumber', //hey a simple column for once
             header: 'Aadhaar Number',
+            enableGlobalFilter: false,
             enableSorting: false,
             size: 100,
             muiEditTextFieldProps: {
@@ -704,6 +703,7 @@ const TalentTable = () => {
           {
             accessorKey: 'fatherName', //hey a simple column for once
             header: 'Father Name',
+            enableGlobalFilter: false,
             enableColumnFilter: false,
             enableSorting: false,
             size: 100,
@@ -731,6 +731,7 @@ const TalentTable = () => {
           {
             accessorKey: 'motherName', //hey a simple column for once
             header: 'Mother Name',
+            enableGlobalFilter: false,
             enableColumnFilter: false,
             enableSorting: false,
             size: 100,
@@ -759,6 +760,7 @@ const TalentTable = () => {
             accessorKey: 'dob', //convert to Date for sorting and filtering
             id: 'dob',
             header: 'DOB',
+            enableGlobalFilter: false,
             enableColumnFilter: false,
             size: 100,
             muiEditTextFieldProps: {
@@ -788,6 +790,7 @@ const TalentTable = () => {
             enableColumnFilter: false,
             enableSorting: false,
             size: 100,
+            enableGlobalFilter: false,
           },
           {
             accessorKey: 'talentEmploymentType', //hey a simple column for once
@@ -795,6 +798,7 @@ const TalentTable = () => {
             enableColumnFilter: false,
             enableSorting: false,
             size: 100,
+            enableGlobalFilter: false,
           },
           {
             accessorKey: 'reportingManager', //hey a simple column for once
@@ -802,10 +806,12 @@ const TalentTable = () => {
             enableColumnFilter: false,
             enableSorting: false,
             size: 100,
+            enableGlobalFilter: false,
           },
           {
             accessorKey: 'plOwner', //hey a simple column for once
             header: 'P&L Owner',
+            enableGlobalFilter: false,
             enableColumnFilter: false,
             enableSorting: false,
             size: 100,
@@ -813,12 +819,14 @@ const TalentTable = () => {
           {
             accessorKey: 'talentCategory', //hey a simple column for once
             header: 'Category',
+            enableGlobalFilter: false,
             enableColumnFilter: false,
             enableSorting: false,
             size: 100,
           },
           {
             accessorKey: 'ekYear', //hey a simple column for once
+            enableGlobalFilter: false,
             header: 'EK Year',
             enableColumnFilter: false,
             size: 100,
@@ -934,11 +942,37 @@ const TalentTable = () => {
     columns,
     data: talentList,
     enableRowSelection: true,
-    initialState: { columnVisibility: { talentId: true, } },
+    initialState : {
+        columnVisibility: {
+            
+            alternateNumber: false,
+            tenthPercent: false,
+            twelthPercent: false,
+            cgpaMasters: false,
+            cgpaUndergrad: false,
+            marksheet: false,
+            currentLocation: false,
+            panNumber: false,
+            aadhaarNumber: false,
+            fatherName: false,
+            motherName: false,
+            dob: false,
+            talentSkills: false,
+            talentEmploymentType: false,
+            talentCategory: false,
+        }
+      },
     isLoading,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
-    enableEditing: true,
+    enableGlobalFilter: true,
+    positionGlobalFilter: 'left',
+    muiSearchTextFieldProps: {
+        autoComplete: true,
+        placeholder: 'Filter By College Name',
+        sx: { minWidth: '300px' },
+        variant: 'outlined',
+    },
     onRowSelectionChange: setRowSelection,
     state: { rowSelection },
     getRowId: row => row.talentId,
@@ -1095,26 +1129,6 @@ const TalentTable = () => {
 
       return (
         <div className='flex gap-5'>
-          <Button
-            variant='contained'
-            onClick={() => {
-              table.setCreatingRow(true)
-            }}
-          >
-            Create New Talent
-          </Button>
-
-          <Button
-            variant='contained'
-            color='error'
-            onClick={() => {
-              setSelectedRows(selectedRows)
-              setOpenDeleteRowsModal(true)
-            }}
-            disabled={selectedRows.length === 0}
-          >
-            Delete Selected
-          </Button>
         </div>
       )
     },
@@ -1122,7 +1136,7 @@ const TalentTable = () => {
 
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
-      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>TALENT</h2>
+      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>Alumni</h2>
       <br></br>
       <br></br>
       {isLoading && (
@@ -1174,4 +1188,4 @@ const TalentTable = () => {
     </div>
   )
 }
-export default TalentTable
+export default Alumni

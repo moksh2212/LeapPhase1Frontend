@@ -36,28 +36,8 @@ const style = {
   border: '2px solid white',
   boxShadow: 24,
   p: 4,
-  borderRadius: '20px',
-}
-const NameCell = ({ renderedCellValue }) => {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '1rem',
-      }}
-    >
-      {/* using renderedCellValue instead of cell.getValue() preserves filter match highlighting */}
-      <span>{renderedCellValue}</span>
-    </Box>
-  )
-}
-NameCell.propTypes = {
-  renderedCellValue: PropTypes.node.isRequired,
-  row: PropTypes.shape({
-    original: PropTypes.shape({}).isRequired,
-  }).isRequired,
-}
+  borderRadius: '20px'
+};
 
 const SalaryCell = ({ cell }) => {
   return (

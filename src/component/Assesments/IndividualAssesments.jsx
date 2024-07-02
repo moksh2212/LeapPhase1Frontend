@@ -23,7 +23,7 @@ import {
 } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux'
-const baseUrl = process.env.BASE_URL
+const baseUrl = process.env.BASE_URL2
 
 const IndividualAssesments = () => {
   const [talentList, setTalentList] = useState([])
