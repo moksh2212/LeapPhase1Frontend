@@ -44,7 +44,7 @@ const Assignment = () => {
   const [rowToEdit, setRowToEdit] = useState(false)
   const token = useSelector(state => state.user.token)
 
-  const baseUrl =  process.env.BASE_URL
+  const baseUrl =  process.env.BASE_URL2
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {

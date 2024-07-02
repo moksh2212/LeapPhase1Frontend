@@ -154,6 +154,8 @@ const CandidateTable = () => {
   const selectTechnology = ['Java', 'React', 'UI5', 'Integration']
 
   const token = useSelector(state => state.user.token)
+  
+  const baseUrl = process.env.BASE_URL2
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -207,7 +209,7 @@ const CandidateTable = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch('http://localhost:3057/admin/viewData', {
+        const response = await fetch(`${baseUrl}/admin/viewData`, {
           headers: {
             Authorization: `Basic ${token}`,
           },

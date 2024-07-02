@@ -21,8 +21,8 @@ import {
 
 
 
-const canBaseUrl = process.env.BASE_URL
-const tanBaseUrl = process.env.BASE_URL
+const canBaseUrl = process.env.BASE_URL2
+const tanBaseUrl = process.env.BASE_URL2
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -88,6 +88,7 @@ const AssesTable = () => {
   const [validationErrors, setValidationErrors] = useState({})
   const [text, setText] = useState('')
   const [open, setOpen] = useState(false);
+  const [count, setCount] = useState(0);
 
   const token = useSelector(state => state.user.token)
 
@@ -215,8 +216,7 @@ const AssesTable = () => {
     enableEditing: true,
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
-        backgroundColor: row.original.selectedForNextStage ? 'rgba(0, 135, 213, 0.1)' : undefined,
-        color: row.original.selectedForNextStage ? '#0087D5' : undefined,
+      
         '&:hover': {
           backgroundColor: row.original.selectedForNextStage ? 'rgba(0, 135, 213, 0.2)' : undefined,
         },
@@ -301,7 +301,10 @@ const AssesTable = () => {
           ...row,
           selectedForNextStage: arr.some(selectedRow => selectedRow.id === row.id)
         })));
+        setCount(table.getSelectedRowModel().rows.length)
+
         setOpen(true);
+        table.toggleAllRowsSelected(false);
       };
 
 
@@ -355,7 +358,7 @@ const AssesTable = () => {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             />
           )}
-          {open && <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          {open && <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           >
             <Alert
               onClose={handleClose}
@@ -363,7 +366,7 @@ const AssesTable = () => {
               variant="filled"
               sx={{ width: '100%' }}
             >
-              {table.getSelectedRowModel().rows.length === 1 ? `${table.getSelectedRowModel().rows.length} candiadate selected successfully  ` : `${table.getSelectedRowModel().rows.length} candiadates selected successfully `}
+              {count === 1 ? `${count} candiadate selected successfully  ` : `${table.getSelectedRowModel().rows.length} candiadates selected successfully `}
             </Alert>
           </Snackbar>}
         </div>

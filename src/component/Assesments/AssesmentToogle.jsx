@@ -56,7 +56,7 @@ const AssesmentToogle = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
-  const tanBaseUrl = process.env.BASE_URL
+  const tanBaseUrl = process.env.BASE_URL2
 
   const token = useSelector(state=>state.user.token)
   

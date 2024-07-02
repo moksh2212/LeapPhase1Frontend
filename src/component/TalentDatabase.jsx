@@ -18,6 +18,7 @@ import {
 } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 
 const TalentTable = () => {
   const [talentList, setTalentList] = useState([])
@@ -32,7 +33,9 @@ const TalentTable = () => {
   const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
-  const tanBaseUrl = process.env.BASE_URL
+  const tanBaseUrl = process.env.BASE_URL2
+
+  const token = useSelector(state=>state.user.token)
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -53,6 +56,11 @@ const TalentTable = () => {
     try {
       const response = await fetch(
         `${tanBaseUrl}/cpm/talents/viewmarksheet/${talentId}`,
+        {
+          headers:{
+            Authorization: `Basic ${token}`
+          }
+        }
       )
       if (!response.ok) {
         throw new Error('Failed to fetch marksheet')
@@ -72,6 +80,9 @@ const TalentTable = () => {
       const response = await fetch(`${tanBaseUrl}/cpm/talents/uploadmarksheet/${talentId}`, {
         method: 'PUT',
         body: formData,
+        headers:{
+          Authorization: `Basic ${token}`
+        }
       });
   
       if (!response.ok) {
@@ -165,7 +176,12 @@ const TalentTable = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`)
+        const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`,{
+          headers:{
+            Authorization: `Basic ${token}`
+          }
+          }
+        )
         const data = await response.json()
         setTalentList(data)
       } catch (error) {
@@ -218,6 +234,8 @@ const TalentTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Basic ${token}`
+
           },
           body: JSON.stringify(talentToUpdate),
         },

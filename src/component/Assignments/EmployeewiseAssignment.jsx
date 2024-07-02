@@ -49,7 +49,7 @@ const EmployeewiseAssignment = () => {
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
   const [rowToEdit, setRowToEdit] = useState(false)
 const [feedbacksend, setfeedbacksend] = useState(true)
-  const baseUrl =  process.env.BASE_URL
+  const baseUrl =  process.env.BASE_URL2
   const token = useSelector(state => state.user.token)
 
 console.log(feedbacksend)

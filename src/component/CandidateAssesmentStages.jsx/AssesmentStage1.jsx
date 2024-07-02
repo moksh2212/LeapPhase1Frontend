@@ -24,8 +24,8 @@ import {
 
 
 
-const canBaseUrl = process.env.BASE_URL
-const tanBaseUrl = process.env.BASE_URL
+const canBaseUrl = process.env.BASE_URL2
+const tanBaseUrl = process.env.BASE_URL2
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -91,6 +91,7 @@ const AssesTable = () => {
   const [validationErrors, setValidationErrors] = useState({})
   const [open, setOpen] = useState(false);
   const [x, setx] = useState(0)
+  const [count, setCount] = useState(0);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -238,7 +239,6 @@ getAllAssessments`, {
     },
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
-        backgroundColor: row.original.selectedForNextStage ? 'rgba(0, 135, 213, 0.3)' : undefined,
         '&:hover': {
           backgroundColor: row.original.selectedForNextStage ? 'rgba(0, 135, 213, 0.4)' : undefined,
         },
@@ -271,7 +271,11 @@ getAllAssessments`, {
           ...row,
           selectedForNextStage: arr.some(selectedRow => selectedRow.id === row.id)
         })));
+        setCount(table.getSelectedRowModel().rows.length)
         setOpen(true);
+        setHasSelectedRows(false)
+        table.toggleAllRowsSelected(false);
+
       };
       const [selectedFile, setSelectedFile] = useState(null)
       const handleFileChange = event => {
@@ -383,7 +387,7 @@ getAllAssessments`, {
             />
           )}
           {open && <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           >
             <Alert
               onClose={handleClose}
@@ -391,7 +395,7 @@ getAllAssessments`, {
               variant="filled"
               sx={{ width: '100%' }}
             >
-              {table.getSelectedRowModel().rows.length === 1 ? `${table.getSelectedRowModel().rows.length} candiadate selected successfully for stage 2 ` : `${table.getSelectedRowModel().rows.length} candiadates selected successfully for stage  2`}
+              {count === 1 ? `${count} candiadate selected successfully for stage 2 ` : `${count} candiadates selected successfully for stage  2`}
             </Alert>
           </Snackbar>}
         </div>

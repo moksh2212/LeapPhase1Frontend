@@ -24,7 +24,7 @@ const columns = [
   { id: 'officeLocation', label: 'Office Location', minWidth: 170 },
   { id: 'ekYear', label: 'Ek Year', minWidth: 170 },
 ]
- 
+
 function createData(
   talentName,
   talentCategory,
@@ -35,7 +35,6 @@ function createData(
   checkin,
   checkout,
   totalHours,
-
 ) {
   return {
     talentName,
@@ -49,44 +48,49 @@ function createData(
     totalHours,
   }
 }
- 
+
 export default function WeeklyCalendarUser() {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(7)
   const [startDate, setStartDate] = useState(new Date())
   const [attendanceData, setAttendanceData] = useState([])
-  const {currentUser } = useSelector(state=>state.user)
+  const { currentUser } = useSelector(state => state.user)
   const perBaseUrl = 'http://192.168.0.141:8080'
+  const token = useSelector(state => state.user.token)
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
         // it is talentid from attendance table on front edn to give your own value directly give in fetched
- 
+
         const urlParams = new URLSearchParams(window.location.search)
         const fetched = urlParams.get('talentId')
         const start = new Date(startDate)
         const end = new Date(startDate)
         end.setDate(start.getDate() + 6)
-        console.log(
-          `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
-            start,
-          )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,
-        )
- 
+        // console.log(
+        //   `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
+        //     start,
+        //   )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,
+        // )
+
         const response = await axios.get(
           `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
             start,
-          )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,
-        )
+          )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,{
+            headers:{
+              Authorization: `Basic ${token}`
+            }
+          }
+        );
         setAttendanceData(response.data)
       } catch (error) {
         console.error('Error fetching attendance data:', error)
       }
     }
- 
+
     fetchAttendanceData()
-  }, [startDate,currentUser])
- 
+  }, [startDate, currentUser])
+
   const rows = attendanceData.map(attendance =>
     createData(
       attendance.talentName,
@@ -104,55 +108,59 @@ export default function WeeklyCalendarUser() {
     const totalHoursComponents = curr.totalHours.split(':') // Splitting hours and minutes
     const hours = parseInt(totalHoursComponents[0])
     const minutes = parseInt(totalHoursComponents[1])
- 
+
     // Adding hours and minutes to the accumulator
     return acc + (hours * 60 + minutes) // Convert hours to minutes
   }, 0)
- 
+
   // Convert total minutes to hours and remaining minutes
   const totalHours = Math.floor(totalWorkingMinutes / 60)
   const remainingMinutes = totalWorkingMinutes % 60
- 
+
   // Format total working hours
   const formattedTotalHours = `${totalHours}hrs ${remainingMinutes}mins`
- 
+
   const decreaseWeek = () => {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() - 7)
     setStartDate(newStartDate)
   }
- 
+
   const increaseWeek = () => {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() + 7)
     setStartDate(newStartDate)
   }
- 
+
   const formatDate = date => {
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
     return `${year}-${month}-${day}`
   }
- 
+
   const startOfWeek = new Date(startDate)
   startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
   const endOfWeek = new Date(startDate)
   endOfWeek.setDate(startOfWeek.getDate() + 6)
- 
+
   return (
     <div>
-      
       <div
         className='flex flex-row justify-center'
-        style={{ margin: '10px 90px',height:'147px',width: '30%',border: '2px solid #ccc', borderRadius: '8px', padding: '16px' }}
+        style={{
+          margin: '10px 90px',
+          height: '147px',
+          width: '30%',
+          border: '2px solid #ccc',
+          borderRadius: '8px',
+          padding: '16px',
+        }}
       >
-        
         <div
           className='flex flex-row justify-between'
           style={{ margin: '10px 90px' }}
         >
-          
           <Card
             title={
               <div className='flex items-center'>
@@ -199,14 +207,22 @@ export default function WeeklyCalendarUser() {
         <div className='flex flex-row mt-4 justify-center items-center gap-4'>
           <Button
             shape='square'
-            style={{ backgroundColor: '#a1b4b5', color: '#ffffff', boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}
+            style={{
+              backgroundColor: '#a1b4b5',
+              color: '#ffffff',
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            }}
             icon={<LeftOutlined />}
             onClick={decreaseWeek}
           />
           <div className='text-gray-1000 font-bold'>{`${startOfWeek.toLocaleDateString()} - ${endOfWeek.toLocaleDateString()}`}</div>
           <Button
             onClick={increaseWeek}
-            style={{ backgroundColor: '#a1b4b5', color: '#ffffff', boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)' }}
+            style={{
+              backgroundColor: '#a1b4b5',
+              color: '#ffffff',
+              boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+            }}
             shape='square'
             icon={<RightOutlined />}
           />
