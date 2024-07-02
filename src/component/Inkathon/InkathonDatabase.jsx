@@ -24,26 +24,27 @@ import {
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import {AddInkathon }from './AddInkathon'
 
 
 
-
-
-const InkathonTable = () => {
-  const [talentList, setTalentList] = useState([])
+  const InkathonTable = () => {
+  const [inkathonList, setInkathonsList] = useState([])
+  const [openCreateInkathonForm, setOpenCreateInkathonForm] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
-  const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [error, setError] = useState()
-  
-  const [talentIdToDelete, setTalentIdToDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
-  const [selectedRows, setSelectedRows] = useState([])
-  const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
+
+  const [inkathonIdToDelete, setInkathonIdToDelete] = useState({})
+  const [openInkathonDeleteModal, setOpenInkathonDeleteModal] = useState(false)
+
+  
 
   const tanBaseUrl = process.env.BASE_URL
-
+  const token = useSelector(state => state.user.token)
 
   const ActionCell = ({ cell }) => {
     // Assuming cell.getValue() is the method to get the Inkathon ID
@@ -67,9 +68,34 @@ const InkathonTable = () => {
       getValue: PropTypes.func.isRequired,
     }).isRequired,
   };
-  const openInkathon = (inkathonId) => {
-    console.log(`Opening inkathon ${inkathonId}`);
-    window.open('?tab=createinkathon', '_blank');
+  const createInkathon = async formData => {
+    setOpenCreateInkathonForm(false)
+    setIsLoading(true)
+    setError(null)
+    setOpenSnackbar(null)
+    console.log(formData)
+    try {
+      const response = await fetch(`${tanBaseUrl}/api/inkathons/create`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${token}`,
+        },
+        body: formData,
+        
+      })
+      console.log(response)
+      if (response.ok) {
+        alert('Inkathon Created successfully.')
+        const data = await response.json()
+        setInkathonsList(prevInkathons => [...prevInkathons, data])
+        setIsLoading(false)
+      } else {
+        alert('Failed to Create Inkathon')
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -82,22 +108,48 @@ const InkathonTable = () => {
 
     setOpenSnackbar(false)
   }
-  const handleDelete = async () => {
-    await deleteTalent(talentIdToDelete)
-    setOpenDeleteModal(false)
+  const handleInkathonDelete = async () => {
+    await deleteInkathon(inkathonIdToDelete)
+    setOpenInkathonDeleteModal(false)
   }
-  const renderDeleteModal = () => (
-    <Dialog open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
-      <DialogTitle>Delete Talent</DialogTitle>
+  const deleteInkathon = async inkathonId => {
+    setIsLoading(true)
+    setError(null)
+    setOpenSnackbar(null)
+    try {
+      const response = await fetch(`${tanBaseUrl}/api/inkathons/delete/${inkathonId}`, {
+        method: 'DELETE',
+        headers:{
+          Authorization: `Basic ${token}`,
+        },
+      })
+
+      if (response.ok) {
+        setInkathonsList(prevInkathons =>
+          prevInkathons.filter(inkathon => inkathon.inkathonId !== inkathonId),
+        )
+        setOpenSnackbar('Project deleted successfully!')
+        setError(null)
+      }
+    } catch (error) {
+      console.error('Error deleting Project:', error)
+      setError(error.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+  const renderInkathonDeleteModal = () => (
+    <Dialog open={openInkathonDeleteModal} onClose={() => setOpenInkathonDeleteModal(false)}>
+      <DialogTitle>Delete Inkathon</DialogTitle>
       <DialogContent>
-        <p>Are you sure you want to delete this talent?</p>
+        <p>Are you sure you want to delete this Project?</p>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpenDeleteModal(false)}>Cancel</Button>
+        <Button onClick={() => setOpenInkathonDeleteModal(false)}>Cancel</Button>
         <Button
           onClick={() => {
-            console.log('Deleting talent with ID:', talentIdToDelete)
-            handleDelete()
+            console.log('Deleting Inkathon with ID:', inkathonIdToDelete)
+            handleInkathonDelete()
           }}
           color='error'
         >
@@ -106,111 +158,21 @@ const InkathonTable = () => {
       </DialogActions>
     </Dialog>
   )
-  const renderDeleteRowsModal = () => (
-    <Dialog
-      open={openDeleteRowsModal}
-      onClose={() => setOpenDeleteRowsModal(false)}
-    >
-      <DialogTitle>Delete Talents</DialogTitle>
-      <DialogContent>
-        <p>Are you sure you want to delete selected talents?</p>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setOpenDeleteRowsModal(false)}>Cancel</Button>
-        <Button onClick={handleDeleteSelectedRows} color='error'>
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
-  )
-  const updateTalent = async talentToUpdate => {
-    setIsLoading(true)
-    setError(null)
-    setOpenSnackbar(null)
-    try {
-      const response = await fetch(
-        `${tanBaseUrl}/api/inkathons/${talentToUpdate.inkathonId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(talentToUpdate),
-        },
-      )
-
-      if (response.ok) {
-        const data = await response.json()
-        setTalentList(prevTalents =>
-          prevTalents.map(talent =>
-            talent.inkathonId === data.inkathonId ? data : talent,
-          ),
-        )
-        setOpenSnackbar('Talent updated successfully!')
-        setError(null)
-      }
-    } catch (error) {
-      console.error('Error updating talent:', error)
-      setError(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-  const deleteTalent = async talentId => {
-    setIsLoading(true)
-    setError(null)
-    setOpenSnackbar(null)
-    try {
-      const response = await fetch(
-        `${tanBaseUrl}/api/inkathons/${talentId}`,
-        {
-          method: 'DELETE',
-        },
-      )
-
-      if (response.ok) {
-        setTalentList(prevTalents =>
-          prevTalents.filter(talent => talent.talentId !== talentId),
-        )
-        setOpenSnackbar('Talent deleted successfully!')
-        setError(null)
-      }
-    } catch (error) {
-      console.error('Error deleting talent:', error)
-      setError(error.message)
-    } finally {
-      setIsLoading(false)
-    }
-    location.reload()
-  }
-  const handleDeleteSelectedRows = async () => {
-    setOpenSnackbar(null)
-    setError(null)
-    setIsLoading(true)
-    setOpenDeleteRowsModal(false)
-
-    let count = 0
-    try {
-      for (const row of selectedRows) {
-        await deleteTalent(row.inkathonId)
-        count++
-      }
-    } catch (error) {
-      setError()
-      setError(`Failed to delete talent(s): ${error.message}`)
-    }
-
-    setRowSelection([])
-    setOpenSnackbar(`${count} talent(s) deleted successfully.`)
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${tanBaseUrl}/api/inkathons`)
-        const data = await response.json()
-        setTalentList(data)
+        const response = await fetch(`${tanBaseUrl}/api/inkathons`,{
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
+        if (response.status !== 200) {
+          setInkathonsList([]) // or set to null
+        } else {
+          const data = await response.json()
+          setInkathonsList(data)
+        }
       } catch (error) {
         console.error('Error fetching data:', error)
         setError(error.message)
@@ -277,7 +239,7 @@ const InkathonTable = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: talentList,
+    data: inkathonList,
     enableRowSelection: true,
     initialState: { columnVisibility: { talentId: true, } },
     isLoading,
@@ -289,8 +251,11 @@ const InkathonTable = () => {
         <IconButton onClick={() => console.info('Edit')}>
           <EditIcon />
         </IconButton>
-        <IconButton onClick={() => console.info('Delete')}>
+        <IconButton onClick={() => {
+          setInkathonIdToDelete(row.original.inkathonId)
+          setOpenInkathonDeleteModal(true)}}>
           <DeleteIcon />
+          
         </IconButton>
       </Box>
     ),
@@ -310,43 +275,6 @@ const InkathonTable = () => {
       table.setEditingRow(null)
     },
 
-    renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
-      const hasErrors = columns.some(
-        accessorKey => validationErrors[accessorKey],
-      )
-      return (
-        <>
-          <DialogTitle variant='h5' sx={{ textAlign: 'center' }}>
-            Create New Talent
-          </DialogTitle>
-          <DialogContent
-            sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-          >
-            {internalEditComponents.map((component, index) => (
-              <div key={index}>{component}</div>
-            ))}
-
-            {columns.map(
-              accessorKey =>
-                validationErrors[accessorKey] && (
-                  <FormHelperText key={accessorKey} error>
-                    {validationErrors[accessorKey]}
-                  </FormHelperText>
-                ),
-            )}
-          </DialogContent>
-          <DialogActions>
-            <MRT_EditActionButtons
-              variant='text'
-              table={table}
-              row={row}
-              disabled={hasErrors}
-            />
-          </DialogActions>
-        </>
-      )
-    },
-    
     renderTopToolbarCustomActions: ({ table }) => {
       const selectedRows = table
         .getSelectedRowModel()
@@ -354,6 +282,14 @@ const InkathonTable = () => {
 
       return (
         <div className='flex gap-5'>
+          <Button
+            variant='contained'
+            onClick={() => {
+              setOpenCreateInkathonForm(true)
+            }}
+          >
+            Create New Inkathon
+          </Button>
           <Button
             variant='contained'
             color='error'
@@ -383,11 +319,16 @@ const InkathonTable = () => {
       {!isLoading && (
         <MaterialReactTable
           table={table}
-          updateTalent={updateTalent}
         />
       )}
-      {renderDeleteModal()}
-      {renderDeleteRowsModal()}
+      {openCreateInkathonForm && (
+                <AddInkathon
+                  openModal={openCreateInkathonForm}
+                  setOpenModal={setOpenCreateInkathonForm}
+                  createInkathon={createInkathon}
+                />
+              )}
+      {renderInkathonDeleteModal()}
       <Snackbar
         open={!!openSnackbar} // Convert openSnackbar to a boolean value
         autoHideDuration={5000}

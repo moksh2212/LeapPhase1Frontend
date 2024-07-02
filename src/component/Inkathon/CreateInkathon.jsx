@@ -3,6 +3,7 @@ import {CreateProjectForm} from './CreateProjectForm'
 import {CreateTeamForm} from './CreateTeamForm'
 import {UpdateProjectForm} from './UpdateProjectForm'
 import {UpdateTeamForm} from './UpdateTeamForm'
+import { useSelector } from 'react-redux'
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -53,7 +54,7 @@ export default function CreateInkathon() {
   const [projectTitles, setProjectTitles] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
-
+  const token = useSelector(state => state.user.token)
 
 
 
@@ -114,7 +115,7 @@ export default function CreateInkathon() {
     const teamId = cell.getValue()
 
     // Construct the URL with the Inkathon ID as a query parameter
-    const url = `?tab=createinkathon&id=${teamId}`
+    const url = `?tab=teamtabinkathon&id=${teamId}`
 
     return (
       <Box display='flex' justifyContent='center'>
@@ -134,50 +135,55 @@ export default function CreateInkathon() {
     setIsLoading(true)
     setError(null)
     setOpenSnackbar(null)
-
+    console.log(formData)
     try {
-      const response = await fetch(`${tanBaseUrl}/assignments/Create`, {
+      const response = await fetch(`${tanBaseUrl}/api/projects/create/${inkathonId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: formData,
+        
       })
+      console.log(response)
       if (response.ok) {
-        setError(null)
+        alert('Project Created successfully.')
         const data = await response.json()
         setProjectList(prevProjects => [...prevProjects, data])
-        setOpenSnackbar('Project created successfully!')
+        setIsLoading(false)
+      } else {
+        alert('Failed to Create Project')
+        setIsLoading(false)
       }
     } catch (error) {
-      console.error('Error creating Project:', error)
-      setError(error.message)
-    } finally {
-      setIsLoading(false)
+      console.log(error)
     }
   }
-  const updateProject = async formData => {
+  const updateProject = async (formData,projectId) => {
     setOpenUpdateProjectForm(false)
     setIsLoading(true)
     setError(null)
     setOpenSnackbar(null)
 
     try {
-      const response = await fetch(`${tanBaseUrl}/assignments/Create`, {
-        method: 'POST',
+      const response = await fetch(`${tanBaseUrl}/api/projects/update/${projectId}`, {
+        method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: formData,
       })
       if (response.ok) {
         setError(null)
         const data = await response.json()
-        setProjectList(prevProjects => [...prevProjects, data])
-        setOpenSnackbar('Project created successfully!')
+        setProjectList(prevProjects =>
+          prevProjects.map(project =>
+            project.projectId === data.projectId ? data : project,
+          ),)
+        setOpenSnackbar('Project updated successfully!')
       }
     } catch (error) {
-      console.error('Error creating Project:', error)
+      console.error('Error updating Project:', error)
       setError(error.message)
     } finally {
       setIsLoading(false)
@@ -194,6 +200,9 @@ export default function CreateInkathon() {
     try {
       const response = await fetch(`${tanBaseUrl}/api/projects/delete/${projectId}`, {
         method: 'DELETE',
+        headers:{
+          Authorization: `Basic ${token}`,
+        },
       })
 
       if (response.ok) {
@@ -231,7 +240,6 @@ export default function CreateInkathon() {
     </Dialog>
   )
 
-
   const createTeam = async formData => {
     setOpenCreateProjectForm(false)
     setIsLoading(true)
@@ -243,6 +251,7 @@ export default function CreateInkathon() {
       const response = await fetch(`${tanBaseUrl}/api/teams/create/${inkathonId}/${formData.projectId}`, {
         method: 'POST',
         headers: {
+          Authorization: `Basic ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
@@ -252,6 +261,7 @@ export default function CreateInkathon() {
         const data = await response.json()
         setTeamList(prevTeams => [...prevTeams, data])
         setOpenSnackbar('Team created successfully!')
+        setIsLoading(false)
       }
     } catch (error) {
       console.error('Error creating Team:', error)
@@ -267,9 +277,10 @@ export default function CreateInkathon() {
     setOpenSnackbar(null)
 
     try {
-      const response = await fetch(`${tanBaseUrl}/assignments/Create`, {
-        method: 'POST',
+      const response = await fetch(`${tanBaseUrl}/api/teams/${formData.teamId}/${formData.projectId}`, {
+        method: 'PUT',
         headers: {
+          Authorization: `Basic ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
@@ -277,11 +288,11 @@ export default function CreateInkathon() {
       if (response.ok) {
         setError(null)
         const data = await response.json()
-        setProjectList(prevProjects => [...prevProjects, data])
-        setOpenSnackbar('Project created successfully!')
+        setTeamList(prevTeams => [...prevTeams, data])
+        setOpenSnackbar('Team Updated successfully!')
       }
     } catch (error) {
-      console.error('Error creating Project:', error)
+      console.error('Error updating Team:', error)
       setError(error.message)
     } finally {
       setIsLoading(false)
@@ -297,7 +308,11 @@ export default function CreateInkathon() {
     setOpenSnackbar(null)
     try {
       const response = await fetch(`${tanBaseUrl}/api/teams/delete/${teamId}`, {
+        
         method: 'DELETE',
+        headers:{
+          Authorization: `Basic ${token}`,
+        }
       })
 
       if (response.ok) {
@@ -357,6 +372,7 @@ export default function CreateInkathon() {
         {
           method: 'PUT',
           headers: {
+            Authorization: `Basic ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(talentToUpdate),
@@ -384,9 +400,21 @@ export default function CreateInkathon() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const inkResponse = await fetch(`${tanBaseUrl}/api/inkathons/${inkathonId}`)
-        const projectResponse = await fetch(`${tanBaseUrl}/api/projects/getInkathonProject/${inkathonId}`)
-        const teamResponse = await fetch(`${tanBaseUrl}/api/teams/getInkathonTeams/${inkathonId}`)
+        const inkResponse = await fetch(`${tanBaseUrl}/api/inkathons/${inkathonId}`,{
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
+        const projectResponse = await fetch(`${tanBaseUrl}/api/projects/getInkathonProject/${inkathonId}`,{
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
+        const teamResponse = await fetch(`${tanBaseUrl}/api/teams/getInkathonTeams/${inkathonId}`,{
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
   
         if (inkResponse.status === 204) {
           setCurrInkathon(null) // or set to an empty object {}
@@ -395,7 +423,7 @@ export default function CreateInkathon() {
           setCurrInkathon(inkathon)
         }
   
-        if (teamResponse.status === 204) {
+        if (teamResponse.status !== 200) {
           setTeamList([]) // or set to null
         } else {
           const teams = await teamResponse.json()
@@ -513,7 +541,7 @@ export default function CreateInkathon() {
           size: 100,
         },    
         {
-          accessorKey: 'projectId', //hey a simple column for once
+          accessorKey: 'projects.projectId', //hey a simple column for once
           header: 'ProjectId',
           enableColumnFilter: false,
           enableSorting: false,
@@ -601,7 +629,6 @@ export default function CreateInkathon() {
             onClick={() => {
               setOpenCreateProjectForm(true)
             }}
-            disabled={selectedRows.length !== 0}
           >
             Create New Project
           </Button>

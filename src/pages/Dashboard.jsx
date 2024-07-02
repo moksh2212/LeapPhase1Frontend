@@ -24,6 +24,8 @@ import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStag
 import CampusCalendarView from '../component/CampusCalendar&InterviewScheduling/CampusCalendarView'
 import InkathonDatabase from '../component/Inkathon/InkathonDatabase'
 import CreateInkathon from '../component/Inkathon/CreateInkathon'
+import TeamTabInkathon from '../component/Inkathon/TeamTabInkathon'
+
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
@@ -62,15 +64,13 @@ export default function Dashboard() {
           {tab === 'IndividualAssesments' && <IndividualAssesments />}
           {tab === 'attendance-academic' && <AcademicInternsAttendance />}
           {tab === 'assessmenttoogle' && <AssesmentToogle />}
-          {tab === 'individualtoogleassesments' && (
-            <IndividualToogleAssesments />
-          )}
- {tab === 'alumni' && <Alumni />}
+          {tab === 'individualtoogleassesments' && (<IndividualToogleAssesments />)}
+          {tab === 'alumni' && <Alumni />}
           {tab === 'EmployeewiseAssignment' && <EmployeewiseAssignment />}
-
           {tab === 'Perform' && <Perform />}
           {tab === 'inkathon' && <InkathonDatabase />}
           {tab === 'createinkathon' && <CreateInkathon />}
+          {tab === 'teamtabinkathon' && <TeamTabInkathon />}
           {tab==='CandidateAssesmentsCombined' && <CandidateAssesmentsCombined/>}
           {tab === 'campus-calendar' && <CampusCalendarView />}
         </div>

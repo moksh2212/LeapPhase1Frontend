@@ -10,39 +10,15 @@ import {
   Alert,
 } from 'flowbite-react'
 
-export function CreateProjectForm({ openModal, setOpenModal, createAssignment }) {
-  const [assignmentWeek, setAssignmentWeek] = useState('')
-  const [projectName, setProjectName] = useState('')
+export function CreateProjectForm({ openModal, setOpenModal, createProject }) {
+
+  const [projectTitle, setProjectTitle] = useState('')
   const [projectDescription, setProjectDescription] = useState('')
-  const [assignmentFile, setAssignmentFile] = useState(null)
-  const [assignmentFileName, setAssignmentFileName] = useState(null)
-  const [assignedTo, setAssignedTo] = useState('');
-  const [assignmentFileUrl, setAssignmentFileUrl] = useState(null)
-  const [assignmentFileUploadProgress, setAssignmentFileUploadProgress] =
-    useState(null)
-  const [assignmentFileUploadError, setAssignmentFileUploadError] =
-    useState(null)
-  const [assignmentFileUploading, setAssignmentFileUploading] = useState(false)
-  const [talentList, setTalentList] = useState([])
-  const [selectedTalents, setSelectedTalents] = useState([]);
-  const [FilteredTalentList, setFilteredTalentList] = useState([])
-  const tanBaseUrl = process.env.BASE_URL
-  const urlParams = new URLSearchParams(location.search)
-  const inkathonId = urlParams.get('id')
+  const [projectFile, setProjectFile] = useState(null)
+
   useEffect(() => {
     fetchTalentList()
   }, [])
-  const technologySkills = {
-    "Java": ["Java", "Spring", "Hibernate"],
-    "React": ["React", "JavaScript", "HTML", "CSS"],
-    "JavaScript": ["JavaScript", "Node.js", "Express.js"],
-    "UI 5": ["UI 5", "SAPUI5", "HTML", "CSS"],
-    "Integration": ["Integration", "API", "Microservices"],
-    // Add SolidWorks, AutoCAD, ANSYS for relevant technologies
-    "Mechanical Engineering": ["SolidWorks", "AutoCAD", "ANSYS"],
-    "Civil Engineering": ["AutoCAD", "Revit", "STAAD.Pro"],
-    // Add more technologies and their required skills as needed
-};
 
 
   const fetchTalentList = async () => {
@@ -58,77 +34,19 @@ export function CreateProjectForm({ openModal, setOpenModal, createAssignment })
       console.error('Error fetching talent list:', error)
     }
   }
-  const handleselectedtalent = (talent, index) => {
-    const newselectedtalent = selectedTalents.filter((tal, i) => (
-      tal != talent
-    ))
-    setSelectedTalents(newselectedtalent)
-  }
   const handleSubmit = async e => {
     e.preventDefault()
-
-    const formData = {
-      projectName,
-      projectDescription,
-      assignmentFileName,
-      assignmentFileUrl,
-    }
-    console.log(formData)
-    handleFileUpload(formData);
-  }
-
-  const handleFileUpload = async (formData) => {
-    try {
-      if (!assignmentFile) {
-        setAssignmentFileUploadError('No file selected')
-        return
-      }
-
-      if (
-        !assignmentFile.type.startsWith('application/pdf') ||
-        assignmentFile.size > 2 * 1024 * 1024
-      ) {
-        setAssignmentFileUploadError(
-          'File must be of type pdf and less than 4mb',
-        )
-        setAssignmentFile(null)
-        setAssignmentFileUrl(null)
-        setAssignmentFileUploadProgress(null)
-        console.log('File must be of type pdf')
-        return
-      }
-
-      setAssignmentFileUploadError(null)
-      setAssignmentFileUploading(true)
-
-      const formData = new FormData()
-      
+    const formData = new FormData()
       // Append the string to the FormData
-      formData.append('projectName', projectName );
+      formData.append('projectTitle', projectTitle );
       formData.append('projectDescription', projectDescription );
-      formData.append('projectDescriptionFile', assignmentFile )
-
-      const response = await fetch(`${tanBaseUrl}/api/projects/create/${inkathonId}`, {
-        method: 'POST',
-        body: formData,
-      })
-      console.log(response)
-      if (response.ok) {
-        alert('File uploaded successfully.')
-        window.location.reload()
-      } else {
-        alert('Failed to upload file.')
-      }
-    } catch (error) {
-      setAssignmentFileUploadError('Could not upload File')
-      console.log(error)
-    }
-
+      formData.append('projectFile', projectFile )
+    console.log(formData)
+    createProject(formData);
   }
 
   const handleFileChange = async e => {
-    setAssignmentFile(e.target.files[0])
-    setAssignmentFileName(e.target.files[0].name)
+    setProjectFile(e.target.files[0])
   }
 
   return (
@@ -138,14 +56,14 @@ export function CreateProjectForm({ openModal, setOpenModal, createAssignment })
         <form onSubmit={handleSubmit} className='flex max-w-md flex-col gap-4'>
           <div>
             <div className='mb-2 block'>
-              <Label htmlFor='projectName' value='Project Name' />
+              <Label htmlFor='projectTitle' value='Project Name' />
             </div>
             <TextInput
-              id='projectName'
+              id='projectTitle'
               type='text'
               placeholder='Enter project name'
-              value={projectName}
-              onChange={e => setProjectName(e.target.value)}
+              value={projectTitle}
+              onChange={e => setProjectTitle(e.target.value)}
               required
               size={'sm'}
             />
@@ -178,12 +96,6 @@ export function CreateProjectForm({ openModal, setOpenModal, createAssignment })
               size={'sm'}
             />
           </div>
-          {assignmentFileUploadProgress && (
-            <Progress progress={assignmentFileUploadProgress} />
-          )}
-          {assignmentFileUploadError && (
-            <Alert color={'failure'}>{assignmentFileUploadError}</Alert>
-          )}
           <Button type='submit' color={'blue'} size={'sm'}>
             Create Inkathon Project
           </Button>

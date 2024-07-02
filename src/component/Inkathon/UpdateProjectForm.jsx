@@ -47,25 +47,11 @@ export function UpdateProjectForm({ openModal, setOpenModal, updateProject , pro
     const formData = new FormData()
       
       // Append the string to the FormData
-      formData.append('projectName', projectTitle );
+      formData.append('projectTitle', projectTitle );
       formData.append('projectDescription', projectDescription );
-      formData.append('projectDescriptionFile', projectFile )
-      try{
-      const response = await fetch(`${tanBaseUrl}/api/projects/update/${projectId}`, {
-        method: 'PUT',
-        body: formData,
-      })
-      console.log(response)
-      if (response.ok) {
-        alert('File uploaded successfully.')
-        window.location.reload()
-      } else {
-        alert('Failed to upload file.')
-      }
-    } catch (error) {
-      setAssignmentFileUploadError('Could not upload File')
-      console.log(error)
-    }
+      formData.append('projectFile', projectFile )
+      console.log( formData)
+      updateProject( formData ,projectId);
     
   }
 
@@ -161,7 +147,7 @@ export function UpdateProjectForm({ openModal, setOpenModal, updateProject , pro
               type='text'
               placeholder=''
               value={projectDescription}
-              onChange={e => setProjectTitle(e.target.value)}
+              onChange={e => setProjectDescription(e.target.value)}
               required
               size={'sm'}
             />

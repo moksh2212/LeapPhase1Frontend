@@ -7,9 +7,9 @@ import {
   Select,
 } from 'flowbite-react'
 
-export function UpdateTeamForm({ openModal, setOpenModal, createTeam ,teamForm, projectTitles }) {
+export function UpdateTeamForm({ openModal, setOpenModal, updateTeam ,teamForm, projectTitles }) {
   const [teamId, setTeamId] = useState(teamForm.teamId)
-  const [projectId, setProjectId] = useState('')
+  const [projectId, setProjectId] = useState(teamForm.projects.projectId)
   const [teamName, setTeamName] = useState(teamForm.teamName)
 
 
@@ -18,11 +18,12 @@ export function UpdateTeamForm({ openModal, setOpenModal, createTeam ,teamForm, 
     e.preventDefault()
 
     const formData = {
-      teamName,
+      projectId,
       teamId,
+      teamName
     }
     console.log(formData)
-    createTeam(formData);
+    updateTeam(formData);
   }
 
   return (
@@ -46,19 +47,22 @@ export function UpdateTeamForm({ openModal, setOpenModal, createTeam ,teamForm, 
           </div>
           <Select
             id='projectTitle'
-            value={teamId}
+            value={projectId}
             onChange={e => setProjectId(e.target.value)}
             required
             size={'sm'}
           >
+            <option value='' disabled selected>
+            ID - {teamForm.projectId}
+            </option>
             {projectTitles.map(project => (
-              <option key={project.teamId} value={project.teamId}>
-                ID - {project.teamId}  - {project.projectTitle}
+              <option key={project.projectId} value={project.projectId}>
+                ID - {project.projectId}  - {project.projectTitle}
               </option>
             ))}
           </Select>
           <Button type='submit' color={'blue'} size={'sm'}>
-            Create Team
+            Update Team
           </Button>
         </form>
       </Modal.Body>

@@ -50,9 +50,12 @@ export function CreateTeamForm({ openModal, setOpenModal, createTeam , projectTi
             required
             size={'sm'}
           >
+            <option value='' disabled selected>
+              Select a project
+            </option>
             {projectTitles.map(project => (
               <option key={project.projectId} value={project.projectId}>
-                ID - {project.projectId}  - {project.projectTitle}
+                ID - {project.projectId} - {project.projectTitle}
               </option>
             ))}
           </Select>
