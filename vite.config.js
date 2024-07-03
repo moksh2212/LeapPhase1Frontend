@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [react()],
   define: {
     // 'process.env.BASE_URL': '"http://localhost:3058"',
-    'process.env.BASE_URL': '"http://192.168.137.190:8080"',
+    'process.env.BASE_URL': '"http://192.168.0.147:8080"',
 
-    'process.env.BASE_URL2': '"http://192.168.137.190:8080"',
+    'process.env.BASE_URL2': '"http://192.168.0.147:8080"',
   },
 })

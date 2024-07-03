@@ -377,7 +377,7 @@ export default function TeamTabInkathon() {
               <br />
               <h2 className='text-3xl text-[#0087D5] font-bold mb-3'>
                 {currTeam && currTeam.manager
-                  ? `PROJECT MANAGER: ${currTeam.manager}`
+                  ? `PROJECT MANAGER: ${currTeam.manager.name}`
                   : ' PROJECT MANAGER: Not Assigned'}
               </h2>
 
