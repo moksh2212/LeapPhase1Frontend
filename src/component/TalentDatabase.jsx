@@ -83,9 +83,6 @@ const TalentTable = () => {
           },
         method: 'PUT',
         body: formData,
-        headers:{
-          Authorization: `Basic ${token}`
-        }
       });
   
       if (!response.ok) {
