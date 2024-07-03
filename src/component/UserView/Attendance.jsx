@@ -62,7 +62,7 @@ const Attendance = () => {
         }
 
         axios
-          .post('http://192.168.0.141:8080/cpm/leaves/addLeave', dataToSend, {
+          .post('http://192.168.0.147:8080/cpm/leaves/addLeave', dataToSend, {
             headers: {
               Authorization: `Basic ${token}`,
             },
@@ -108,7 +108,7 @@ const Attendance = () => {
 
         axios
           .post(
-            'http://192.168.0.141:8080/cpm/regularize/addRegularize',
+            'http://192.168.0.147:8080/cpm/regularize/addRegularize',
             dataToSend,
             {
               headers: {

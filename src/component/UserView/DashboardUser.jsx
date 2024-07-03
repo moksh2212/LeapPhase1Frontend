@@ -22,7 +22,7 @@ const dashboardItems = [
   { title: 'Attendance', icon: EventNote, color: '#ffb74d', link: '/attendance' },
   { title: 'Performance', icon: TrendingUp, color: '#ef5350', link: '/performance' },
   { title: 'Daily Work Tracker', icon: Work, color: '#ab47bc', link: '/daily-work-tracker' },
-  { title: 'Skills', icon: DescriptionTwoTone, color: '#78909c', link: '/skills' },
+  // { title: 'Skills', icon: DescriptionTwoTone, color: '#78909c', link: '/skills' },
 ];
 
 const fadeIn = keyframes`
@@ -119,4 +119,3 @@ function DashboardUser() {
 }
 
 export default DashboardUser;
- 

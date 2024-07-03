@@ -105,4 +105,3 @@ const PerformancePage = () => {
 };
 
 export default PerformancePage;
- 
