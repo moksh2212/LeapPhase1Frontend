@@ -19,7 +19,6 @@ import {
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import { useSelector } from 'react-redux'
 
 const TalentTable = () => {
   const [talentList, setTalentList] = useState([])
