@@ -21,13 +21,13 @@ import EmployeewiseAssignment from '../component/Assignments/EmployeewiseAssignm
 import FinalAssignmentview from '../component/Assignments/FinalAssignmentview'
 import Perform from '../component/Perform'
 import CampusCalendarView from '../component/CampusCalendar&InterviewScheduling/CampusCalendarView'
-import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssesmentsCombined'
+import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssessmentsCombined'
 import TrainingAttendance from '../component/attendancecomponents/TrainingAttendance'
 import Trainers from '../component/Trainers'
 import InkathonDatabase from '../component/Inkathon/InkathonDatabase'
 import CreateInkathon from '../component/Inkathon/CreateInkathon'
 import TeamTabInkathon from '../component/Inkathon/TeamTabInkathon'
-
+import CombinedTalent from '../component/Assesments/CombinedTalent'
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
@@ -76,6 +76,7 @@ export default function Dashboard() {
           {tab==='CandidateAssesmentsCombined' && <CandidateAssesmentsCombined/>}
           {tab === 'campus-calendar' && <CampusCalendarView />}
           {tab === 'candidate-assesment' && <CandidateAssesmentsCombined />}
+          {tab === 'CombinedTalent' && <CombinedTalent />}
         </div>
       </div>
     </>

@@ -139,22 +139,6 @@ getAllAssessments`, {
             size: 100,
             enableEditing: false,
           },
-
-          {
-            accessorKey: 'quantitativeScore',
-            header: 'Quantitative Score',
-            enableColumnFilter: true,
-            enableSorting: true,
-            size: 100,
-          },
-          {
-            accessorKey: 'logicalScore',
-            header: 'Logical Score',
-            enableColumnFilter: true,
-            enableSorting: true,
-            size: 100,
-          },
-
           {
             accessorKey: 'email', //accessorKey used to define `data` column. `id` gets set to accessorKey automatically
             enableClickToCopy: true,
@@ -182,6 +166,22 @@ getAllAssessments`, {
               },
             }),
           },
+          {
+            accessorKey: 'quantitativeScore',
+            header: 'Quantitative Score',
+            enableColumnFilter: true,
+            enableSorting: true,
+            size: 100,
+          },
+          {
+            accessorKey: 'logicalScore',
+            header: 'Logical Score',
+            enableColumnFilter: true,
+            enableSorting: true,
+            size: 100,
+          },
+
+    
           {
             accessorKey: 'codingScore',
             header: 'Coding Score',

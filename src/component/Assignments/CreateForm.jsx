@@ -265,8 +265,8 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
               type="date"
               value={assignmentDuedate}
               onChange={(e) => setAssignmentDuedate(e.target.value)}
-              required
               min={new Date().toISOString().split('T')[0]}
+              required
             />
           </div>
           <div>

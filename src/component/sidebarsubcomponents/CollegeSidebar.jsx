@@ -54,7 +54,7 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
             </Link>
             <Link to='?tab=candidate-assesment'>
               <Sidebar.Item as={'div'} active={tab === 'candidate-assesment'}>
-                Assesments
+                Assessments
               </Sidebar.Item>
             </Link>
             
