@@ -39,7 +39,7 @@ const MonthlyCalendar = () => {
 
   const [attendanceData, setAttendanceData] = useState([])
 
-  const perBaseUrl = process.env.BASE_URL2
+  const perBaseUrl = 'http://192.168.0.147:8080'
 
   const token = useSelector(state=>state.user.token)
 

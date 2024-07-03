@@ -55,7 +55,7 @@ export default function WeeklyCalendarUser() {
   const [startDate, setStartDate] = useState(new Date())
   const [attendanceData, setAttendanceData] = useState([])
   const { currentUser } = useSelector(state => state.user)
-  const perBaseUrl = 'http://192.168.0.141:8080'
+  const perBaseUrl = 'http://192.168.0.147:8080'
   const token = useSelector(state => state.user.token)
   useEffect(() => {
     const fetchAttendanceData = async () => {
@@ -64,9 +64,11 @@ export default function WeeklyCalendarUser() {
 
         const urlParams = new URLSearchParams(window.location.search)
         const fetched = urlParams.get('talentId')
-        const start = new Date(startDate)
-        const end = new Date(startDate)
-        end.setDate(start.getDate() + 6)
+        const currentDate = new Date(startDate);
+        const start = new Date(currentDate);
+        start.setDate(currentDate.getDate() - currentDate.getDay());
+        const end = new Date(currentDate);
+        end.setDate(currentDate.getDate() + (6 - currentDate.getDay()));
         // console.log(
         //   `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
         //     start,
@@ -76,11 +78,12 @@ export default function WeeklyCalendarUser() {
         const response = await axios.get(
           `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
             start,
-          )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,{
-            headers:{
-              Authorization: `Basic ${token}`
-            }
-          }
+          )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          },
         );
         setAttendanceData(response.data)
       } catch (error) {
@@ -89,7 +92,7 @@ export default function WeeklyCalendarUser() {
     }
 
     fetchAttendanceData()
-  }, [startDate, currentUser])
+  }, [startDate,token, currentUser,perBaseUrl])
 
   const rows = attendanceData.map(attendance =>
     createData(
@@ -123,14 +126,18 @@ export default function WeeklyCalendarUser() {
   const decreaseWeek = () => {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() - 7)
+    newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
     setStartDate(newStartDate)
-  }
+    
+}
 
-  const increaseWeek = () => {
-    const newStartDate = new Date(startDate)
-    newStartDate.setDate(newStartDate.getDate() + 7)
-    setStartDate(newStartDate)
-  }
+const increaseWeek = () => {
+  const newStartDate = new Date(startDate)
+  newStartDate.setDate(newStartDate.getDate() + 7)
+  newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
+  setStartDate(newStartDate)
+  
+}
 
   const formatDate = date => {
     const year = date.getFullYear()
@@ -139,11 +146,15 @@ export default function WeeklyCalendarUser() {
     return `${year}-${month}-${day}`
   }
 
-  const startOfWeek = new Date(startDate)
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
-  const endOfWeek = new Date(startDate)
-  endOfWeek.setDate(startOfWeek.getDate() + 6)
+  const currentDate = new Date(startDate); // Your input date
+  const startOfWeek = new Date(currentDate);
+  const endOfWeek = new Date(currentDate);
 
+  startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+ 
+  // Adjust to the end of the week (Saturday)
+  endOfWeek.setDate(currentDate.getDate() + (6 - currentDate.getDay()));
+ 
   return (
     <div>
       <div

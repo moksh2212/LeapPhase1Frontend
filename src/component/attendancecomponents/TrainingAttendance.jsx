@@ -32,7 +32,7 @@ import {
 } from '@mui/material'
 import { useSelector } from 'react-redux'
 
-const baseUrl = process.env.BASE_URL2
+const baseUrl = 'http://192.168.0.147:8080'
 
 const TrainingAttendance = () => {
   const [data, setData] = useState([])
@@ -274,7 +274,7 @@ const TrainingAttendance = () => {
     enableRowSelection: true,
     enableCellActions: true,
     initialState: {
-      showColumnFilters: false,
+      showColumnFilters: true,
       showGlobalFilter: true,
       columnPinning: {
         left: ['mrt-row-expand', 'mrt-row-select'],
@@ -319,7 +319,7 @@ const TrainingAttendance = () => {
     renderTopToolbar: ({ table }) => {
       return (
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
-          <div className='flex justify-between mb-2 rounded-md'>
+          <div className='flex justify-between mb-2 bg-[#F9FAFB] rounded-md'>
             <h2 className={`text-3xl text-[#0087D5] font-bold my-auto p-2`}>
               Training Attendance
             </h2>
@@ -383,7 +383,7 @@ const TrainingAttendance = () => {
                 </DemoContainer>
               </LocalizationProvider>
             </div>
-            <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginX:5}}>
+            <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <MRT_GlobalFilterTextField table={table} />
               <MRT_ToggleFiltersButton table={table} />
             </Box>

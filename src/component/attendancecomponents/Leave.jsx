@@ -179,7 +179,7 @@ const Leave = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const [tabValue, setTabValue] = useState(0) // State for managing active tab
-  const API_URL = process.env.BASE_URL2
+  const API_URL = 'http://192.168.0.147:8080'
   const token = useSelector(state => state.user.token)
   useEffect(() => {
     fetchLeaveRequests()
