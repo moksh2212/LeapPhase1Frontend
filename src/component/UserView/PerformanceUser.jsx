@@ -1,7 +1,7 @@
 // src/PerformancePage.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
-import { Container, Grid, Typography, Paper, Avatar, Card, CardContent, CardHeader, Box } from '@mui/material';
+import { Container, Grid, Typography, Paper, Snackbar, Alert } from '@mui/material';
 import {
   Chart as ChartJS,
   ArcElement,
@@ -9,86 +9,100 @@ import {
   Legend,
   Title,
 } from 'chart.js';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
-// Register the required components
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const PerformancePage = () => {
-  // Dummy data for the pie charts
-  const data = {
-    assessment: 75,
-    assignment: 85,
-    attendance: 90,
+  const token = useSelector(state => state.user.token);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const { currentUser } = useSelector(state => state.user);
+  
+  useEffect(() => {
+    // Fetch performance data from the backend
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://192.168.0.147:8080/cpm/performance/getPerformanceById?talentId=${currentUser.talentId}`, {
+          headers: {
+            Authorization: `Basic ${token}`
+          }
+        });
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching performance data:', error);
+        setError('Error fetching performance data');
+        setOpen(true);
+      }
+    };
+
+    fetchData();
+  }, [token, currentUser]);
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
-  const pieData = {
+  const pieData = data ? {
     labels: ['Assessment', 'Assignment', 'Attendance'],
     datasets: [
       {
         label: 'Performance',
-        data: [data.assessment, data.assignment, data.attendance],
+        data: [data.assessmentScore, data.assignmentScore, data.averageAttendance],
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
       },
     ],
-  };
-
-  const employee = {
-    name: 'Moksh Thakran',
-    position: 'Software Engineer',
-    department: 'Development',
-    image: '<img src="data:image/png;base64,rg+vXfzxmQx/4Pdl9POsyfTk0cPOniSaFvMXwQBHaPbk1pW18jIUdvj44A6dkZMj/hj/PvIjXuOmve2Bo4yYmYiNWJgxzpwORpT1xAtbaEGEYN6RHj3R1lMRSrOOZOlu/jWzZvtcua8jZRwhCFtF6I9f26BIWv2x8aung6CR/+CJUeW8I2pjJyvwhvA8ui0AahZyPH0N1phnUQ9S7SAsvQRj6m8vnKxWeeR8yGNzEcwzBn36kOgYeTig7Nj5HBscoLAOQxCDKJjA8hLA4bEQ/IxsRumVXqGSwr4UtTf8/Liiz47zhf0AAAAAASUVORK5CYII=" alt="image" iscopyblocked="false">', // Replace with actual image URL
-  };
+  } : null;
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
-      <Card sx={{ mb: 5 }}>
-        <CardHeader
-          avatar={<Avatar alt={employee.name} src={employee.image} sx={{ width: 100, height: 100 }} />}
-          title={<Typography variant="h5">{employee.name}</Typography>}
-          subheader={
-            <Typography variant="subtitle1" color="text.secondary">
-              {employee.position}, {employee.department}
-            </Typography>
-          }
-        />
-      </Card>
-
-      <Typography variant="h4" align="center" gutterBottom>
+      <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', mb: 3, color: '#12C2E9' }}>
         Performance Overview
       </Typography>
 
-      <Grid container spacing={4} justifyContent="center">
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2 }}>
+      {data && (
+        <Grid container spacing={4} justifyContent="center">
+          <Grid item xs={12} md={6}>
             <Pie data={pieData} />
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Grid container spacing={4}>
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h6">Average Assessment Score</Typography>
-                <Typography variant="h4">{data.assessment}%</Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h6">Average Assignment Score</Typography>
-                <Typography variant="h4">{data.assignment}%</Typography>
-              </Paper>
-            </Grid>
-            <Grid item xs={12}>
-              <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h6">Attendance Score</Typography>
-                <Typography variant="h4">{data.attendance}%</Typography>
-              </Paper>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Grid container spacing={4}>
+              <Grid item xs={12}>
+                <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
+                  <Typography variant="h6">Average Assessment Score</Typography>
+                  <Typography variant="h4">{data.assessmentScore}%</Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12}>
+                <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
+                  <Typography variant="h6">Average Assignment Score</Typography>
+                  <Typography variant="h4">{data.assignmentScore}%</Typography>
+                </Paper>
+              </Grid>
+              <Grid item xs={12}>
+                <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
+                  <Typography variant="h6">Attendance Score</Typography>
+                  <Typography variant="h4">{data.averageAttendance}%</Typography>
+                </Paper>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      )}
+
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleClose} severity="error" variant='filled' sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
 
 export default PerformancePage;
+ 

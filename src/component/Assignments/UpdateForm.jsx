@@ -211,6 +211,7 @@ export function UpdateForm({ openModal, setOpenModal, createAssignment, assnForm
               value={assignmentDuedate}
               onChange={e => setAssignmentDuedate(e.target.value)}
               required
+              min={new Date().toISOString().split('T')[0]}
             />
           </div>
           <div>

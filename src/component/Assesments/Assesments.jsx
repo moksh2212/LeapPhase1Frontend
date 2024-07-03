@@ -449,7 +449,7 @@ const TalentTable = () => {
           <AccountCircle />
         </ListItemIcon>
         <Link to={`/dashboard?tab=IndividualAssesments&talentId=${row.original.talentId}`}>
-          <Typography variant="inherit">Assesments</Typography>
+          <Typography variant="inherit">Assessments</Typography>
         </Link>
       </MenuItem>,
     ],
@@ -536,7 +536,7 @@ const TalentTable = () => {
                 <div>
                   <ButtonGroup>
                   <div className='flex justify-center items-center p-2 border-3 border-gray-300 rounded bg-blue-500 text-gray-700 gap-1 mr-3'>
-                  <h2 className="text-white font-bold">Assesment Wise View</h2>
+                  <h2 className="text-white font-bold">Assessment Wise View</h2>
 
                  
                 <div>
@@ -592,7 +592,7 @@ const TalentTable = () => {
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
       <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>
-        Assesments
+        Assessments
       </h2><br></br><br></br>
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>

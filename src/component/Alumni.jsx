@@ -18,6 +18,7 @@ import {
 } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
+import { useSelector } from 'react-redux'
 
 const Alumni = () => {
   const [talentList, setTalentList] = useState([])
@@ -33,6 +34,8 @@ const Alumni = () => {
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
   const tanBaseUrl = process.env.BASE_URL
+  const token = useSelector(state => state.user.token)
+
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -53,6 +56,11 @@ const Alumni = () => {
     try {
       const response = await fetch(
         `${tanBaseUrl}/cpm/talents/viewmarksheet/${talentId}`,
+        {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        },
       )
       if (!response.ok) {
         throw new Error('Failed to fetch marksheet')
@@ -65,51 +73,57 @@ const Alumni = () => {
     }
   }
   const uploadMarksheet = async (talentId, file) => {
-    const formData = new FormData();
-    formData.append('marksheetsSemwise', file);
-  
+    const formData = new FormData()
+    formData.append('marksheetsSemwise', file)
+
     try {
-      const response = await fetch(`${tanBaseUrl}/cpm/talents/uploadmarksheet/${talentId}`, {
-        method: 'PUT',
-        body: formData,
-      });
-  
+      const response = await fetch(
+        `${tanBaseUrl}/cpm/talents/uploadmarksheet/${talentId}`,
+        {
+          method: 'PUT',
+          body: formData,
+        },
+      )
+
       if (!response.ok) {
-        throw new Error('Failed to upload marksheet');
+        throw new Error('Failed to upload marksheet')
       }
-  
-      console.log('Marksheet uploaded successfully');
+
+      console.log('Marksheet uploaded successfully')
     } catch (error) {
-      console.error('Error uploading marksheet:', error);
+      console.error('Error uploading marksheet:', error)
     }
-    location.reload();
+    location.reload()
   }
   // MarksheetCell component with prop validation
   const MarksheetCell = ({ row }) => {
     const talentId = row.original.talentId
-  
+
     const handleViewMarksheet = async () => {
       await fetchMarksheet(talentId)
     }
-  
+
     return (
-      <Box display="flex" justifyContent="center">
-      <ButtonGroup variant="contained" size="small">
-      <Button onClick={handleViewMarksheet} disabled={!row.original.marksheetsSemwise}>
-        {row.original.marksheetsSemwise ? 'View' : 'NA'}
-      </Button>
-      <Button
-        component="label"
-      >
-        <input
-          type="file"
-          hidden
-          accept=".pdf"
-          onChange={(event) => uploadMarksheet(talentId, event.target.files[0])}
-        />
-        {row.original.marksheetsSemwise ? 'Update' : 'Upload'}
-      </Button>
-    </ButtonGroup>
+      <Box display='flex' justifyContent='center'>
+        <ButtonGroup variant='contained' size='small'>
+          <Button
+            onClick={handleViewMarksheet}
+            disabled={!row.original.marksheetsSemwise}
+          >
+            {row.original.marksheetsSemwise ? 'View' : 'NA'}
+          </Button>
+          <Button component='label'>
+            <input
+              type='file'
+              hidden
+              accept='.pdf'
+              onChange={event =>
+                uploadMarksheet(talentId, event.target.files[0])
+              }
+            />
+            {row.original.marksheetsSemwise ? 'Update' : 'Upload'}
+          </Button>
+        </ButtonGroup>
       </Box>
     )
   }
@@ -296,7 +310,7 @@ const Alumni = () => {
         id: 'talent',
         columns: [
           {
-            accessorKey: 'talentId',   
+            accessorKey: 'talentId',
             header: 'Talent Id',
             enableEditing: false,
             enableGlobalFilter: false,
@@ -942,36 +956,35 @@ const Alumni = () => {
     columns,
     data: talentList,
     enableRowSelection: true,
-    initialState : {
-        columnVisibility: {
-            
-            alternateNumber: false,
-            tenthPercent: false,
-            twelthPercent: false,
-            cgpaMasters: false,
-            cgpaUndergrad: false,
-            marksheet: false,
-            currentLocation: false,
-            panNumber: false,
-            aadhaarNumber: false,
-            fatherName: false,
-            motherName: false,
-            dob: false,
-            talentSkills: false,
-            talentEmploymentType: false,
-            talentCategory: false,
-        }
+    initialState: {
+      columnVisibility: {
+        alternateNumber: false,
+        tenthPercent: false,
+        twelthPercent: false,
+        cgpaMasters: false,
+        cgpaUndergrad: false,
+        marksheet: false,
+        currentLocation: false,
+        panNumber: false,
+        aadhaarNumber: false,
+        fatherName: false,
+        motherName: false,
+        dob: false,
+        talentSkills: false,
+        talentEmploymentType: false,
+        talentCategory: false,
       },
+    },
     isLoading,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
     enableGlobalFilter: true,
     positionGlobalFilter: 'left',
     muiSearchTextFieldProps: {
-        autoComplete: true,
-        placeholder: 'Filter By College Name',
-        sx: { minWidth: '300px' },
-        variant: 'outlined',
+      autoComplete: true,
+      placeholder: 'Filter By College Name',
+      sx: { minWidth: '300px' },
+      variant: 'outlined',
     },
     onRowSelectionChange: setRowSelection,
     state: { rowSelection },
@@ -1127,10 +1140,7 @@ const Alumni = () => {
         .getSelectedRowModel()
         .flatRows.map(row => row.original)
 
-      return (
-        <div className='flex gap-5'>
-        </div>
-      )
+      return <div className='flex gap-5'></div>
     },
   })
 

@@ -568,7 +568,7 @@ const AssesmentToogle = () => {
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
       <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>
-        Assesments
+        Assessments
       </h2><br></br><br></br>
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>

@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 
 export default function InkathonSidebar({ setShowInkathonSidebar }) {
   const [tab, setTab] = useState('')
-  const {currentUser} = useSelector(state=>state.user)
+  const { currentUser } = useSelector(state => state.user)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
@@ -29,22 +29,17 @@ export default function InkathonSidebar({ setShowInkathonSidebar }) {
       >
         <Sidebar.Items>
           <Sidebar.ItemGroup>
-              <Sidebar.Item
-                as={'div'}
-                label={currentUser.adminCheck? 'Admin':'User'}
-                labelColor='dark'
-              >
-                {currentUser.name}
-              </Sidebar.Item>
+            <Sidebar.Item
+              as={'div'}
+              label={currentUser.adminCheck ? 'Admin' : 'User'}
+              labelColor='dark'
+            >
+              {currentUser.name}
+            </Sidebar.Item>
             <Link to='?tab=inkathon'>
               <Sidebar.Item as={'div'} active={tab === 'inkathon'}>
-              Inkathon Database
+                Inkathon Database
               </Sidebar.Item>
-            </Link>
-            <Link to='?tab=createinkathon'>
-            <Sidebar.Item as={'div'} active={tab === 'createinkathon'}>
-              Create Inkathon
-            </Sidebar.Item>
             </Link>
           </Sidebar.ItemGroup>
         </Sidebar.Items>

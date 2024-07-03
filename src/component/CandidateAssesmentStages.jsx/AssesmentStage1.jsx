@@ -295,7 +295,6 @@ getAllAssessments`, {
           const response = await fetch(`${canBaseUrl}/cpm2/assessment/upload`, {
             method: 'POST',
             body: formData,
-          }, {
             headers: {
               Authorization: `Basic ${token}`,
             },
