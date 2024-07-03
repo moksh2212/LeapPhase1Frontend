@@ -32,6 +32,8 @@ const MonthlyCalendarUser = () => {
     const [attendanceData, setAttendanceData] = useState([]);
  
     const perBaseUrl = 'http://192.168.0.141:8080'
+
+    const token = useSelector(state=>state.user.token)
  
     useEffect(() => {
  
@@ -55,7 +57,11 @@ const MonthlyCalendarUser = () => {
  
             console.log(`${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formattedStartDate}&endDate=${formattedEndDate}&talentId=${currentUser.talentId}`)
  
-            const response = await axios.get(`${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formattedStartDate}&endDate=${formattedEndDate}&talentId=${currentUser.talentId}`);
+            const response = await axios.get(`${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formattedStartDate}&endDate=${formattedEndDate}&talentId=${currentUser.talentId}`, {
+              headers:{
+                Authorization: `Basic ${token}`
+              }
+            });
  
             setAttendanceData(response.data);
  

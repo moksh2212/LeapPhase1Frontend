@@ -2,11 +2,11 @@ import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import CandidatesAssesmentsStage1 from './AssesmentStage1';
-import CandidatesAssesmentsStage2 from './AssesmentStage2';
-import CandidatesAssesmentsStage3 from './AssesmentStage3';
-import CandidatesAssesmentsStage4 from './AssesmentStage4';
-import CandidatesAssesmentsStage5 from './AssesmentStage5';
+import CandidatesAssesmentsStage1 from './AssessmentStage1';
+import CandidatesAssesmentsStage2 from './AssessmentStage2';
+import CandidatesAssesmentsStage3 from './AssessmentStage3';
+import CandidatesAssesmentsStage4 from './AssessmentStage4';
+import CandidatesAssesmentsStage5 from './AssessmentStage5';
 export const CandidateAssesmentsCombined = () => {
     const [value, setValue] = React.useState(0);
 

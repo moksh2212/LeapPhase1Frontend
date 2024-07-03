@@ -29,7 +29,7 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
       >
         <Sidebar.Items>
           <Sidebar.ItemGroup>
-            <Sidebar.Item as={'div'} label={currentUser.adminCheck? 'Admin':'User'} labelColor='dark'>
+            <Sidebar.Item as={'div'} label={currentUser.roles.includes('ROLE_ADMIN')? 'Admin':'User'} labelColor='dark'>
               {currentUser.talentName}
             </Sidebar.Item>
             <Link to='?tab=college-and-contact'>
@@ -50,6 +50,11 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
             <Link to='?tab=alumni'>
               <Sidebar.Item as={'div'} active={tab === 'alumni'}>
                 Alumni
+              </Sidebar.Item>
+            </Link>
+            <Link to='?tab=candidate-assesment'>
+              <Sidebar.Item as={'div'} active={tab === 'candidate-assesment'}>
+                Assessments
               </Sidebar.Item>
             </Link>
             

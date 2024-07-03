@@ -246,7 +246,7 @@ const CollegeCalendarView = () => {
   ])
 
   return (
-    <div className='container mx-auto p-4'>
+    <div className='container p-4'>
       <h2 className='text-2xl font-bold mb-4'>College Schedules</h2>
       {isLoading && <div className='h-[10rem] font-medium flex justify-center items-center'>Loading...</div>}
       {!isLoading && (
@@ -276,7 +276,7 @@ const CollegeCalendarView = () => {
 const EventPopup = ({ event, onClose }) => {
   return (
     <div className='fixed inset-0 flex items-center justify-center z-50'>
-      {/* Backdrop */}
+
       <div className='absolute inset-0 bg-black opacity-50'></div>
 
       {/* Popup Container */}

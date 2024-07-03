@@ -19,6 +19,7 @@ import {
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 const TalentTable = () => {
   const [talentList, setTalentList] = useState([])
@@ -33,9 +34,9 @@ const TalentTable = () => {
   const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
-  const tanBaseUrl = process.env.BASE_URL
-  const token = useSelector(state => state.user.token)
+  const tanBaseUrl = process.env.BASE_URL2
 
+  const token = useSelector(state=>state.user.token)
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -55,10 +56,11 @@ const TalentTable = () => {
   const fetchMarksheet = async talentId => {
     try {
       const response = await fetch(
-        `${tanBaseUrl}/cpm/talents/viewmarksheet/${talentId}`,{
-          headers: {
-          Authorization: `Basic ${token}`
-          },
+        `${tanBaseUrl}/cpm/talents/viewmarksheet/${talentId}`,
+        {
+          headers:{
+            Authorization: `Basic ${token}`
+          }
         }
       )
       if (!response.ok) {
@@ -82,6 +84,9 @@ const TalentTable = () => {
           },
         method: 'PUT',
         body: formData,
+        headers:{
+          Authorization: `Basic ${token}`
+        }
       });
   
       if (!response.ok) {
@@ -254,10 +259,11 @@ const TalentTable = () => {
       setIsLoading(true)
       try {
         const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`,{
-          headers: {
-          Authorization: `Basic ${token}`
-          },
-        })
+          headers:{
+            Authorization: `Basic ${token}`
+          }
+          }
+        )
         const data = await response.json()
         setTalentList(data)
       } catch (error) {
@@ -313,6 +319,7 @@ const TalentTable = () => {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Basic ${token}`
+
           },
           body: JSON.stringify(talentToUpdate),
         },

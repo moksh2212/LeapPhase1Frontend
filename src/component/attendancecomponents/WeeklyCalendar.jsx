@@ -13,6 +13,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { useEffect } from 'react'
 import { Card } from 'antd'
+import { useSelector } from 'react-redux'
 const columns = [
   { id: 'talentName', label: 'Talent Name', minWidth: 170 },
   { id: 'date', label: 'Date', minWidth: 170 },
@@ -53,7 +54,8 @@ export default function WeeklyCalendar() {
   const [rowsPerPage, setRowsPerPage] = useState(7)
   const [startDate, setStartDate] = useState(new Date())
   const [attendanceData, setAttendanceData] = useState([])
-  const perBaseUrl = process.env.BASE_URL
+  const perBaseUrl = process.env.BASE_URL2
+  const token = useSelector(state=>state.user.token)
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
@@ -74,6 +76,11 @@ export default function WeeklyCalendar() {
           `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
             start,
           )}&endDate=${formatDate(end)}&talentId=${fetched}`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          },
         )
         setAttendanceData(response.data)
       } catch (error) {

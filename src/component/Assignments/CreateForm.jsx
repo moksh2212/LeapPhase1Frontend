@@ -19,6 +19,7 @@ import {
 } from 'firebase/storage';
 
 import { app } from '../../firebase.js';
+import { useSelector } from 'react-redux'
 
 export function CreateForm({ openModal, setOpenModal, createAssignment }) {
   const [assignmentWeek, setAssignmentWeek] = useState('');
@@ -36,7 +37,6 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
   const [talentList, setTalentList] = useState([]);
   const [selectedTalents, setSelectedTalents] = useState([]);
   const [filteredTalentList, setFilteredTalentList] = useState([]);
-
   useEffect(() => {
     if (assignmentFile) {
       handleFileUpload();
@@ -46,6 +46,8 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
   useEffect(() => {
     fetchTalentList()
   }, [])
+  const token = useSelector(state => state.user.token)
+
   const technologySkills = {
     Java: ['Java', 'Spring', 'Hibernate'],
     React: ['React', 'JavaScript', 'HTML', 'CSS'],
@@ -73,7 +75,11 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
 
   const fetchTalentList = async () => {
     try {
-      const response = await fetch('http://localhost:8080/cpm/talents/alltalent');
+      const response = await fetch('http://192.168.0.147:8080/cpm/talents/alltalent', {
+        headers: {
+          Authorization: `Basic ${token}`,
+        },
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch talent list');
       }
@@ -88,6 +94,11 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     const newselectedtalent = selectedTalents.filter((tal, i) => tal != talent)
     setSelectedTalents(newselectedtalent)
   }
+  const selectedTalentEmails = selectedTalents.map((talent) => {
+    // Find talent by email in talentList and return email
+    const foundTalent = talentList.find((t) => t.email === talent);
+    return foundTalent ? foundTalent.email : null;
+  });
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -99,8 +110,9 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
       assignmentDuedate,
       assignmentFileName,
       assignmentFileUrl,
-      assignedTo,
-    }
+      assignedTo: selectedTalentEmails.join(', '), 
+      mentorAssigned:"mokshthakran80299@gmail.com"
+        }
     console.log(formData)
     createAssignment(formData)
   }
@@ -198,6 +210,19 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
           </div>
           <div>
             <div className="mb-2 block">
+              <Label htmlFor="assignmentName" value="Trainer Name" />
+            </div>
+            <TextInput
+              id="TrainerName"
+              type="text"
+              placeholder="Enter Trainer name"
+              value={"Abhimanyu Kaushik "}
+              required
+              size="sm"
+            />
+          </div>
+          <div>
+            <div className="mb-2 block">
               <Label htmlFor="MaxMarks" value="Max Marks" />
             </div>
             <TextInput
@@ -240,6 +265,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
               type="date"
               value={assignmentDuedate}
               onChange={(e) => setAssignmentDuedate(e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
               required
             />
           </div>
@@ -271,10 +297,12 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
               id='assignedTo'
               value={assignedTo}
               onChange={(e) => {
+               
                 const selectedValues = Array.from(
                   e.target.selectedOptions,
                   (option) => option.value
                 );
+                
                 const uniqueSelectedValues = selectedValues.filter(
                   (value) => !selectedTalents.includes(value)
                 );
@@ -305,7 +333,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
                     >
                       {talent}
                       <div
-                        onClick={() => handleSelectedTalent(talent)}
+                        onClick={() => handleselectedtalent(talent)}
                         className="ml-2 cursor-pointer"
                       >
                         <ImCross />

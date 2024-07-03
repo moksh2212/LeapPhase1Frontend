@@ -29,7 +29,7 @@ export default function EmployeesSidebar({ setShowEmployeesSidebar }) {
       >
         <Sidebar.Items>
           <Sidebar.ItemGroup>
-            <Sidebar.Item as={'div'} label={currentUser.adminCheck? 'Admin':'User'} labelColor='dark'>
+            <Sidebar.Item as={'div'} label={currentUser.roles.includes('ROLE_ADMIN')? 'Admin':'User'} labelColor='dark'>
               {currentUser.talentName}
             </Sidebar.Item>
             <Link to='/dashboard?tab=attendance'>
@@ -54,9 +54,14 @@ export default function EmployeesSidebar({ setShowEmployeesSidebar }) {
                 Assignments
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=assessments'>
-              <Sidebar.Item as={'div'} active={tab === 'assessments'}>
+            <Link to='?tab=CombinedTalent'>
+              <Sidebar.Item as={'div'} active={tab === 'CombinedTalent'}>
                 Assessments
+              </Sidebar.Item>
+            </Link>
+            <Link to='?tab=trainers'>
+              <Sidebar.Item as={'div'} active={tab === 'trainers'}>
+                Trainers
               </Sidebar.Item>
             </Link>
           

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AccountCircle } from '@mui/icons-material';
 import { Link } from 'react-router-dom'; // Import Link
-import  IndividualAssesments  from './IndividualAssesments';
+import IndividualAssesments from './IndividualAssesments';
 import Modal from '@mui/material/Modal';
 import Switch from '@mui/material/Switch';
 import { useNavigate } from 'react-router-dom';
@@ -43,7 +43,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux';
 
 const AssesmentToogle = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [talentList, setTalentList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
@@ -56,12 +56,11 @@ const AssesmentToogle = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
   const label = { inputProps: { 'aria-label': 'Switch demo' } };
-  const tanBaseUrl = process.env.BASE_URL
+  const tanBaseUrl = process.env.BASE_URL2
 
-  const token = useSelector(state=>state.user.token)
-  
+  const token = useSelector(state => state.user.token)
+
   const handleToggle = () => {
-    // Redirect to the specified URL
     navigate('/dashboard?tab=assessments');
   };
   const handleClose = (event, reason) => {
@@ -124,7 +123,7 @@ const AssesmentToogle = () => {
       setIsLoading(true)
       try {
         const response = await fetch(`${tanBaseUrl}/assessments/assementwiseview`, {
-          headers:{
+          headers: {
             Authorization: `Basic ${token}`,
           }
         })
@@ -213,12 +212,12 @@ const AssesmentToogle = () => {
     try {
       const response = await fetch(`${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`, {
         method: 'DELETE',
-        headers:{
+        headers: {
           Authorization: `Basic ${token}`,
         }
       })
 
-  
+
       if (response.ok) {
         setTalentList(prevTalents =>
           prevTalents.filter(talent => talent.talentId !== talentId),
@@ -258,16 +257,16 @@ const AssesmentToogle = () => {
   const columns = useMemo(
     () => [
       {
-        id: 'talent', 
+        id: 'talent',
         columns: [
           {
-            accessorKey: 'assessmentId', 
-            header: 'Assesment ID',
+            accessorKey: 'assessmentId',
+            header: 'Assessment ID',
             enableEditing: false,
             size: 100,
           },
           {
-            accessorKey: 'assessmentType', 
+            accessorKey: 'assessmentType',
             header: 'Assessment Type',
             enableSorting: false,
             size: 100,
@@ -280,7 +279,7 @@ const AssesmentToogle = () => {
                   ...validationErrors,
                   talentName: undefined,
                 }),
-    
+
               onBlur: event => {
                 const { value } = event.target
                 if (!value) {
@@ -307,7 +306,7 @@ const AssesmentToogle = () => {
                   ...validationErrors,
                   currentLocation: undefined,
                 }),
-    
+
               onBlur: event => {
                 const { value } = event.target
                 if (!value) {
@@ -414,7 +413,7 @@ const AssesmentToogle = () => {
     editDisplayMode: 'modal',
     enableRowActions: true,
 
-    renderRowActionMenuItems: ({ closeMenu ,row}) => [
+    renderRowActionMenuItems: ({ closeMenu, row }) => [
       <MenuItem
         key={0}
         onClick={() => {
@@ -431,9 +430,9 @@ const AssesmentToogle = () => {
         </Link>
       </MenuItem>,
     ],
- renderTopToolbar: ({ table }) => {
+    renderTopToolbar: ({ table }) => {
       const [hasSelectedRows, setHasSelectedRows] = useState(false);
-  const [openConvertModal, setOpenConvertModal] = useState(false);
+      const [openConvertModal, setOpenConvertModal] = useState(false);
       const handleDeactivate = () => {
         const confirmed = window.confirm(
           'Are you sure you want to delete the data?',
@@ -452,8 +451,8 @@ const AssesmentToogle = () => {
         }
       }
 
-      
-   // eslint-disable-next-line react-hooks/rules-of-hooks
+
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [selectedFile, setSelectedFile] = useState(null)
       const handleFileChange = event => {
         setSelectedFile(event.target.files[0])
@@ -485,11 +484,11 @@ const AssesmentToogle = () => {
         }
       }
 
-        // Update the state variable based on the selected rows
-  const selectedRowCount = table.getSelectedRowModel().flatRows.length;
-  useEffect(() => {
-    setHasSelectedRows(selectedRowCount > 0);
-  }, [selectedRowCount]);
+      // Update the state variable based on the selected rows
+      const selectedRowCount = table.getSelectedRowModel().flatRows.length;
+      useEffect(() => {
+        setHasSelectedRows(selectedRowCount > 0);
+      }, [selectedRowCount]);
 
       return (
         <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300">
@@ -514,12 +513,7 @@ const AssesmentToogle = () => {
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                 <div>
                   <ButtonGroup>
-                  <div className='flex justify-center items-center p-2 border-3 border-gray-300 rounded bg-blue-400 text-gray-700 gap-1 mr-3'>
-                  <h2 class="text-white font-bold ">Talent Wise View</h2>
-                <div>
-                <Switch {...label} defaultChecked onChange={handleToggle} />
-                </div>
-                </div>
+                   
                     <Button variant='contained' component='label'>
                       <label htmlFor='excelFile' className='excel-file-label'>
                         {selectedFile
@@ -532,9 +526,9 @@ const AssesmentToogle = () => {
                           onChange={handleFileChange}
                         />
                       </label>
-                    </Button> 
+                    </Button>
                     <Button
-                    style={{marginLeft: '10px'}}
+                      style={{ marginLeft: '10px' }}
                       onClick={handleUpload}
                       color='success'
                       variant='contained'
@@ -545,32 +539,30 @@ const AssesmentToogle = () => {
                     </Button>
                   </ButtonGroup>
                 </div>
-              
+
               </Box>
             </Box>
           </Box>
-           {/* Render the snackbar conditionally */}
-      {hasSelectedRows && (
-        <Snackbar
-          open={hasSelectedRows}
-          message="Rows are selected"
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        />
-      )}
+          {/* Render the snackbar conditionally */}
+          {hasSelectedRows && (
+            <Snackbar
+              open={hasSelectedRows}
+              message="Rows are selected"
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            />
+          )}
 
         </div>
       )
     },
-    
+
   })
 
-    
+
 
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
-      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>
-        Assesments
-      </h2><br></br><br></br>
+
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
           <CircularProgress className='w-full mx-auto my-auto' />
@@ -617,7 +609,7 @@ const AssesmentToogle = () => {
           {error}
         </Alert>
       </Snackbar>
-      
+
     </div>
   )
 }

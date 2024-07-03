@@ -17,11 +17,12 @@ import {
   lighten,
 } from '@mui/material'
 
+import { useSelector } from 'react-redux'
 
 
 
-const canBaseUrl = process.env.BASE_URL
-const tanBaseUrl = process.env.BASE_URL
+const canBaseUrl = process.env.BASE_URL2
+const tanBaseUrl = process.env.BASE_URL2
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -87,7 +88,9 @@ const AssesTable = () => {
   const [validationErrors, setValidationErrors] = useState({})
   const [text, setText] = useState('')
   const [open, setOpen] = useState(false);
+  const [count, setCount] = useState(0);
 
+  const token = useSelector(state => state.user.token)
 
 
   const handleClose = (event, reason) => {
@@ -100,7 +103,11 @@ const AssesTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`);
+        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        });
         let jsonData = await response.json();
 
         jsonData = jsonData.filter(assessment => assessment && assessment.assessmentLevelFour);
@@ -292,8 +299,7 @@ const AssesTable = () => {
     enableEditing: true,
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
-        backgroundColor: row.original.selectedForNextStage ? 'rgba(0, 135, 213, 0.1)' : undefined,
-        color: row.original.selectedForNextStage ? '#0087D5' : undefined,
+      
         '&:hover': {
           backgroundColor: row.original.selectedForNextStage ? 'rgba(0, 135, 213, 0.2)' : undefined,
         },
@@ -316,6 +322,8 @@ const AssesTable = () => {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(values),
           },
@@ -369,6 +377,8 @@ const AssesTable = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(arr),
           }
@@ -377,7 +387,10 @@ const AssesTable = () => {
           ...row,
           selectedForNextStage: arr.some(selectedRow => selectedRow.id === row.id)
         })));
+        setCount(table.getSelectedRowModel().rows.length)
+
         setOpen(true);
+        table.toggleAllRowsSelected(false);
       };
 
 
@@ -429,15 +442,15 @@ const AssesTable = () => {
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             />
           )}
-          {open && <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          {open && <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}   anchorOrigin={{ vertical: 'top', horizontal: 'center' }}  
+          >
             <Alert
               onClose={handleClose}
               severity="success"
               variant="filled"
               sx={{ width: '100%' }}
-              anchorOrigin={{ vertical: "top", horizontal: "top" }}
             >
-              {table.getSelectedRowModel().rows.length === 1 ? `${table.getSelectedRowModel().rows.length} candiadate selected successfully for stage 3 ` : `${table.getSelectedRowModel().rows.length} candiadates selected successfully for stage  5`}
+              {count=== 1 ? `${count} candiadate selected successfully for stage 3 ` : `${count} candiadates selected successfully for stage  5`}
             </Alert>
           </Snackbar>}
         </div>

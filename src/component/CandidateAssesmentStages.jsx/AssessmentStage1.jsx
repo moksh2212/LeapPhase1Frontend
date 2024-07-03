@@ -3,6 +3,8 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
+import { useSelector } from 'react-redux'
+
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -22,8 +24,8 @@ import {
 
 
 
-const canBaseUrl = process.env.BASE_URL
-const tanBaseUrl = process.env.BASE_URL
+const canBaseUrl = process.env.BASE_URL2
+const tanBaseUrl = process.env.BASE_URL2
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -89,6 +91,7 @@ const AssesTable = () => {
   const [validationErrors, setValidationErrors] = useState({})
   const [open, setOpen] = useState(false);
   const [x, setx] = useState(0)
+  const [count, setCount] = useState(0);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -97,19 +100,25 @@ const AssesTable = () => {
 
     setOpen(false);
   };
+  const token = useSelector(state => state.user.token)
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`${canBaseUrl}/cpm2/assessment/
-getAllAssessments`)
+getAllAssessments`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
         let jsonData = await response.json()
         jsonData = jsonData.slice(0, jsonData.length)
-        let arr=[]
+        let arr = []
         jsonData.forEach(asses => {
           arr.push(asses["assessmentLevelOne"])
         });
         setData(arr)
-        console.log(jsonData) 
+        console.log(jsonData)
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -130,22 +139,6 @@ getAllAssessments`)
             size: 100,
             enableEditing: false,
           },
-
-          {
-            accessorKey: 'quantitativeScore', 
-            header: 'Quantitative Score',
-            enableColumnFilter: true, 
-            enableSorting: true,
-            size: 100,
-          },
-          {
-            accessorKey: 'logicalScore', 
-            header: 'Logical Score',
-            enableColumnFilter: true, 
-            enableSorting: true,
-            size: 100,
-          },
-
           {
             accessorKey: 'email', //accessorKey used to define `data` column. `id` gets set to accessorKey automatically
             enableClickToCopy: true,
@@ -174,6 +167,22 @@ getAllAssessments`)
             }),
           },
           {
+            accessorKey: 'quantitativeScore',
+            header: 'Quantitative Score',
+            enableColumnFilter: true,
+            enableSorting: true,
+            size: 100,
+          },
+          {
+            accessorKey: 'logicalScore',
+            header: 'Logical Score',
+            enableColumnFilter: true,
+            enableSorting: true,
+            size: 100,
+          },
+
+    
+          {
             accessorKey: 'codingScore',
             header: 'Coding Score',
             enableSorting: true,
@@ -188,7 +197,7 @@ getAllAssessments`)
             size: 100,
           },
           {
-            accessorKey: 'totalScore', 
+            accessorKey: 'totalScore',
             header: 'Total Score',
             enableSorting: true,
             enableColumnFilter: true,
@@ -230,7 +239,6 @@ getAllAssessments`)
     },
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
-        backgroundColor: row.original.selectedForNextStage ? 'rgba(0, 135, 213, 0.3)' : undefined,
         '&:hover': {
           backgroundColor: row.original.selectedForNextStage ? 'rgba(0, 135, 213, 0.4)' : undefined,
         },
@@ -240,11 +248,11 @@ getAllAssessments`)
       const [hasSelectedRows, setHasSelectedRows] = useState(false);
 
 
-      const handleActivate = async() => {
-        let arr=[];
-        table.getSelectedRowModel().flatRows.map( (row) => {
-         arr.push(row.original);
-     
+      const handleActivate = async () => {
+        let arr = [];
+        table.getSelectedRowModel().flatRows.map((row) => {
+          arr.push(row.original);
+
         });
         const response = await fetch(
           `${tanBaseUrl}/cpm2/assessment
@@ -253,6 +261,8 @@ getAllAssessments`)
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              Authorization: `Basic ${token}`,
+
             },
             body: JSON.stringify(arr),
           }
@@ -261,7 +271,11 @@ getAllAssessments`)
           ...row,
           selectedForNextStage: arr.some(selectedRow => selectedRow.id === row.id)
         })));
-        setOpen(true); 
+        setCount(table.getSelectedRowModel().rows.length)
+        setOpen(true);
+        setHasSelectedRows(false)
+        table.toggleAllRowsSelected(false);
+
       };
       const [selectedFile, setSelectedFile] = useState(null)
       const handleFileChange = event => {
@@ -281,11 +295,14 @@ getAllAssessments`)
           const response = await fetch(`${canBaseUrl}/cpm2/assessment/upload`, {
             method: 'POST',
             body: formData,
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
           })
           console.log(response)
           if (response.ok) {
             alert('File uploaded successfully.')
-          setx(1)
+            setx(1)
           } else {
             alert('Failed to upload file.')
           }
@@ -322,10 +339,10 @@ getAllAssessments`)
             </Box>
             <Box>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-             
+
                 <Button
                   color='success'
-                  disabled={table.getSelectedRowModel().rows.length===0}
+                  disabled={table.getSelectedRowModel().rows.length === 0}
                   onClick={handleActivate}
                   variant='contained'
                 >
@@ -352,7 +369,7 @@ getAllAssessments`)
                       color='success'
                       variant='contained'
                       disabled={!selectedFile}
-                      sx={{ ml: 2 }} 
+                      sx={{ ml: 2 }}
                     >
                       Upload File
                     </Button>
@@ -368,17 +385,18 @@ getAllAssessments`)
               anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             />
           )}
-        {  open &&  <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert
-          onClose={handleClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: '100%' }}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}  // Set position to top-right
+          {open && <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           >
-         {table.getSelectedRowModel().rows.length===1?`${table.getSelectedRowModel().rows.length} candiadate selected successfully for stage 2 `:`${table.getSelectedRowModel().rows.length} candiadates selected successfully for stage  2` } 
-         </Alert>
-      </Snackbar>}
+            <Alert
+              onClose={handleClose}
+              severity="success"
+              variant="filled"
+              sx={{ width: '100%' }}
+            >
+              {count === 1 ? `${count} candiadate selected successfully for stage 2 ` : `${count} candiadates selected successfully for stage  2`}
+            </Alert>
+          </Snackbar>}
         </div>
       )
     },

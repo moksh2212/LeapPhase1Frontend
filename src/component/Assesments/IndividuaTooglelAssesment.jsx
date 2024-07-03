@@ -36,8 +36,8 @@ const IndividualToogleAssesments = () => {
   const [rowSelection, setRowSelection] = useState({})
   const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
-  const baseUrl = process.env.BASE_URL
-  const token = useSelector(state=>state.user.token)
+  const baseUrl = process.env.BASE_URL2
+  const token = useSelector(state => state.user.token)
   const updateAssessment = async AssesmentToUpdate => {
     try {
       const urlParams = new URLSearchParams(window.location.search)
@@ -65,9 +65,8 @@ const IndividualToogleAssesments = () => {
       }
     } catch (error) {
       console.error('Error updating talent:', error)
-    } 
+    }
   }
- 
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -133,10 +132,10 @@ const IndividualToogleAssesments = () => {
         const response = await fetch(
           `${baseUrl}/assessments/assessment/${assessmentId}`,
           {
-            headers:{
+            headers: {
               Authorization: `Basic ${token}`,
-            }
-          }
+            },
+          },
         )
         const data = await response.json()
         setTalentList(data)
@@ -191,9 +190,9 @@ const IndividualToogleAssesments = () => {
         `${baseUrl}/cpm/talents/deletetalent/${talentId}`,
         {
           method: 'DELETE',
-          headers:{
+          headers: {
             Authorization: `Basic ${token}`,
-          }
+          },
         },
       )
 
