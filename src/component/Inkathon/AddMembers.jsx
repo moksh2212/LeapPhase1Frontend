@@ -1,7 +1,7 @@
 import { useEffect, useState , useCallback } from 'react'
 import { Label, TextInput, Button, Modal, Select } from 'flowbite-react'
 import { ImCross } from 'react-icons/im'
-
+import { useSelector } from 'react-redux'
 export function AddMembers({ openModal, setOpenModal, createMember }) {
   const [talentId, setTalentId] = useState('')
   const [role, setRole] = useState('')
@@ -12,7 +12,7 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
   const [selectedTalents, setSelectedTalents] = useState([])
 
   const tanBaseUrl = process.env.BASE_URL
-
+  const token = useSelector(state => state.user.token)
   useEffect(() => {
     fetchTalentList()
   }, [])
@@ -61,7 +61,12 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
 
   const fetchTalentList = async () => {
     try {
-      const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`)
+      const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`,{
+        headers: {
+          Authorization: `Basic ${token}`,
+        },
+      }
+      )
       if (!response.ok) {
         throw new Error('Failed to fetch talent list')
       }

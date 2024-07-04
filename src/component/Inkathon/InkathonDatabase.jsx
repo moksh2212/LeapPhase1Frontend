@@ -85,12 +85,12 @@ import {AddInkathon }from './AddInkathon'
       })
       console.log(response)
       if (response.ok) {
-        alert('Inkathon Created successfully.')
+        setOpenSnackbar('Inkathon Created successfully.')
         const data = await response.json()
         setInkathonsList(prevInkathons => [...prevInkathons, data])
         setIsLoading(false)
       } else {
-        alert('Failed to Create Inkathon')
+        setError('Failed to Create Inkathon')
         setIsLoading(false)
       }
     } catch (error) {
@@ -128,11 +128,11 @@ import {AddInkathon }from './AddInkathon'
         setInkathonsList(prevInkathons =>
           prevInkathons.filter(inkathon => inkathon.inkathonId !== inkathonId),
         )
-        setOpenSnackbar('Project deleted successfully!')
+        setOpenSnackbar('Inkathon deleted successfully!')
         setError(null)
       }
     } catch (error) {
-      console.error('Error deleting Project:', error)
+      console.error('Error deleting Inkathon:', error)
       setError(error.message)
     } finally {
       setIsLoading(false)

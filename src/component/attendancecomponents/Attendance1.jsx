@@ -225,11 +225,11 @@ const Attendance1 = ({ employees }) => {
 
             <div className='my-auto mr-2'>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-                <Link to='/dashboard?tab=trainingAttendance'>
+                {/* <Link to='/dashboard?tab=trainingAttendance'>
                   <Button color='primary' variant='contained'>
                     Training Attendance
                   </Button>
-                </Link>
+                </Link> */}
                 <Link to='/dashboard?tab=regularization'>
                   <Button
                     color='primary'
