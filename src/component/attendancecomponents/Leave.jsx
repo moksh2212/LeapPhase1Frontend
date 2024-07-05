@@ -20,29 +20,46 @@ import {
   DialogContentText,
   Snackbar,
   Alert,
+  TextField,
 } from '@mui/material'
 import { useSelector } from 'react-redux'
 
 const LeaveRequestTable = ({ requests, onApprove, onReject, isPendingTab }) => {
   const [selectedRequest, setSelectedRequest] = useState(null)
-
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
+  const [rejectionReason, setRejectionReason] = useState('')
   const handleRowClick = request => {
     setSelectedRequest(request)
   }
 
+ 
+
   const handleCloseModal = () => {
     setSelectedRequest(null)
   }
+   
+  
 
   const handleApprove = () => {
     onApprove(selectedRequest.leaveId)
     handleCloseModal()
   }
 
-  const handleReject = () => {
-    onReject(selectedRequest.leaveId)
-    handleCloseModal()
+  const handleRejectClick = () => {
+    setRejectDialogOpen(true)
   }
+
+  const handleRejectConfirm = () => {
+    onReject(selectedRequest.leaveId, rejectionReason)
+    setRejectDialogOpen(false)
+    handleCloseModal()
+    setRejectionReason('')
+  }
+  const handleRejectCancel = () => {
+    setRejectDialogOpen(false)
+    setRejectionReason('')
+  }
+
 
   return (
     <Paper elevation={3} style={{ marginTop: '20px', padding: '20px' }}>
@@ -107,24 +124,58 @@ const LeaveRequestTable = ({ requests, onApprove, onReject, isPendingTab }) => {
         request={selectedRequest}
         onClose={handleCloseModal}
         onApprove={handleApprove}
-        onReject={handleReject}
+        onReject={handleRejectClick}
+
       />
+      <Dialog open={rejectDialogOpen} onClose={handleRejectCancel}>
+        <DialogTitle>Reject Leave Request</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please enter the reason for rejecting this leave request:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="rejection-reason"
+            label="Rejection Reason"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleRejectCancel} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleRejectConfirm} color="secondary">
+            Reject
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   )
 }
 
 const LeaveRequestDetailModal = ({ request, onClose, onApprove, onReject }) => {
   const [loading, setLoading] = useState(false)
+  const [reason, setReason] = useState('')
 
   const handleApprove = async () => {
     setLoading(true)
     await onApprove()
     setLoading(false)
   }
-
+  const handleDownloadPDF = () => {
+    const link = document.createElement('a');
+    link.href = `data:application/pdf;base64,${request.reasonFile}`;
+    link.download = 'reasonFile.pdf';
+    link.click();
+  };
   const handleReject = async () => {
     setLoading(true)
-    await onReject()
+    await onReject(reason)
     setLoading(false)
   }
 
@@ -155,9 +206,11 @@ const LeaveRequestDetailModal = ({ request, onClose, onApprove, onReject }) => {
               <Typography variant='subtitle1' style={{ marginBottom: '8px' }}>
                 Detailed Reason:
               </Typography>
+             
               <DialogContentText style={{ whiteSpace: 'pre-line' }}>
                 {request.description}
               </DialogContentText>
+              {request.reasonFile && <Button onClick={handleDownloadPDF}>Download Reason File</Button>}
             </Grid>
           </Grid>
         )}
@@ -235,25 +288,22 @@ const Leave = () => {
     }
   }
 
-  const handleRejectRequest = async leaveId => {
+  const handleRejectRequest = async (leaveId, reason) => {
     try {
-      const response = await fetch(`${API_URL}/cpm/leaves/decline/${leaveId}`, {
+      const response = await fetch(`${API_URL}/cpm/leaves/decline/${leaveId}?reasonForReject=${encodeURIComponent(reason)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Basic ${token}`,
         },
-        body: JSON.stringify({ status: 'Declined' }),
       })
-
+  
       if (!response.ok) {
         const errorText = await response.text()
         console.error('Error response text:', errorText)
-        throw new Error(
-          `Failed to reject leave request: ${response.statusText}`,
-        )
+        throw new Error(`Failed to reject leave request: ${response.statusText}`)
       }
-
+  
       const updatedRequests = leaveRequests.map(request =>
         request.leaveId === leaveId
           ? { ...request, approvalStatus: 'Declined' }
@@ -263,10 +313,15 @@ const Leave = () => {
       setSnackbarMessage('Leave request rejected successfully')
       setSnackbarOpen(true)
     } catch (error) {
-      console.error('Error rejecting leave request:', error)
+      console.error('Error rejecting leave request:', error.message)
+      if (error.response) {
+        console.error('Response data:', error.response.data)
+        console.error('Response status:', error.response.status)
+        console.error('Response headers:', error.response.headers)
+      }
     }
   }
-
+  
   const handleSnackbarClose = () => {
     setSnackbarOpen(false)
   }
@@ -275,10 +330,6 @@ const Leave = () => {
     setTabValue(newValue)
   }
 
-  // Filter leave requests to show only those with approvalStatus 'Pending'
-  //const pendingRequests = leaveRequests.filter(request => request.approvalStatus === 'Pending');
-
-  // Filter leave requests based on tabValue
   const filteredRequests = leaveRequests.filter(request => {
     if (tabValue === 0) {
       return request.approvalStatus === 'Pending'

@@ -114,7 +114,7 @@ export default function DashSidebar() {
         >
           <FaUserGraduate className='w-6 h-6 sm:h-8 sm:w-8 mx-auto' />
           <span className='text-xs font-semibold text-center'>
-            Academic Interns
+            Industrial Interns
           </span>
         </div>
 
