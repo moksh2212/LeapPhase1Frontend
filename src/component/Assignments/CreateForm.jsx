@@ -216,7 +216,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
 
   const fetchEvaluatorData = async () => {
     try {
-      const response = await fetch('http://192.168.137.38:3058/api/admin/evaluator/getallevaluator', {
+      const response = await fetch(`${baseUrl}/api/admin/evaluator/getallevaluator`, {
         headers: {
           Authorization: `Basic ${token}`,
         },

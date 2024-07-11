@@ -58,7 +58,7 @@ function Signin() {
         const data = await response.json();
         console.log(data)
         dispatch(signInSuccess({user:data, token:token}))
-        if (data.roles && data.roles.includes('ROLE_USER') && !data.roles.includes('ROLE_ADMIN')) {
+        if (data.roles && data.roles.includes('USER') && !data.roles.includes('ADMIN')) {
           navigate('/user');
         } else {
           navigate('/');
