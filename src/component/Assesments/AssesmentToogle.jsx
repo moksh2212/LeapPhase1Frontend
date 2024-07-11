@@ -470,6 +470,9 @@ const AssesmentToogle = () => {
           const response = await fetch(`${tanBaseUrl}/assessments/uploadexcel`, {
             method: 'POST',
             body: formData,
+            headers: {
+              'Authorization': `Basic ${token}`,
+            },
           })
           console.log(response)
           if (response.ok) {

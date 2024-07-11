@@ -37,6 +37,7 @@ const IndividualAssessments = () => {
   const [rowSelection, setRowSelection] = useState({});
   const [selectedRows, setSelectedRows] = useState([]);
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false);
+  const [x, setx] = useState(0)
   const token = useSelector(state => state.user.token);
   const navigate = useNavigate(); // Use useNavigate hook
 
@@ -67,6 +68,7 @@ const IndividualAssessments = () => {
             talent.talentId === data.talentId ? data : talent,
           ),
         );
+        setx(1)
       } else {
         console.error('Error updating assessment:', response.statusText);
       }
@@ -160,7 +162,7 @@ const IndividualAssessments = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [x]);
 
   const createTalent = async newTalent => {
     setIsLoading(true);
