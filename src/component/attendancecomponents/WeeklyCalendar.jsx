@@ -59,19 +59,22 @@ export default function WeeklyCalendar() {
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
-        // it is talentid from attendance table on front edn to give your own value directly give in fetched
- 
         const urlParams = new URLSearchParams(window.location.search)
         const fetched = urlParams.get('talentId')
-        const start = new Date(startDate)
-        const end = new Date(startDate)
-        end.setDate(start.getDate() + 6)
+        
+        // Calculate start and end of week
+        const currentDate = new Date(startDate);
+        const start = new Date(currentDate);
+        start.setDate(currentDate.getDate() - currentDate.getDay());
+        const end = new Date(currentDate);
+        end.setDate(currentDate.getDate() + (6 - currentDate.getDay()));
+  
         console.log(
           `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
             start,
           )}&endDate=${formatDate(end)}&talentId=${fetched}`,
         )
- 
+  
         const response = await axios.get(
           `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
             start,
@@ -87,9 +90,9 @@ export default function WeeklyCalendar() {
         console.error('Error fetching attendance data:', error)
       }
     }
- 
+  
     fetchAttendanceData()
-  }, [startDate])
+  }, [startDate, token, perBaseUrl])
  
   const rows = attendanceData.map(attendance =>
     createData(
@@ -117,20 +120,23 @@ export default function WeeklyCalendar() {
   const totalHours = Math.floor(totalWorkingMinutes / 60)
   const remainingMinutes = totalWorkingMinutes % 60
  
-  // Format total working hours
   const formattedTotalHours = `${totalHours}hrs ${remainingMinutes}mins`
  
   const decreaseWeek = () => {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() - 7)
+    newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
     setStartDate(newStartDate)
-  }
- 
-  const increaseWeek = () => {
+    console.log("decrease=", newStartDate)
+}
+
+const increaseWeek = () => {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() + 7)
+    newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
     setStartDate(newStartDate)
-  }
+    console.log("increase=", newStartDate)
+}
  
   const formatDate = date => {
     const year = date.getFullYear()
@@ -139,10 +145,19 @@ export default function WeeklyCalendar() {
     return `${year}-${month}-${day}`
   }
  
-  const startOfWeek = new Date(startDate)
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
-  const endOfWeek = new Date(startDate)
-  endOfWeek.setDate(startOfWeek.getDate() + 6)
+  const currentDate = new Date(startDate); // Your input date
+  const startOfWeek = new Date(currentDate);
+  const endOfWeek = new Date(currentDate);
+  
+  // Adjust to the start of the week (Sunday)
+  startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+  
+  // Adjust to the end of the week (Saturday)
+  endOfWeek.setDate(currentDate.getDate() + (6 - currentDate.getDay()));
+  
+  console.log("Start of week:", startOfWeek);
+  console.log("End of week:", endOfWeek);
+
  
   return (
     <div>

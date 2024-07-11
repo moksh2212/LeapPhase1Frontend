@@ -22,7 +22,7 @@ function Signin() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const signBaseUrl = 'http://192.168.0.147:8080'
+  const signBaseUrl = process.env.BASE_URL2
   const dispatch = useDispatch()
 
 
@@ -56,6 +56,7 @@ function Signin() {
       if (response.ok) {
 
         const data = await response.json();
+        console.log(data)
         dispatch(signInSuccess({user:data, token:token}))
         if (data.roles && data.roles.includes('ROLE_USER') && !data.roles.includes('ROLE_ADMIN')) {
           navigate('/user');
@@ -66,6 +67,7 @@ function Signin() {
 
       else{
         dispatch(signInFailure());
+        setErrorMessage("Email or password not correct")
       }
     } catch (error) {
       setErrorMessage(error.message);

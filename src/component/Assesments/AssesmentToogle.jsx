@@ -24,7 +24,6 @@ import {
   lighten,
   DialogContent,
   DialogTitle,
-  FormHelperText,
   Snackbar,
   ButtonGroup,
 } from '@mui/material'
@@ -426,7 +425,7 @@ const AssesmentToogle = () => {
           <AccountCircle />
         </ListItemIcon>
         <Link to={`/dashboard?tab=individualtoogleassesments&assesmentid=${row.original.assessmentId}`}>
-          <Typography variant="inherit">Assessees</Typography>
+        <button>  <Typography variant="inherit">Assessees</Typography></button>
         </Link>
       </MenuItem>,
     ],

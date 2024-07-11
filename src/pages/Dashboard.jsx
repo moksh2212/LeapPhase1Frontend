@@ -19,7 +19,6 @@ import IndividualToogleAssesments from '../component/Assesments/IndividuaTooglel
 import Alumni from '../component/Alumni';
 import EmployeewiseAssignment from '../component/Assignments/EmployeewiseAssignment'
 import FinalAssignmentview from '../component/Assignments/FinalAssignmentview'
-import Perform from '../component/Perform'
 import CampusCalendarView from '../component/CampusCalendar&InterviewScheduling/CampusCalendarView'
 import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssessmentsCombined'
 import TrainingAttendance from '../component/attendancecomponents/TrainingAttendance'
@@ -28,6 +27,7 @@ import InkathonDatabase from '../component/Inkathon/InkathonDatabase'
 import CreateInkathon from '../component/Inkathon/CreateInkathon'
 import TeamTabInkathon from '../component/Inkathon/TeamTabInkathon'
 import CombinedTalent from '../component/Assesments/CombinedTalent'
+import AssesmentCollege from '../component/CandidateAssesmentStages.jsx/AssesmentCollege'
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
@@ -69,14 +69,14 @@ export default function Dashboard() {
           {tab === 'individualtoogleassesments' && (<IndividualToogleAssesments />)}
           {tab === 'alumni' && <Alumni />}
           {tab === 'EmployeewiseAssignment' && <EmployeewiseAssignment />}
-          {tab === 'Perform' && <Perform />}
           {tab === 'inkathon' && <InkathonDatabase />}
           {tab === 'createinkathon' && <CreateInkathon />}
           {tab === 'teamtabinkathon' && <TeamTabInkathon />}
           {tab==='CandidateAssesmentsCombined' && <CandidateAssesmentsCombined/>}
           {tab === 'campus-calendar' && <CampusCalendarView />}
-          {tab === 'candidate-assesment' && <CandidateAssesmentsCombined />}
+          {tab === 'candidate-assessment' && <CandidateAssesmentsCombined />}
           {tab === 'CombinedTalent' && <CombinedTalent />}
+          {tab === 'AssesmentCollege' && <AssesmentCollege />}
         </div>
       </div>
     </>

@@ -103,7 +103,9 @@ const AssesTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`, {
+        const urlParams = new URLSearchParams(window.location.search);
+        const collegeId = urlParams.get('collegeId');
+        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`, {
           headers: {
             Authorization: `Basic ${token}`,
           },
@@ -162,6 +164,11 @@ const AssesTable = () => {
             size: 100,
             enableEditing: false,
             isVisible: false,
+            Cell: ({ cell }) => (
+              <div className='ml-2'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'email',
@@ -174,6 +181,11 @@ const AssesTable = () => {
             header: 'Candiate Name',
             size: 100,
             enableEditing: false,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
 
           {
@@ -193,6 +205,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
 
 
@@ -317,7 +334,7 @@ const AssesTable = () => {
         <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300">
           <div className='flex justify-between mb-2 rounded-md'>
             <h2 className={`text-2xl text-[#0087D5] font-bold my-auto p-2`}>
-              Candidates selected for stage 5
+              Candidates selected for behavioural interview
             </h2>
             <div className='my-auto mr-2'></div>
           </div>

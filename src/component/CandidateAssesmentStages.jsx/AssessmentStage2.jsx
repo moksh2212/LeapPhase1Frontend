@@ -97,7 +97,9 @@ const AssesTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`,{
+        const urlParams = new URLSearchParams(window.location.search);
+        const collegeId = urlParams.get('collegeId');
+        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`, {
           headers: {
             Authorization: `Basic ${token}`,
           }
@@ -167,12 +169,22 @@ const AssesTable = () => {
             header: 'Candiate Name',
             size: 100,
             enableEditing: false,
+            Cell: ({ cell }) => (
+              <div className='ml-6'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'email',
             header: 'Email',
             size: 100,
             enableEditing: false,
+            Cell: ({ cell }) => (
+              <div className='flex items-center justify-center '>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'problemStatement', 
@@ -191,6 +203,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-14'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'processWorkflow', 
@@ -209,6 +226,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'contentTotal',
@@ -227,6 +249,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'techStacks',
@@ -245,6 +272,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'recommendedSolution', 
@@ -263,6 +295,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'languageAndGrammar', 
@@ -281,6 +318,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-16'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'logicalFlow', 
@@ -299,6 +341,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'presentationTotal', 
@@ -317,6 +364,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'totalScore', 
@@ -326,7 +378,13 @@ const AssesTable = () => {
             enableEditing: false,
 
             size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
+
         ],
       },
     ],
@@ -445,7 +503,7 @@ const AssesTable = () => {
         <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300">
           <div className='flex justify-between mb-2 rounded-md'>
             <h2 className={`text-2xl text-[#0087D5] font-bold my-auto p-2`}>
-              Candidates selected for Stage 2
+              Candidates selected for design excercise
             </h2>
             <div className='my-auto mr-2'></div>
           </div>

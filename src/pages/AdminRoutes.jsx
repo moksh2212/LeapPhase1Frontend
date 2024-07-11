@@ -12,7 +12,7 @@ export default function AdminRoutes() {
     return <Outlet />;
   }
 
-  if (currentUser.roles.includes('ROLE_USER') && !currentUser.roles.includes('ROLE_ADMIN')) {
+  if (currentUser.roles.includes('USER') && !currentUser.roles.includes('ROLE_ADMIN')) {
     return <Navigate to="/user" />;
   }
 

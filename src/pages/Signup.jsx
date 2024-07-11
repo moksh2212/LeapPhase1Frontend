@@ -17,7 +17,7 @@ function Signup() {
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const navigate = useNavigate()
   // const baseUrl = process.env.BASE_URL
-  const baseUrl = 'http://192.168.137.200:8080'
+  const baseUrl = process.env.BASE_URL2
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
