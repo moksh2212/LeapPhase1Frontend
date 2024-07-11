@@ -16,9 +16,11 @@ import {
   FormHelperText,
   Snackbar,
 } from '@mui/material'
+import {Group} from '@mui/icons-material';
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import { StatusForm } from './StatusForm'
 
 const TalentTable = () => {
   const [talentList, setTalentList] = useState([])
@@ -27,6 +29,9 @@ const TalentTable = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [error, setError] = useState()
 
+  const [talentToStatus, setTalentToStatus] = useState(false)
+  const [openStatusForm, setOpenStatusForm] = useState(false)
+
   const [talentIdToDelete, setTalentIdToDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
@@ -34,8 +39,8 @@ const TalentTable = () => {
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
   const tanBaseUrl = process.env.BASE_URL2
+  const token = useSelector(state => state.user.token)
 
-  const token = useSelector(state=>state.user.token)
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -48,19 +53,89 @@ const TalentTable = () => {
     setOpenSnackbar(false)
   }
 
-  const handleDelete = async () => {
-    await deleteTalent(talentIdToDelete)
-    setOpenDeleteModal(false)
+  const StatusCell = ({ row }) => {
+    const talentId = row.original.talentId
+    const status = row.original.talentStatus
+
+    const statusButtonStyle = {
+      backgroundColor: status === 'ACTIVE' ? 'lightgreen' : 'lightcoral',
+      padding: '10px',
+      border: 'none',
+      borderRadius: '80px',
+      cursor: 'pointer',
+    }
+    const dotStyle = {
+      fontSize: '25px',
+      marginRight: '5px',
+      color: status === 'ACTIVE' ? 'green' : 'red',
+    }
+
+    return (
+      <button
+        style={statusButtonStyle}
+        onClick={() => {
+          setTalentToStatus(row.original), setOpenStatusForm(true)
+        }}
+      >
+        <span style={dotStyle}>&#8226;</span>
+        {status === 'ACTIVE' ? `${status}` : `${status}`}
+      </button>
+    )
+  }
+
+  StatusCell.propTypes = {
+    row: PropTypes.shape({
+      original: PropTypes.shape({
+        talentId: PropTypes.string.isRequired,
+        talentStatus: PropTypes.string.isRequired,
+        marksheetsSemwise: PropTypes.bool.isRequired,
+      }).isRequired,
+    }).isRequired,
+  }
+  const updateStatus = async formData => {
+    setOpenStatusForm(false)
+    setIsLoading(true)
+    setError(null)
+    setOpenSnackbar(null)
+    console.log(formData)
+    const talentId = formData.get('talentId')
+    try {
+      const response = await fetch(
+        `${tanBaseUrl}/cpm/talents/resign/${talentId}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+          body: formData,
+        },
+      )
+      console.log(response)
+      if (response.ok) {
+        setOpenSnackbar('Status Updated successfully.')
+        const data = await response.json()
+        setTalentList(prevTalents => [
+          ...prevTalents.filter(talent => talent.talentId !== data.talentId),
+          data,
+        ])
+        setIsLoading(false)
+      } else {
+        setError('Failed to Update Status')
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   const fetchMarksheet = async talentId => {
     try {
       const response = await fetch(
         `${tanBaseUrl}/cpm/talents/viewmarksheet/${talentId}`,
         {
-          headers:{
-            Authorization: `Basic ${token}`
-          }
-        }
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        },
       )
       if (!response.ok) {
         throw new Error('Failed to fetch marksheet')
@@ -73,54 +148,60 @@ const TalentTable = () => {
     }
   }
   const uploadMarksheet = async (talentId, file) => {
-    const formData = new FormData();
-    formData.append('marksheetsSemwise', file);
-  
+    const formData = new FormData()
+    formData.append('marksheetsSemwise', file)
+
     try {
-      const response = await fetch(`${tanBaseUrl}/cpm/talents/uploadmarksheet/${talentId}`, {
+      const response = await fetch(
+        `${tanBaseUrl}/cpm/talents/uploadmarksheet/${talentId}`,
+        {
           headers: {
-          Authorization: `Basic ${token}`
+            Authorization: `Basic ${token}`,
           },
-        method: 'PUT',
-        body: formData,
-      });
-  
+          method: 'PUT',
+          body: formData,
+        },
+      )
+
       if (!response.ok) {
-        throw new Error('Failed to upload marksheet');
+        throw new Error('Failed to upload marksheet')
       }
-  
-      console.log('Marksheet uploaded successfully');
+
+      console.log('Marksheet uploaded successfully')
     } catch (error) {
-      console.error('Error uploading marksheet:', error);
+      console.error('Error uploading marksheet:', error)
     }
-    location.reload();
+    location.reload()
   }
   // MarksheetCell component with prop validation
   const MarksheetCell = ({ row }) => {
     const talentId = row.original.talentId
-  
+
     const handleViewMarksheet = async () => {
       await fetchMarksheet(talentId)
     }
-  
+
     return (
-      <Box display="flex" justifyContent="center">
-      <ButtonGroup variant="contained" size="small">
-      <Button onClick={handleViewMarksheet} disabled={!row.original.marksheetsSemwise}>
-        {row.original.marksheetsSemwise ? 'View' : 'NA'}
-      </Button>
-      <Button
-        component="label"
-      >
-        <input
-          type="file"
-          hidden
-          accept=".pdf"
-          onChange={(event) => uploadMarksheet(talentId, event.target.files[0])}
-        />
-        {row.original.marksheetsSemwise ? 'Update' : 'Upload'}
-      </Button>
-    </ButtonGroup>
+      <Box display='flex' justifyContent='center'>
+        <ButtonGroup variant='contained' size='small'>
+          <Button
+            onClick={handleViewMarksheet}
+            disabled={!row.original.marksheetsSemwise}
+          >
+            {row.original.marksheetsSemwise ? 'View' : 'NA'}
+          </Button>
+          <Button component='label'>
+            <input
+              type='file'
+              hidden
+              accept='.pdf'
+              onChange={event =>
+                uploadMarksheet(talentId, event.target.files[0])
+              }
+            />
+            {row.original.marksheetsSemwise ? 'Update' : 'Upload'}
+          </Button>
+        </ButtonGroup>
       </Box>
     )
   }
@@ -136,11 +217,12 @@ const TalentTable = () => {
   const fetchResume = async talentId => {
     try {
       const response = await fetch(
-        `${tanBaseUrl}/cpm/talents/viewresume/${talentId}`,{
+        `${tanBaseUrl}/cpm/talents/viewresume/${talentId}`,
+        {
           headers: {
-          Authorization: `Basic ${token}`
+            Authorization: `Basic ${token}`,
           },
-        }
+        },
       )
       if (!response.ok) {
         throw new Error('Failed to fetch Resume')
@@ -153,52 +235,53 @@ const TalentTable = () => {
     }
   }
   const uploadResume = async (talentId, file) => {
-    const formData = new FormData();
-    formData.append('resume', file);
-  
+    const formData = new FormData()
+    formData.append('resume', file)
+
     try {
-      const response = await fetch(`${tanBaseUrl}/cpm/talents/uploadresume/${talentId}`, {
+      const response = await fetch(
+        `${tanBaseUrl}/cpm/talents/uploadresume/${talentId}`,
+        {
           headers: {
-          Authorization: `Basic ${token}`
+            Authorization: `Basic ${token}`,
           },
-        method: 'PUT',
-        body: formData,
-      });
-  
+          method: 'PUT',
+          body: formData,
+        },
+      )
+
       if (!response.ok) {
-        throw new Error('Failed to upload Resume');
+        throw new Error('Failed to upload Resume')
       }
-  
-      console.log('Resume uploaded successfully');
+
+      console.log('Resume uploaded successfully')
     } catch (error) {
-      console.error('Error uploading Resume:', error);
+      console.error('Error uploading Resume:', error)
     }
-    location.reload();
+    location.reload()
   }
   const ResumeCell = ({ row }) => {
     const talentId = row.original.talentId
     const handleViewResume = async () => {
       await fetchResume(talentId)
     }
-  
+
     return (
-      <Box display="flex" justifyContent="center">
-      <ButtonGroup variant="contained" size="small">
-      <Button onClick={handleViewResume} disabled={!row.original.resume}>
-        {row.original.resume ? 'View' : 'NA'}
-      </Button>
-      <Button
-        component="label"
-      >
-        <input
-          type="file"
-          hidden
-          accept=".pdf"
-          onChange={(event) => uploadResume(talentId, event.target.files[0])}
-        />
-        {row.original.resume ? 'Update' : 'Upload'}
-      </Button>
-    </ButtonGroup>
+      <Box display='flex' justifyContent='center'>
+        <ButtonGroup variant='contained' size='small'>
+          <Button onClick={handleViewResume} disabled={!row.original.resume}>
+            {row.original.resume ? 'View' : 'NA'}
+          </Button>
+          <Button component='label'>
+            <input
+              type='file'
+              hidden
+              accept='.pdf'
+              onChange={event => uploadResume(talentId, event.target.files[0])}
+            />
+            {row.original.resume ? 'Update' : 'Upload'}
+          </Button>
+        </ButtonGroup>
       </Box>
     )
   }
@@ -250,28 +333,6 @@ const TalentTable = () => {
     </Dialog>
   )
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      try {
-        const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`,{
-          headers:{
-            Authorization: `Basic ${token}`
-          }
-          }
-        )
-        const data = await response.json()
-        setTalentList(data)
-      } catch (error) {
-        console.error('Error fetching data:', error)
-        setError(error.message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [])
 
   const createTalent = async newTalent => {
     setIsLoading(true)
@@ -283,8 +344,7 @@ const TalentTable = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`
-            
+          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(newTalent),
       })
@@ -314,8 +374,7 @@ const TalentTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`
-
+            Authorization: `Basic ${token}`,
           },
           body: JSON.stringify(talentToUpdate),
         },
@@ -339,7 +398,10 @@ const TalentTable = () => {
       setIsLoading(false)
     }
   }
-
+  const handleDelete = async () => {
+    await deleteTalent(talentIdToDelete)
+    setOpenDeleteModal(false)
+  }
   const deleteTalent = async talentId => {
     setIsLoading(true)
     setError(null)
@@ -349,9 +411,9 @@ const TalentTable = () => {
         `${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`,
         {
           method: 'DELETE',
-            headers: {
-            Authorization: `Basic ${token}`
-            }
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
         },
       )
 
@@ -369,6 +431,36 @@ const TalentTable = () => {
       setIsLoading(false)
     }
   }
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      try {
+        const talentResponse = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
+        const summaryResponse = await fetch(`${tanBaseUrl}/cpm/talents/summary`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
+        const talData = await talentResponse.json()
+        setTalentList(talData)
+
+        
+      } catch (error) {
+        console.error('Error fetching data:', error)
+        setError(error.message)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const handleDeleteSelectedRows = async () => {
     setOpenSnackbar(null)
@@ -396,6 +488,13 @@ const TalentTable = () => {
       {
         id: 'talent',
         columns: [
+          {
+            accessorKey: 'talentStatus',
+            header: 'Status',
+            enableEditing: false,
+            size: 100,
+            Cell: StatusCell,
+          },
           {
             accessorKey: 'talentId',
             header: 'Talent Id',
@@ -651,12 +750,14 @@ const TalentTable = () => {
             header: 'Marksheet',
             size: 100,
             Cell: MarksheetCell,
+            Edit: () => null,
           },
           {
             accessorKey: 'resume',
             header: 'Resume',
             size: 100,
             Cell: ResumeCell,
+            Edit: () => null,
           },
           {
             accessorKey: 'officeLocation', //hey a simple column for once
@@ -1023,7 +1124,7 @@ const TalentTable = () => {
     columns,
     data: talentList,
     enableRowSelection: true,
-    initialState: { columnVisibility: { talentId: true, } },
+    initialState: { columnVisibility: { talentId: true } },
     isLoading,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
@@ -1213,6 +1314,30 @@ const TalentTable = () => {
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
       <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>TALENT</h2>
       <br></br>
+      <div className='w-full p-4 bg-gray-100'>
+        <div className='w-full p-4 bg-gray-200'>
+          <div className='flex flex-row gap-x-6'>
+            <div className='w-full p-4 bg-gray-200'>
+              <h3 className='text-xl text-[#0087D5] font-bold mb-3'>
+                <Group/>Talents 
+              </h3>
+              <br />
+              <h3 className='text-xl text-[#0087D5] font-bold mb-3'>
+                Active 
+              </h3>
+              <h3 className='text-xl text-[#0087D5] font-bold mb-3'>
+                Inactive 
+              </h3>
+              <br />        
+            </div>
+            <div className='w-full p-4 bg-gray-200'>
+              <h2 className='text-xl text-[#0087D5] font-bold mb-3'>
+                hello
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
       <br></br>
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
@@ -1260,6 +1385,14 @@ const TalentTable = () => {
           {error}
         </Alert>
       </Snackbar>
+      {openStatusForm && (
+        <StatusForm
+          openModal={openStatusForm}
+          setOpenModal={setOpenStatusForm}
+          updateStatus={updateStatus}
+          statusUp={talentToStatus}
+        />
+      )}
     </div>
   )
 }

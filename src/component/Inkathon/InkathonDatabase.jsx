@@ -275,10 +275,6 @@ import {AddInkathon }from './AddInkathon'
     },
 
     renderTopToolbarCustomActions: ({ table }) => {
-      const selectedRows = table
-        .getSelectedRowModel()
-        .flatRows.map(row => row.original)
-
       return (
         <div className='flex gap-5'>
           <Button
@@ -288,17 +284,6 @@ import {AddInkathon }from './AddInkathon'
             }}
           >
             Create New Inkathon
-          </Button>
-          <Button
-            variant='contained'
-            color='error'
-            onClick={() => {
-              setSelectedRows(selectedRows)
-              setOpenDeleteRowsModal(true)
-            }}
-            disabled={selectedRows.length === 0}
-          >
-            Delete Selected
           </Button>
         </div>
       )

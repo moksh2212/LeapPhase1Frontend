@@ -605,8 +605,9 @@ export default function CreateInkathon() {
     renderRowActions: ({ row ,closeMenu}) => (
       <Box>
         <IconButton onClick={() => {
+          setProjToEdit(row.original)
           setOpenUpdateProjectForm(true)
-          setProjToEdit(row.original)}}>
+          }}>
           <EditIcon />
         </IconButton>
         <IconButton onClick={() => {
