@@ -1,8 +1,11 @@
 import { Button } from 'flowbite-react'
 import { FaArrowRight } from 'react-icons/fa'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 export default function Home() {
+
+  
   return (
     <>
       <div className='flex flex-col m-5 lg:flex-row' style={{ height: 'calc(100vh - 84px)' }}>

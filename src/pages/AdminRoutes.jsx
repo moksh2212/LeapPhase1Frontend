@@ -8,11 +8,11 @@ export default function AdminRoutes() {
     return <Navigate to="/signin" />;
   }
 
-  if (currentUser.roles.includes('ROLE_ADMIN') ) {
+  if (currentUser.roles.includes('ADMIN') || currentUser.roles.includes('SUPERADMIN') ) {
     return <Outlet />;
   }
 
-  if (currentUser.roles.includes('ROLE_USER') && !currentUser.roles.includes('ROLE_ADMIN')) {
+  if (currentUser.roles.includes('USER') && !currentUser.roles.includes('ADMIN') && !currentUser.roles.includes('SUPERADMIN')) {
     return <Navigate to="/user" />;
   }
 

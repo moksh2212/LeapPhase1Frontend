@@ -1,53 +1,40 @@
-import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { TextInput, Button, Label, Spinner } from 'flowbite-react'
 import { Alert, Snackbar } from '@mui/material'
 import OtpInput from '../component/OTPInput'
 
-function Signup() {
-  const [talentName, setName] = useState('')
+
+
+function ForgotPassword() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [inctureId, setInctureId] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmNewPassword, setConfirmNewPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [passwordMatchError, setPasswordMatchError] = useState(false)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [otp, setOtp] = useState('')
   const [otpSent, setOtpSent] = useState(false)
-  const navigate = useNavigate()
-  // const baseUrl = process.env.BASE_URL
   const baseUrl = process.env.BASE_URL2
 
-  const handleOtpComplete = completedOtp => {
+  const handleOtpComplete = (completedOtp) => {
     setOtp(completedOtp)
-  }
-
-  const resetForm = () => {
-    setName('')
-    setEmail('')
-    setPassword('')
-    setConfirmPassword('')
-    setInctureId('')
-    setOtp('')
-    setOtpSent(false)
-    setErrorMessage('')
-    setPasswordMatchError(false)
   }
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
     }
-
     setOpenSnackbar(false)
   }
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (password !== confirmPassword) {
+    if (newPassword !== confirmNewPassword) {
       setPasswordMatchError(true)
       return
     }
@@ -63,40 +50,25 @@ function Signup() {
     try {
       const formdata = new FormData()
       formdata.append('email', email)
-      formdata.append('password', password)
-      formdata.append('talentName', talentName)
-      formdata.append('inctureId', inctureId)
+      formdata.append('password', newPassword)
       formdata.append('otp', otp)
-      const response = await fetch(`${baseUrl}/security/register`, {
+      const response = await fetch(`${baseUrl}/security/forgotPassword`, {
         method: 'POST',
-
         body: formdata,
         credentials: 'include',
       })
 
       if (response.ok) {
-        setOpenSnackbar('Account created successfully. Redirecting to signin')
-        setTimeout(() => {
-          navigate('/signin')
-        }, 3000)
-      } else if (response.status === 418) {
-        setOpenSnackbar(
-          'Account registered successfully, pending from admin approval',
-        )
+        setOpenSnackbar('Password reset successfully. Redirecting to signin')
         setTimeout(() => {
           navigate('/signin')
         }, 3000)
       } else {
-        setErrorMessage(
-          (await response.text()) ||
-            'Could not create account. Please try again.',
-        )
-        setIsLoading(false)
-        return
+        setErrorMessage(await response.text() || 'Could not reset password. Please try again.')
       }
     } catch (error) {
       console.error('Error', error)
-      setErrorMessage('Could not create account. Please try again later.')
+      setErrorMessage('Could not reset password. Please try again later.')
     } finally {
       setIsLoading(false)
     }
@@ -107,11 +79,6 @@ function Signup() {
       setErrorMessage('Please enter an email address')
       return
     }
-    if (password !== confirmPassword) {
-      setPasswordMatchError(true)
-      return
-    }
-    setPasswordMatchError(false)
     setIsLoading(true)
     try {
       const formdata = new FormData()
@@ -135,11 +102,10 @@ function Signup() {
     }
   }
 
-  const isFormValid =
-    talentName && email && password && confirmPassword && inctureId
+  const isFormValid = email && password && newPassword && confirmNewPassword 
 
   return (
-    <div className='flex items-center justify-center min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 '>
+    <div className='flex items-center justify-center min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
       <div className='max-w-md w-full space-y-8'>
         <div>
           <img
@@ -148,34 +114,11 @@ function Signup() {
             alt='Incture Logo'
           />
           <h4 className='mt-4 text-center text-xl text-gray-900'>
-            Create your account
+            Reset your password
           </h4>
         </div>
         <form className='mt-4' onSubmit={handleSubmit}>
           <div className='flex flex-col gap-1'>
-            <div>
-              <Label value='Incture Id' />
-              <TextInput
-                type='text'
-                placeholder='Incture Id'
-                id='inctureId'
-                value={inctureId}
-                onChange={e => setInctureId(e.target.value)}
-                required
-                autoFocus
-              />
-            </div>
-            <div>
-              <Label value='Full Name' />
-              <TextInput
-                type='text'
-                placeholder='Full Name'
-                id='talentName'
-                value={talentName}
-                onChange={e => setName(e.target.value)}
-                required
-              />
-            </div>
             <div>
               <Label value='Email Address' />
               <TextInput
@@ -183,35 +126,39 @@ function Signup() {
                 placeholder='Email Address'
                 id='email'
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={otpSent}
+                required
+                autoFocus
+              />
+            </div>
+           
+            <div>
+              <Label value='New Password' />
+              <TextInput
+                type='password'
+                placeholder='New Password'
+                id='newPassword'
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                disabled={otpSent}
                 required
               />
             </div>
             <div>
-              <Label value='Password' />
+              <Label value='Confirm New Password' />
               <TextInput
                 type='password'
-                placeholder='Password'
-                id='password'
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <Label value='Confirm Password' />
-              <TextInput
-                type='password'
-                placeholder='Confirm Password'
-                id='confirmPassword'
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
+                placeholder='Confirm New Password'
+                id='confirmNewPassword'
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                disabled={otpSent}
                 required
               />
             </div>
             {passwordMatchError && (
-              <p className='text-red-500 text-sm'>Passwords do not match.</p>
+              <p className='text-red-500 text-sm'>New passwords do not match.</p>
             )}
           </div>
 
@@ -235,20 +182,10 @@ function Signup() {
               <div>
                 <Button
                   type='submit'
-                  disabled={
-                    !isFormValid || isLoading || !otpSent || otp.length !== 6
-                  }
+                  disabled={isLoading || !otpSent || otp.length !== 6}
                   className='w-full flex justify-center rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-gradient-to-r focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 mt-3'
                 >
-                  {isLoading ? <Spinner /> : 'Create Account'}
-                </Button>
-
-                <Button
-                  type='button'
-                  onClick={resetForm}
-                  className='w-1/2 ml-2 flex justify-center rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
-                >
-                  Reset Form
+                  {isLoading ? <Spinner /> : 'Reset Password'}
                 </Button>
               </div>
             </>
@@ -262,7 +199,7 @@ function Signup() {
         )}
 
         <p className='mt-2 text-sm text-gray-600 text-center'>
-          Already have an account?{' '}
+          Remember your password?{' '}
           <Link
             to='/signin'
             className='font-medium text-indigo-600 hover:text-indigo-500'
@@ -291,4 +228,4 @@ function Signup() {
   )
 }
 
-export default Signup
+export default ForgotPassword

@@ -13,10 +13,10 @@ import Skills from './component/UserView/Skills'
 import PerformanceUser from './component/UserView/PerformanceUser'
 import AssignmentUser from './component/UserView/AssignmentUser'
 import UserRoutes from './pages/UserRoutes'
-
+import ForgotPassword from './pages/ForgotPassword'
 
 function App() {
-  const {currentUser } = useSelector(state=>state.user)
+  const { currentUser } = useSelector(state => state.user)
   return (
     <BrowserRouter>
       <div className='min-h-screen'>
@@ -25,14 +25,14 @@ function App() {
         <Routes>
           <Route path={'/signin'} element={<Signin />} />
           <Route path={'/signup'} element={<Signup />} />
+          <Route path={'forgotpassword'} element={<ForgotPassword />} />
 
           <Route element={<AdminRoutes />}>
             <Route path={'/'} element={<Home />} />
-            <Route path={'/dashboard'} element={<Dashboard />} />          
+            <Route path={'/dashboard'} element={<Dashboard />} />
           </Route>
 
-          <Route element = {<UserRoutes/>}>
-        
+          <Route element={<UserRoutes />}>
             <Route path={'/user'} element={<DashboardUser />} />
             <Route path={'/attendance'} element={<Attendance />} />
             <Route path={'/performance'} element={<PerformanceUser />} />
@@ -40,7 +40,6 @@ function App() {
             <Route path={'/assignments'} element={<AssignmentUser />} />
           </Route>
         </Routes>
-        
       </div>
     </BrowserRouter>
   )
