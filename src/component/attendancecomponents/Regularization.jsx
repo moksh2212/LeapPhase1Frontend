@@ -1,10 +1,57 @@
 import React, { useState, useEffect } from 'react'
-import { Tabs, Tab } from '@mui/material'
+import { Tabs, Tab, Button, Grid, Typography, Paper, Snackbar, Alert, IconButton, Menu, MenuItem } from '@mui/material'
 import Box from '@mui/material/Box'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid'
-
-import { Button, Grid, Typography, Paper, Snackbar, Alert } from '@mui/material'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useSelector } from 'react-redux'
+
+const ActionsCell = ({ params, handleApprove, handleReject, isPendingTab }) => {
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const handleApproveClick = () => {
+    handleApprove(params)
+    handleClose()
+  }
+
+  const handleRejectClick = () => {
+    handleReject(params)
+    handleClose()
+  }
+
+  if (isPendingTab) {
+    return (
+      <div>
+        <IconButton
+          aria-label="more"
+          aria-controls="long-menu"
+          aria-haspopup="true"
+          onClick={handleClick}
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          keepMounted
+          open={open}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleApproveClick}>Approve</MenuItem>
+          <MenuItem onClick={handleRejectClick}>Decline</MenuItem>
+        </Menu>
+      </div>
+    )
+  }
+  return null
+}
 
 const RegularizeRequestTable = ({
   requests,
@@ -41,7 +88,6 @@ const RegularizeRequestTable = ({
     setPage(0)
   }
 
-  // Calculate the start and end indices for the current page
   const columns = [
     { field: 'talentId', headerName: 'Employee ID', flex: 1, sortable: false },
     {
@@ -51,6 +97,7 @@ const RegularizeRequestTable = ({
       sortable: false,
     },
     { field: 'attendanceDate', headerName: 'Date', flex: 1, sortable: true },
+    { field: 'reason', headerName: 'Reason', flex: 1, sortable: true },
     { field: 'checkin', headerName: 'Check-in', flex: 1, sortable: false },
     { field: 'checkout', headerName: 'Check-out', flex: 1, sortable: false },
     {
@@ -64,47 +111,31 @@ const RegularizeRequestTable = ({
       headerName: 'Actions',
       flex: 1,
       sortable: false,
-      renderCell: params => {
-        if (isPendingTab) {
-          return (
-            <div>
-              <Button
-                variant='contained'
-                color='success'
-                onClick={() => handleApprove(params)}
-              >
-                Approval
-              </Button>{' '}
-              <Button
-                variant='contained'
-                color='error'
-                onClick={() => handleReject(params)}
-              >
-                Decline
-              </Button>
-            </div>
-          )
-        }
-        return null
-      },
+      renderCell: params => (
+        <ActionsCell
+          params={params}
+          handleApprove={handleApprove}
+          handleReject={handleReject}
+          isPendingTab={isPendingTab}
+        />
+      ),
     },
-  ]
+  ].filter(Boolean)
 
   const getRowId = row => row.regularizeId
 
   return (
-    <Paper elevation={3} style={{ marginTop: '20px', padding: '20px' }}>
+    <div style={{ marginTop: '10px', padding: '10px' }}>
       <Typography variant='h5' gutterBottom>
         Regularization Requests
       </Typography>
-      <div
-        style={{ maxHeight: '1000px', overflowY: 'auto', overflowX: 'auto' }}
-      >
+      <div style={{ overflow: 'auto' }}>
         <DataGrid
           rows={requests}
           columns={columns}
           getRowId={getRowId}
-          pageSize={5}
+          style={{ maxHeight: '100%', maxWidth: '100%', overflow: 'auto' }}
+          pageSize={1}
           rowsPerPageOptions={[5, 10, 25]}
           pagination
           components={{
@@ -112,7 +143,7 @@ const RegularizeRequestTable = ({
           }}
         />
       </div>
-    </Paper>
+    </div>
   )
 }
 
@@ -120,8 +151,8 @@ const Regularize = () => {
   const [regularizeRequests, setRegularizeRequests] = useState([])
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
-  const [tabValue, setTabValue] = useState(0) // State for managing active tab
-  const API_URL = process.env.BASE_URL2
+  const [tabValue, setTabValue] = useState(0)
+  const API_URL = 'http://192.168.0.147:8080'
   const token = useSelector(state => state.user.token)
 
   useEffect(() => {
@@ -147,7 +178,6 @@ const Regularize = () => {
   }
 
   const handleApproveRequest = async regularizeId => {
-    console.log('hello')
     try {
       const response = await fetch(
         `${API_URL}/cpm/regularize/approveRegularize/${regularizeId}`,
@@ -167,7 +197,7 @@ const Regularize = () => {
           `Failed to approve regularize request: ${response.statusText}`,
         )
       }
-
+      
       const updatedRequests = regularizeRequests.map(request =>
         request.regularizeId === regularizeId
           ? { ...request, approvalStatus: 'Approved' }
@@ -177,7 +207,7 @@ const Regularize = () => {
       setSnackbarMessage('Regularization request approved successfully')
       setSnackbarOpen(true)
     } catch (error) {
-      console.error('Error approving Regularization request:', error)
+      console.error('Error approving regularization request:', error)
     }
   }
 
@@ -208,7 +238,7 @@ const Regularize = () => {
           : request,
       )
       setRegularizeRequests(updatedRequests)
-      setSnackbarMessage('regularize request rejected successfully')
+      setSnackbarMessage('Regularize request rejected successfully')
       setSnackbarOpen(true)
     } catch (error) {
       console.error('Error rejecting regularize request:', error)
@@ -223,10 +253,6 @@ const Regularize = () => {
     setTabValue(newValue)
   }
 
-  // Filter regularize requests to show only those with approvalStatus 'Pending'
-  //const pendingRequests = regularizeRequests.filter(request => request.approvalStatus === 'Pending');
-
-  // Filter regularize requests based on tabValue
   const filteredRequests = regularizeRequests.filter(request => {
     if (tabValue === 0) {
       return request.approvalStatus === 'Pending'
@@ -238,10 +264,10 @@ const Regularize = () => {
   })
 
   return (
-    <Grid container justifyContent='center' style={{ padding: '20px' }}>
+    <Grid container style={{ padding: '5px', width: '100%' }}>
       <Grid item xs={12} md={10}>
         {/* Tab View */}
-        <Paper square>
+        <div style={{ width: '100%', margin: 'auto', paddingLeft: '20px' }}>
           <Tabs
             value={tabValue}
             indicatorColor='primary'
@@ -253,17 +279,19 @@ const Regularize = () => {
             <Tab label='Approved' />
             <Tab label='Declined' />
           </Tabs>
-        </Paper>
+        </div>
 
         {/* Tab Panels */}
         <Box mt={2}>
           <TabPanel value={tabValue} index={0}>
-            <RegularizeRequestTable
-              requests={filteredRequests}
-              onApprove={handleApproveRequest}
-              onReject={handleRejectRequest}
-              isPendingTab={true}
-            />
+            <div style={{ height: '400px', width: '1200px', overflow: 'auto' }}>
+              <RegularizeRequestTable
+                requests={filteredRequests}
+                onApprove={handleApproveRequest}
+                onReject={handleRejectRequest}
+                isPendingTab={true}
+              />
+            </div>
           </TabPanel>
           <TabPanel value={tabValue} index={1}>
             <RegularizeRequestTable
@@ -299,7 +327,6 @@ const Regularize = () => {
   )
 }
 
-// Function to render tab panels
 function TabPanel(props) {
   const { children, value, index, ...other } = props
 

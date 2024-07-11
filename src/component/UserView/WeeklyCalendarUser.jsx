@@ -54,8 +54,10 @@ export default function WeeklyCalendarUser() {
   const [rowsPerPage, setRowsPerPage] = useState(7)
   const [startDate, setStartDate] = useState(new Date())
   const [attendanceData, setAttendanceData] = useState([])
+  const [totalWorkingDays, setTotalWorkingDays] = useState(0)
+  const [totalAbsentDays, setTotalAbsentDays] = useState(0)
   const { currentUser } = useSelector(state => state.user)
-  const perBaseUrl = 'http://192.168.0.141:8080'
+  const perBaseUrl = 'http://192.168.0.147:8080'
   const token = useSelector(state => state.user.token)
   useEffect(() => {
     const fetchAttendanceData = async () => {
@@ -64,32 +66,34 @@ export default function WeeklyCalendarUser() {
 
         const urlParams = new URLSearchParams(window.location.search)
         const fetched = urlParams.get('talentId')
-        const start = new Date(startDate)
-        const end = new Date(startDate)
-        end.setDate(start.getDate() + 6)
-        // console.log(
-        //   `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
-        //     start,
-        //   )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,
-        // )
+        const currentDate = new Date(startDate);
+        const start = new Date(currentDate);
+        start.setDate(currentDate.getDate() - currentDate.getDay());
+        const end = new Date(currentDate);
+        end.setDate(currentDate.getDate() + (6 - currentDate.getDay()));
 
         const response = await axios.get(
           `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
             start,
-          )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,{
-            headers:{
-              Authorization: `Basic ${token}`
-            }
-          }
+          )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          },
         );
         setAttendanceData(response.data)
+        const workingDays = response.data.filter(day => day.status === 'Present').length;
+        setTotalWorkingDays(workingDays);
+        const absentDays = response.data.filter(day => day.status === 'Absent').length;
+        setTotalAbsentDays(absentDays);
       } catch (error) {
         console.error('Error fetching attendance data:', error)
       }
     }
 
     fetchAttendanceData()
-  }, [startDate, currentUser])
+  }, [startDate,token, currentUser,perBaseUrl])
 
   const rows = attendanceData.map(attendance =>
     createData(
@@ -123,14 +127,18 @@ export default function WeeklyCalendarUser() {
   const decreaseWeek = () => {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() - 7)
+    newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
     setStartDate(newStartDate)
-  }
+    
+}
 
-  const increaseWeek = () => {
-    const newStartDate = new Date(startDate)
-    newStartDate.setDate(newStartDate.getDate() + 7)
-    setStartDate(newStartDate)
-  }
+const increaseWeek = () => {
+  const newStartDate = new Date(startDate)
+  newStartDate.setDate(newStartDate.getDate() + 7)
+  newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
+  setStartDate(newStartDate)
+  
+}
 
   const formatDate = date => {
     const year = date.getFullYear()
@@ -139,13 +147,18 @@ export default function WeeklyCalendarUser() {
     return `${year}-${month}-${day}`
   }
 
-  const startOfWeek = new Date(startDate)
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
-  const endOfWeek = new Date(startDate)
-  endOfWeek.setDate(startOfWeek.getDate() + 6)
+  const currentDate = new Date(startDate); // Your input date
+  const startOfWeek = new Date(currentDate);
+  const endOfWeek = new Date(currentDate);
 
+  startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+ 
+  // Adjust to the end of the week (Saturday)
+  endOfWeek.setDate(currentDate.getDate() + (6 - currentDate.getDay()));
+ 
   return (
     <div>
+      <div className='flex flex-row justify-center'>
       <div
         className='flex flex-row justify-center'
         style={{
@@ -201,6 +214,72 @@ export default function WeeklyCalendarUser() {
               </div>
             </div>
           </Card>
+        </div>
+        
+      </div>
+      <div
+        className='flex flex-row justify-center'
+        style={{
+          margin: '10px 90px',
+          height: '147px',
+          width: '30%',
+          border: '2px solid #ccc',
+          borderRadius: '8px',
+          padding: '1px',
+        }}
+      >
+        <div
+          className='flex flex-row justify-between'
+          style={{ margin: '10px 90px' }}
+        >
+          <Card
+            title={
+              <div className='flex items-center'>
+                <svg
+                  className='MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-ua0iu'
+                  focusable='false'
+                  aria-hidden='true'
+                  viewBox='0 0 24 24'
+                  data-testid='AvTimerIcon'
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    fill: 'green',
+                    marginRight: '8px',
+                  }}
+                >
+                  <path d='M11 17c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1m0-14v4h2V5.08c3.39.49 6 3.39 6 6.92 0 3.87-3.13 7-7 7s-7-3.13-7-7c0-1.68.59-3.22 1.58-4.42L12 13l1.41-1.41-6.8-6.8v.02C4.42 6.45 3 9.05 3 12c0 4.97 4.02 9 9 9 4.97 0 9-4.03 9-9s-4.03-9-9-9zm7 9c0-.55-.45-1-1-1s-1 .45-1 1 .45 1 1 1 1-.45 1-1M6 12c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1'></path>
+                </svg>
+                <div style={{ fontWeight: 'bold', color: '#919195' }}>
+                   No of Days Present: {totalWorkingDays}
+                </div>
+                
+              </div>
+            }
+            style={{ width: 300, border: '1px  blue' }}
+          >
+            <div className='flex items-center'>
+                <svg
+                  className='MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-ua0iu'
+                  focusable='false'
+                  aria-hidden='true'
+                  viewBox='0 0 24 24'
+                  data-testid='AvTimerIcon'
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    fill: 'red',
+                    marginRight: '8px',
+                  }}
+                >
+                  <path d='M11 17c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1m0-14v4h2V5.08c3.39.49 6 3.39 6 6.92 0 3.87-3.13 7-7 7s-7-3.13-7-7c0-1.68.59-3.22 1.58-4.42L12 13l1.41-1.41-6.8-6.8v.02C4.42 6.45 3 9.05 3 12c0 4.97 4.02 9 9 9 4.97 0 9-4.03 9-9s-4.03-9-9-9zm7 9c0-.55-.45-1-1-1s-1 .45-1 1 .45 1 1 1 1-.45 1-1M6 12c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1-1 .45-1 1'></path>
+                </svg>
+                <div style={{ fontWeight: 'bold', color: '#919195' }}>
+                   No of Days Absent: {totalAbsentDays}
+                </div>
+            </div>
+          </Card>
+        </div>
         </div>
       </div>
       <Paper sx={{ width: '100%' }}>

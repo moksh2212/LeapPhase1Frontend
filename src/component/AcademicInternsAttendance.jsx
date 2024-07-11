@@ -321,7 +321,7 @@ const AcademicInternsAttendance = () => {
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
           <div className='flex justify-between mb-2 bg-[#F9FAFB] rounded-md'>
             <h2 className={`text-3xl text-[#0087D5] font-bold my-auto p-2`}>
-              Academic Interns Attendance
+              Industrial Interns Attendance
             </h2>
 
             <div className='my-auto mr-2'>

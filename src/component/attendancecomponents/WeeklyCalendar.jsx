@@ -93,6 +93,7 @@ export default function WeeklyCalendar() {
   
     fetchAttendanceData()
   }, [startDate, token, perBaseUrl])
+  }, [startDate, token, perBaseUrl])
  
   const rows = attendanceData.map(attendance =>
     createData(
@@ -126,6 +127,7 @@ export default function WeeklyCalendar() {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() - 7)
     newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
+    newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
     setStartDate(newStartDate)
     console.log("decrease=", newStartDate)
 }
@@ -134,7 +136,10 @@ const increaseWeek = () => {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() + 7)
     newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
+    newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
     setStartDate(newStartDate)
+    console.log("increase=", newStartDate)
+}
     console.log("increase=", newStartDate)
 }
  

@@ -10,8 +10,7 @@ export function AddInkathon({ openModal, setOpenModal, createInkathon }) {
   const [inkathonName, setInkathonName] = useState('')
   const [inkathonDescription, setInkathonDescription] = useState('')
 
-
-
+  
   const handleSubmit = async e => {
     e.preventDefault()
 

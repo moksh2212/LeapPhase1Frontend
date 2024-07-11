@@ -78,11 +78,11 @@ const TalentTable = () => {
   
     try {
       const response = await fetch(`${tanBaseUrl}/cpm/talents/uploadmarksheet/${talentId}`, {
+          headers: {
+          Authorization: `Basic ${token}`
+          },
         method: 'PUT',
         body: formData,
-        headers:{
-          Authorization: `Basic ${token}`
-        }
       });
   
       if (!response.ok) {
@@ -130,6 +130,84 @@ const TalentTable = () => {
       original: PropTypes.shape({
         talentId: PropTypes.string.isRequired,
         marksheetsSemwise: PropTypes.bool.isRequired,
+      }).isRequired,
+    }).isRequired,
+  }
+  const fetchResume = async talentId => {
+    try {
+      const response = await fetch(
+        `${tanBaseUrl}/cpm/talents/viewresume/${talentId}`,{
+          headers: {
+          Authorization: `Basic ${token}`
+          },
+        }
+      )
+      if (!response.ok) {
+        throw new Error('Failed to fetch Resume')
+      }
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      window.open(url, '_blank')
+    } catch (error) {
+      console.error('Error fetching Resume:', error)
+    }
+  }
+  const uploadResume = async (talentId, file) => {
+    const formData = new FormData();
+    formData.append('resume', file);
+  
+    try {
+      const response = await fetch(`${tanBaseUrl}/cpm/talents/uploadresume/${talentId}`, {
+          headers: {
+          Authorization: `Basic ${token}`
+          },
+        method: 'PUT',
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to upload Resume');
+      }
+  
+      console.log('Resume uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading Resume:', error);
+    }
+    location.reload();
+  }
+  const ResumeCell = ({ row }) => {
+    const talentId = row.original.talentId
+    const handleViewResume = async () => {
+      await fetchResume(talentId)
+    }
+  
+    return (
+      <Box display="flex" justifyContent="center">
+      <ButtonGroup variant="contained" size="small">
+      <Button onClick={handleViewResume} disabled={!row.original.resume}>
+        {row.original.resume ? 'View' : 'NA'}
+      </Button>
+      <Button
+        component="label"
+      >
+        <input
+          type="file"
+          hidden
+          accept=".pdf"
+          onChange={(event) => uploadResume(talentId, event.target.files[0])}
+        />
+        {row.original.resume ? 'Update' : 'Upload'}
+      </Button>
+    </ButtonGroup>
+      </Box>
+    )
+  }
+
+  ResumeCell.propTypes = {
+    row: PropTypes.shape({
+      original: PropTypes.shape({
+        talentId: PropTypes.string.isRequired,
+        resume: PropTypes.bool.isRequired,
       }).isRequired,
     }).isRequired,
   }
@@ -205,6 +283,8 @@ const TalentTable = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Basic ${token}`
+            
         },
         body: JSON.stringify(newTalent),
       })
@@ -269,6 +349,9 @@ const TalentTable = () => {
         `${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`,
         {
           method: 'DELETE',
+            headers: {
+            Authorization: `Basic ${token}`
+            }
         },
       )
 
@@ -568,6 +651,12 @@ const TalentTable = () => {
             header: 'Marksheet',
             size: 100,
             Cell: MarksheetCell,
+          },
+          {
+            accessorKey: 'resume',
+            header: 'Resume',
+            size: 100,
+            Cell: ResumeCell,
           },
           {
             accessorKey: 'officeLocation', //hey a simple column for once
