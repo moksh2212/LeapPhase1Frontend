@@ -34,7 +34,7 @@ const IndividualToogleAssesments = () => {
   const [validationErrors, setValidationErrors] = useState({})
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [error, setError] = useState()
-
+const [x, setx] = useState(0)
   const [talentIdToDelete, setTalentIdToDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
@@ -47,39 +47,37 @@ const IndividualToogleAssesments = () => {
   const updateAssessment = async AssesmentToUpdate => {
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const assessmentId = urlParams.get('assessmentId');
+      const assesmentid = urlParams.get('assesmentid');
   
       // Create URL with query parameters
-      const url = new URL(`${baseUrl}/assessments/updateassessment/${AssesmentToUpdate.assessmentId}/${talentId}`);
-      url.searchParams.append('assessmentId', assessmentId);
+      const url = new URL(`${baseUrl}/assessments/updateassessment/${assesmentid}/${AssesmentToUpdate.talentId}`);
+      url.searchParams.append('assessmentId', assesmentid);
       url.searchParams.append('talentId', AssesmentToUpdate.talentId);
-      url.searchParams.append('score', AssesmentToUpdate.scores); // Get the latest score
-      url.searchParams.append('reason', AssesmentToUpdate.reason);
+      
+      // Get the latest score (which is the only score in the array)
+      
+      url.searchParams.append('score', AssesmentToUpdate.scores);
+      url.searchParams.append('reason', AssesmentToUpdate.reason || '');
   
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Authorization': `Basic ${token}`,
         },
-        // No need for body as we're using query parameters
       });
   
       if (response.ok) {
         const data = await response.json();
         setValidationErrors({});
-        setTalentList(prevTalents =>
-          prevTalents.map(talent =>
-            talent.talentId === data.talentId ? {
-              ...data,
-              scores: [...talent.scores, data.scores], // Append new score to existing scores
-            } : talent,
-          ),
-        );
+        setx(1)
+      
       } else {
         console.error('Error updating assessment:', response.statusText);
+        throw new Error(response.statusText);
       }
     } catch (error) {
       console.error('Error updating talent:', error);
+      throw error;
     }
   };
 
@@ -162,7 +160,7 @@ const IndividualToogleAssesments = () => {
       }
     }
     fetchData()
-  }, [])
+  }, [x])
 
   const createTalent = async newTalent => {
     setIsLoading(true)
@@ -350,33 +348,16 @@ const IndividualToogleAssesments = () => {
 
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: async ({ values, table }) => {
-      console.log('Editing row save function called 1')
+      try {
+        setValidationErrors({});
+        console.log("hello")
+        updateAssessment(values);
+        table.setEditingRow(null);
 
-      // Object.entries(values).forEach(([key, value]) => {
-      //   const temp = value ? value.toString().trim() : '' // Add a null check here
-      //   const rule = validationRules[key]
-
-      //   if (rule) {
-      //     if (rule.required && temp.length === 0) {
-      //       errors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} field cannot be empty`
-      //     } else if (rule.pattern && !rule.pattern.test(value)) {
-      //       errors[key] = rule.message
-      //     }
-      //   }
-      // // })
-      // console.log("Editing row save function called 2");
-
-      // if (Object.keys(errors).length > 0) {
-      //   console.log("Editing row save function called 3");
-
-      //   setValidationErrors(errors)
-      //   return
-      // }
-      // console.log("Editing row save function called 4");
-
-      setValidationErrors({})
-      await updateAssessment(values)
-      table.setEditingRow(null)
+        setOpenSnackbar('Assessment updated successfully!');
+      } catch (error) {
+        setError(`Failed to update assessment: ${error.message}`);
+      }
     },
   })
 
