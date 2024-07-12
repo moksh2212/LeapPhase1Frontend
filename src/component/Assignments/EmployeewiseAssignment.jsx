@@ -413,6 +413,12 @@ console.log(feedbacksend)
         enableEditing: true,
         size: 150,
       },
+      {
+        accessorKey: 'evaluatorName',
+        header: 'Evaluator Name',
+        enableEditing: true,
+        size: 150,
+      },
     ],
     [],
   );

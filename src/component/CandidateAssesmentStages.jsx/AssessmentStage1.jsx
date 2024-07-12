@@ -105,8 +105,9 @@ const AssesTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/
-getAllAssessments`, {
+        const urlParams = new URLSearchParams(window.location.search);
+        const collegeId = urlParams.get('collegeId');
+        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`, {
           headers: {
             Authorization: `Basic ${token}`,
           },
@@ -135,10 +136,16 @@ getAllAssessments`, {
         columns: [
           {
             accessorKey: 'candidateName',
-            header: 'Candiate Name',
+            header: 'Candidate Name',
             size: 100,
             enableEditing: false,
-          },
+            Cell: ({ cell }) => (
+              <div className='ml-8'>
+                {cell.getValue()}
+              </div>
+            ),
+          }
+          ,
           {
             accessorKey: 'email', //accessorKey used to define `data` column. `id` gets set to accessorKey automatically
             enableClickToCopy: true,
@@ -172,6 +179,11 @@ getAllAssessments`, {
             enableColumnFilter: true,
             enableSorting: true,
             size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'logicalScore',
@@ -179,15 +191,11 @@ getAllAssessments`, {
             enableColumnFilter: true,
             enableSorting: true,
             size: 100,
-          },
-
-    
-          {
-            accessorKey: 'codingScore',
-            header: 'Coding Score',
-            enableSorting: true,
-            enableColumnFilter: true,
-            size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'verbalScore',
@@ -195,13 +203,37 @@ getAllAssessments`, {
             enableSorting: true,
             enableColumnFilter: true,
             size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
+
+          {
+            accessorKey: 'codingScore',
+            header: 'Coding Score',
+            enableSorting: true,
+            enableColumnFilter: true,
+            size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
+          },
+
           {
             accessorKey: 'totalScore',
             header: 'Total Score',
             enableSorting: true,
             enableColumnFilter: true,
             size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
 
         ],
@@ -320,7 +352,7 @@ getAllAssessments`, {
         <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300">
           <div className='flex justify-between mb-2 rounded-md'>
             <h2 className={`text-2xl text-[#0087D5] font-bold my-auto p-2`}>
-              Candidates selected for stage 1
+              Candidates selected for online assessment
             </h2>
             <div className='my-auto mr-2'></div>
           </div>

@@ -1,5 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import {
   TextInput,
   Button,
@@ -7,13 +7,13 @@ import {
   Label,
   Spinner,
   Alert,
-} from 'flowbite-react';
-import { useDispatch, useSelector } from 'react-redux';
+} from 'flowbite-react'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   signInStart,
   signInSuccess,
   signInFailure,
-} from '../redux/user/userSlice';
+} from '../redux/user/userSlice'
 
 function Signin() {
   const navigate = useNavigate()
@@ -22,27 +22,25 @@ function Signin() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const signBaseUrl = process.env.BASE_URL
+  const signBaseUrl = process.env.BASE_URL2
   const dispatch = useDispatch()
 
-
-  
   const handleSubmit = async e => {
-    e.preventDefault();
+    e.preventDefault()
 
     const formData = {
       email: email,
       password: password,
-    };
-    if (!formData.email || !formData.password) {
-      setErrorMessage('All fields are required.');
-      return;
     }
-    const token = btoa(`${formData.email}:${formData.password}`);
-    console.log(token);
+    if (!formData.email || !formData.password) {
+      setErrorMessage('All fields are required.')
+      return
+    }
+    const token = btoa(`${formData.email}:${formData.password}`)
+    console.log(token)
     setIsLoading(true)
     try {
-      dispatch(signInStart());
+      dispatch(signInStart())
       const response = await fetch(`${signBaseUrl}/security/login`, {
         method: 'POST',
         headers: {
@@ -54,25 +52,29 @@ function Signin() {
       })
 
       if (response.ok) {
-
-        const data = await response.json();
-        dispatch(signInSuccess({user:data, token:token}))
-        if (data.roles && data.roles.includes('ROLE_USER') && !data.roles.includes('ROLE_ADMIN')) {
-          navigate('/user');
+        const data = await response.json()
+        dispatch(signInSuccess({ user: data, token: token }))
+        if (
+          data.roles &&
+          data.roles.includes('USER') &&
+          !data.roles.includes('ADMIN') &&
+          !data.roles.includes('SUPERADMIN')
+        ) {
+          navigate('/user')
         } else {
-          navigate('/');
+          navigate('/')
         }
-      }
-
-      else{
-        dispatch(signInFailure());
+      } else if (response.status === 401) {
+        setErrorMessage('Email or Password not correct or your account is pending from admin approval')
+      } else {
+        dispatch(signInFailure())
       }
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage(error.message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
@@ -138,6 +140,15 @@ function Signin() {
               {isLoading ? <Spinner /> : 'Signin'}
             </Button>
           </div>
+
+          <p className='text-end text-sm mt-1 space-y-[-8]'>
+              <Link
+                to='/forgotpassword'
+                className='text-indigo-600 hover:text-indigo-500'
+              >
+                Forgot Password?{' '}
+              </Link>
+            </p>
         </form>
 
         {errorMessage && (
@@ -161,7 +172,7 @@ function Signin() {
         </p>
       </div>
     </div>
-  );
+  )
 }
 
-export default Signin;
+export default Signin

@@ -59,6 +59,11 @@ export default function EmployeesSidebar({ setShowEmployeesSidebar }) {
                 Assessments
               </Sidebar.Item>
             </Link>
+            <Link to='?tab=training'>
+              <Sidebar.Item as={'div'} active={tab === 'training'}>
+                Training
+              </Sidebar.Item>
+            </Link>
             <Link to='?tab=trainers'>
               <Sidebar.Item as={'div'} active={tab === 'trainers'}>
                 Trainers

@@ -1,10 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
-import { useSelector } from 'react-redux'
-
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -12,6 +8,8 @@ import {
   MRT_ToggleFiltersButton,
 } from 'material-react-table';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux'
+
 import {
   Button,
   Snackbar,
@@ -20,7 +18,6 @@ import {
 
 const canBaseUrl = process.env.BASE_URL2;
 const tanBaseUrl = process.env.BASE_URL2;
-
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -33,15 +30,14 @@ const NameCell = ({ renderedCellValue }) => {
     >
       <span>{renderedCellValue}</span>
     </Box>
-  );
-};
-
+  )
+}
 NameCell.propTypes = {
   renderedCellValue: PropTypes.node.isRequired,
   row: PropTypes.shape({
     original: PropTypes.shape({}).isRequired,
   }).isRequired,
-};
+}
 
 const SalaryCell = ({ cell }) => {
   return (
@@ -62,18 +58,17 @@ const SalaryCell = ({ cell }) => {
     >
       {cell.getValue()?.toLocaleString?.('en-US', {})}
     </Box>
-  );
-};
-
+  )
+}
 SalaryCell.propTypes = {
   cell: PropTypes.shape({
     getValue: PropTypes.func.isRequired,
   }).isRequired,
-};
+}
 
 const DateHeader = ({ column }) => {
-  return <em>{column.columnDef.header}</em>;
-};
+  return <em>{column.columnDef.header}</em>
+}
 
 DateHeader.propTypes = {
   column: PropTypes.shape({
@@ -81,11 +76,12 @@ DateHeader.propTypes = {
       header: PropTypes.node.isRequired,
     }).isRequired,
   }).isRequired,
-};
+}
 
 const AssesTable = () => {
   const [data, setData] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
+  const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
   const token = useSelector(state => state.user.token)
   const [count, setCount] = useState(0);
@@ -98,31 +94,44 @@ const AssesTable = () => {
 
     setOpen(false);
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`,{
+        const urlParams = new URLSearchParams(window.location.search);
+        const collegeId = urlParams.get('collegeId');
+        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`, {
           headers: {
             Authorization: `Basic ${token}`,
-          },
+          }
         });
         let jsonData = await response.json();
-
-        jsonData = jsonData.filter(assessment => assessment && assessment.assessmentLevelThree);
-        const arr = jsonData.map(assessment => assessment.assessmentLevelThree);
+  
+        jsonData = jsonData.filter(assessment => assessment && assessment.assessmentLevelFinal);
+  
+        const arr = jsonData.map(assessment => assessment.assessmentLevelFinal);
+  
         setData(arr);
-        console.log(jsonData);
+        console.log(jsonData); 
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
+  
     fetchData();
   }, []);
+  
   const validate = (values) => {
     const errors = {};
-    const requiredFields = ['problemSolving', 'analyticalSkills'];
+    const requiredFields = [
+      'contentTotal', 
+      'presentationTotal', 
+      'problemStatement', 
+      'processWorkflow', 
+      'techStacks', 
+      'recommendedSolution', 
+      'languageAndGrammar', 
+      'logicalFlow'
+    ];
   
     requiredFields.forEach((key) => {
       if (values[key] === undefined || values[key] === null || values[key] === '') {
@@ -146,27 +155,15 @@ const AssesTable = () => {
     () => [
       {
         id: 'candidate',
-        header: 'Candidate',
         columns: [
-          {
-            accessorKey: 'levelThreeId',
-            header: 'Level',
-            size: 100,
-            enableEditing: false,
-            isVisible: false,
-            Cell: ({ cell }) => (
-              <div className='ml-3'>
-                {cell.getValue()}
-              </div>
-            ),
-          },
+        
           {
             accessorKey: 'candidateName',
-            header: 'Candidate Name',
+            header: 'Candiate Name',
             size: 100,
             enableEditing: false,
             Cell: ({ cell }) => (
-              <div className='ml-11'>
+              <div className='ml-32'>
                 {cell.getValue()}
               </div>
             ),
@@ -176,66 +173,15 @@ const AssesTable = () => {
             header: 'Email',
             size: 100,
             enableEditing: false,
+            Cell: ({ cell }) => (
+                <div className='ml-32'>
+                  {cell.getValue()}
+                </div>
+              ),
             
           },
-          {
-            accessorKey: 'problemSolving',
-            header: 'Problem Solving',
-            enableColumnFilter: true,
-            enableSorting: true,
-            size: 100,
-            Cell: ({ cell }) => (
-              <div className='ml-11'>
-                {cell.getValue()}
-              </div>
-            ),
-            muiEditTextFieldProps: ({ cell }) => ({
-              error: !!validationErrors[cell.column.id],
-              helperText: validationErrors[cell.column.id],
-              onFocus: () => {
-                if (validationErrors[cell.column.id]) {
-                  const newValidationErrors = { ...validationErrors };
-                  delete newValidationErrors[cell.column.id];
-                  setValidationErrors(newValidationErrors);
-                }
-              },
-            }),
-          },
-          {
-            accessorKey: 'analyticalSkills',
-            header: 'Analytical Skills',
-            enableSorting: true,
-            enableColumnFilter: true,
-            size: 100,
-            muiEditTextFieldProps: ({ cell }) => ({
-              error: !!validationErrors[cell.column.id],
-              helperText: validationErrors[cell.column.id],
-              onFocus: () => {
-                if (validationErrors[cell.column.id]) {
-                  const newValidationErrors = { ...validationErrors };
-                  delete newValidationErrors[cell.column.id];
-                  setValidationErrors(newValidationErrors);
-                }
-              },
-            }),
-            Cell: ({ cell }) => (
-              <div className='ml-11'>
-                {cell.getValue()}
-              </div>
-            ),
-          },
-          {
-            accessorKey: 'totalScore',
-            header: 'Total Score',
-            enableSorting: true,
-            enableColumnFilter: true,
-            size: 100,
-            Cell: ({ cell }) => (
-              <div className='ml-11'>
-                {cell.getValue()}
-              </div>
-            ),
-          },
+        
+
         ],
       },
     ],
@@ -244,15 +190,42 @@ const AssesTable = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data,
+    data, 
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     enableGrouping: true,
     enableColumnPinning: true,
     enableFacetedValues: true,
-    enableRowActions: true,
-    enableRowSelection: true,
-    enableEditing: true,
+    enableRowActions: false,
+    enableRowSelection: false,
+    enableEditing: false,
+    layoutMode: 'grid',
+    muiTablePaperProps: {
+      elevation: 0,
+      sx: {
+        maxWidth: '800px',
+        margin: '0 auto',
+        borderRadius: '8px',
+        border: '1px solid #e0e0e0',
+      },
+    },
+    muiTableProps: {
+      sx: {
+        tableLayout: 'fixed',
+      },
+    },
+    muiTableBodyCellProps: {
+      sx: {
+        padding: '16px',
+        textAlign: 'center', // Center the content horizontally
+
+      },},
+      muiTableHeadCellProps: {
+        sx: {
+          textAlign: 'center', // Center the header text
+          marginLeft:'120px'
+        },
+      },
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
         '&:hover': {
@@ -260,18 +233,20 @@ const AssesTable = () => {
         },
       },
     }),
-    onEditingRowSave: async ({ table, values }) => {
+    onEditingRowSave: async ({ table, values, row }) => {
       const errors = validate(values);
       if (Object.keys(errors).length) {
         setValidationErrors(errors);
         return;
       }
-setValidationErrors({})
+    
+      setValidationErrors({});
+    
+    
       try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const collegeId = urlParams.get('collegeId');
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`, {
-
+        const response = await fetch(
+          `${canBaseUrl}/cpm2/assessment/updateLevelTwo`,
+          {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -293,6 +268,7 @@ setValidationErrors({})
     },
     onEditingRowCancel: () => {
       setValidationErrors({});
+
     },
     initialState: {
       showColumnFilters: false,
@@ -310,6 +286,7 @@ setValidationErrors({})
       shape: 'rounded',
       variant: 'outlined',
     },
+
     renderTopToolbar: ({ table }) => {
       const [hasSelectedRows, setHasSelectedRows] = useState(false);
 
@@ -319,7 +296,7 @@ setValidationErrors({})
           arr.push(row.original);
         });
         const response = await fetch(
-          `${tanBaseUrl}/cpm2/assessment/selectLevelThree`,
+          `${tanBaseUrl}/cpm2/assessment/selectLevelTwo`,
           {
             method: 'POST',
             headers: {
@@ -347,12 +324,11 @@ setValidationErrors({})
       }, [selectedRowCount]);
 
       return (
-        <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbar-thumb-slate-300">
-          <div className='flex justify-between mb-2 rounded-md'>
+        <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300">
+          <div className='flex justify-centre mb-2 rounded-md items-center ml-72'>
             <h2 className={`text-2xl text-[#0087D5] font-bold my-auto p-2`}>
-              Candidates selected for stage 3
+             Final Selected
             </h2>
-            <div className='my-auto mr-2'></div>
           </div>
           <Box
             sx={theme => ({
@@ -369,14 +345,7 @@ setValidationErrors({})
             </Box>
             <Box>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-                <Button
-                  color='success'
-                  disabled={table.getSelectedRowModel().rows.length === 0}
-                  onClick={handleActivate}
-                  variant='contained'
-                >
-                  Select for Stage 4
-                </Button>
+               
               </Box>
             </Box>
           </Box>
@@ -396,9 +365,9 @@ setValidationErrors({})
                 variant="filled"
                 sx={{ width: '100%' }}
               >
-                {count === 1
-                  ? `${count} candidate selected successfully for stage 4`
-                  : `${count} candidates selected successfully for stage 4`}
+                {count=== 1
+                  ? `${count} candidate selected successfully for stage 3`
+                  : `${count} candidates selected successfully for stage 3`}
               </Alert>
             </Snackbar>
           )}
@@ -407,16 +376,18 @@ setValidationErrors({})
     },
   });
 
-  return <MaterialReactTable table={table} />;
-};
+  return  <div style={{ padding: '20px' }}>
+  <MaterialReactTable table={table} />
+</div>
+}
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
-const CandidatesAssesmentsStage3 = () => (
+const AssesmentFinalSelected = () => (
   <LocalizationProvider dateAdapter={AdapterDayjs}>
-    <AssesTable />
+    <AssesTable  />
   </LocalizationProvider>
 );
 
-export default CandidatesAssesmentsStage3;
+export default AssesmentFinalSelected;

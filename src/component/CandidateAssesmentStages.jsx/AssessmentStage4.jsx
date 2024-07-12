@@ -102,8 +102,10 @@ const AssesTable = () => {
   };
   useEffect(() => {
     const fetchData = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const collegeId = urlParams.get('collegeId');
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`, {
+        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`, {
           headers: {
             Authorization: `Basic ${token}`,
           },
@@ -163,12 +165,22 @@ const AssesTable = () => {
             size: 100,
             enableEditing: false,
             isVisible: false,
+            Cell: ({ cell }) => (
+              <div className='ml-2'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'candidateName',
             header: 'Candiate Name',
             size: 100,
             enableEditing: false,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'email',
@@ -183,6 +195,11 @@ const AssesTable = () => {
             enableColumnFilter: true,
             enableSorting: true,
             size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
             muiEditTextFieldProps: ({ cell }) => ({
               error: !!validationErrors[cell.column.id],
               helperText: validationErrors[cell.column.id],
@@ -201,6 +218,11 @@ const AssesTable = () => {
             enableColumnFilter: true,
             enableSorting: true,
             size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
             muiEditTextFieldProps: ({ cell }) => ({
               error: !!validationErrors[cell.column.id],
               helperText: validationErrors[cell.column.id],
@@ -221,6 +243,11 @@ const AssesTable = () => {
             enableSorting: true,
             enableColumnFilter: true,
             size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
             muiEditTextFieldProps: ({ cell }) => ({
               error: !!validationErrors[cell.column.id],
               helperText: validationErrors[cell.column.id],
@@ -232,6 +259,7 @@ const AssesTable = () => {
                 }
               },
             }),
+           
           },
           {
             accessorKey: 'tenacity',
@@ -250,6 +278,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'valueSystem',
@@ -268,6 +301,11 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
           {
             accessorKey: 'totalScore',
@@ -276,6 +314,11 @@ const AssesTable = () => {
             enableColumnFilter: true,
             enableEditing: false,
             size: 100,
+            Cell: ({ cell }) => (
+              <div className='ml-11'>
+                {cell.getValue()}
+              </div>
+            ),
           },
 
 

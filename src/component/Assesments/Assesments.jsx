@@ -492,6 +492,9 @@ const TalentAssessment = () => {
           formData.append('file', selectedFile)
 
           const response = await fetch(`${tanBaseUrl}/assessments/uploadexcel`, {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
             method: 'POST',
             body: formData,
           })
