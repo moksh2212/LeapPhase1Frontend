@@ -125,11 +125,11 @@ const RegularizeRequestTable = ({
   const getRowId = row => row.regularizeId
 
   return (
-    <div style={{ marginTop: '10px', padding: '10px' }}>
+    <div >
       <Typography variant='h5' gutterBottom>
         Regularization Requests
       </Typography>
-      <div style={{ overflow: 'auto' }}>
+      <div >
         <DataGrid
           rows={requests}
           columns={columns}
@@ -264,8 +264,8 @@ const Regularize = () => {
   })
 
   return (
-    <Grid container style={{ padding: '5px', width: '100%' }}>
-      <Grid item xs={12} md={10}>
+    <Grid >
+      <Grid >
         {/* Tab View */}
         <div style={{ width: '100%', margin: 'auto', paddingLeft: '20px' }}>
           <Tabs
@@ -282,9 +282,9 @@ const Regularize = () => {
         </div>
 
         {/* Tab Panels */}
-        <Box mt={2}>
+        <Box >
           <TabPanel value={tabValue} index={0}>
-            <div style={{ height: '400px', width: '1200px', overflow: 'auto' }}>
+            <div >
               <RegularizeRequestTable
                 requests={filteredRequests}
                 onApprove={handleApproveRequest}

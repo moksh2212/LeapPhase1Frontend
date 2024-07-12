@@ -85,12 +85,12 @@ import {AddInkathon }from './AddInkathon'
       })
       console.log(response)
       if (response.ok) {
-        alert('Inkathon Created successfully.')
+        setOpenSnackbar('Inkathon Created successfully.')
         const data = await response.json()
         setInkathonsList(prevInkathons => [...prevInkathons, data])
         setIsLoading(false)
       } else {
-        alert('Failed to Create Inkathon')
+        setError('Failed to Create Inkathon')
         setIsLoading(false)
       }
     } catch (error) {
@@ -128,11 +128,11 @@ import {AddInkathon }from './AddInkathon'
         setInkathonsList(prevInkathons =>
           prevInkathons.filter(inkathon => inkathon.inkathonId !== inkathonId),
         )
-        setOpenSnackbar('Project deleted successfully!')
+        setOpenSnackbar('Inkathon deleted successfully!')
         setError(null)
       }
     } catch (error) {
-      console.error('Error deleting Project:', error)
+      console.error('Error deleting Inkathon:', error)
       setError(error.message)
     } finally {
       setIsLoading(false)
@@ -275,10 +275,6 @@ import {AddInkathon }from './AddInkathon'
     },
 
     renderTopToolbarCustomActions: ({ table }) => {
-      const selectedRows = table
-        .getSelectedRowModel()
-        .flatRows.map(row => row.original)
-
       return (
         <div className='flex gap-5'>
           <Button
@@ -288,17 +284,6 @@ import {AddInkathon }from './AddInkathon'
             }}
           >
             Create New Inkathon
-          </Button>
-          <Button
-            variant='contained'
-            color='error'
-            onClick={() => {
-              setSelectedRows(selectedRows)
-              setOpenDeleteRowsModal(true)
-            }}
-            disabled={selectedRows.length === 0}
-          >
-            Delete Selected
           </Button>
         </div>
       )

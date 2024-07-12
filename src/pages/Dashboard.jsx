@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom'
 import CandidateDatabase from '../component/CandidateDatabase'
-import TalentDatabase from '../component/TalentDatabase'
+import TalentDatabase from '../component/Talent/TalentDatabase'
 import DashSidebar from '../component/DashSidebar'
 import Performance from '../component/Performance'
 import Attendance1 from '../component/attendancecomponents/Attendance1'
