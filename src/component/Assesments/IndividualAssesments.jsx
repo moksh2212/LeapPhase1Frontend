@@ -371,7 +371,7 @@ const IndividualAssessments = () => {
         style={{width: '50px' }}
       >
         <KeyboardArrowLeftIcon/>
-      </Button>Scorecard For Indidvidual Assessment</h2>
+      </Button>Scorecard For Individual Assessment</h2>
     
       <br></br>
       <br></br>

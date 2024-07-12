@@ -36,6 +36,55 @@ const AssesmentCollege = () => {
   const [selectedRows, setSelectedRows] = useState(null)
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
+
+  const selectTier = [
+    'Government Tier 1',
+    'Government Tier 2',
+    'Private Tier 1',
+    'Private Tier 2',
+    'NIT',
+  ]
+
+  const selectRegion = ['North', 'South', 'East', 'West']
+
+  const indStates = [
+    'Andaman and Nicobar Islands',
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chandigarh',
+    'Chhattisgarh',
+    'Dadra and Nagar Haveli and Daman and Diu',
+    'Delhi',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jammu and Kashmir',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Ladakh',
+    'Lakshadweep',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Puducherry',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+  ]
   const token = useSelector(state => state.user.token)
   const baseUrl = process.env.BASE_URL2
   const handleClose = (event, reason) => {
