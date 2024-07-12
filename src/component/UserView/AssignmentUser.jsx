@@ -82,7 +82,7 @@ const AssignmentUser = () => {
           startIcon={<CloudDownload />}
           href={info.row.original.downloadLink}
         >
-          Download
+          Download Assigment
         </Button>
       ),
     }),
@@ -102,19 +102,9 @@ const AssignmentUser = () => {
             onClick={() => handleFileUpload(info.row.original.id)}
             sx={{ ml: 2 }}
           >
-            Upload
+            Upload Assignment
           </Button>
         </Box>
-      ),
-    }),
-    columnHelper.accessor('status', {
-      header: 'Status',
-      cell: (info) => (
-        <Chip
-          label={info.getValue()}
-          color={info.getValue() === 'Checked' ? 'success' : 'error'}
-          icon={info.getValue() === 'Checked' ? <CheckCircleOutline /> : <ErrorOutline />}
-        />
       ),
     }),
     columnHelper.accessor('uploadStatus', {
@@ -123,6 +113,17 @@ const AssignmentUser = () => {
         <Typography variant="body2" color="textSecondary">
           {uploadedFiles[info.row.original.id] ? 'File Uploaded' : 'No file uploaded'}
         </Typography>
+      ),
+    }),
+    
+    columnHelper.accessor('status', {
+      header: 'Status',
+      cell: (info) => (
+        <Chip
+          label={info.getValue()}
+          color={info.getValue() === 'Checked' ? 'success' : 'error'}
+          icon={info.getValue() === 'Checked' ? <CheckCircleOutline /> : <ErrorOutline />}
+        />
       ),
     }),
   ];

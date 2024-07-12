@@ -32,7 +32,7 @@ import {
 } from '@mui/material'
 import { useSelector } from 'react-redux'
 
-const baseUrl = 'http://192.168.0.147:8080'
+const baseUrl = process.env.BASE_URL
 
 const TrainingAttendance = () => {
   const [data, setData] = useState([])

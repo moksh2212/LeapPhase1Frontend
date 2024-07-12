@@ -26,8 +26,9 @@ import {
   lighten,
 } from '@mui/material'
 import { useSelector } from 'react-redux'
+const tanBaseUrl = process.env.BASE_URL
 
-const attd = 'http://192.168.0.147:8080'
+const attd = tanBaseUrl
 const Attendance1 = ({ employees }) => {
   const [modalOpen, setModalOpen] = useState(false)
 

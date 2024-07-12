@@ -85,6 +85,7 @@ const CollegeTable = () => {
 
   const token = useSelector(state => state.user.token)
   const baseUrl = process.env.BASE_URL
+  
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -695,6 +696,12 @@ const CollegeTable = () => {
     isLoading,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     enableEditing: false,
     enableRowActions: true,
     onRowSelectionChange: setRowSelection,
