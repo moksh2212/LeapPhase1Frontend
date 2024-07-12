@@ -18,11 +18,19 @@ import {
   DialogContent,
   DialogTitle,
   Snackbar,
+  LinearProgress,
+  Typography,
+  styled
 } from '@mui/material'
-import { Edit as EditIcon, Delete as DeleteIcon ,ChangeCircle as  ChangeCircleIcon } from '@mui/icons-material'
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  ChangeCircle as ChangeCircleIcon,
+} from '@mui/icons-material'
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
+import { linearProgressClasses } from '@mui/material/LinearProgress';
 
 export default function TeamTabInkathon() {
   const [memberList, setMemberList] = useState([])
@@ -39,7 +47,6 @@ export default function TeamTabInkathon() {
   const [openMemberDeleteModal, setOpenMemberDeleteModal] = useState(false)
   const [openMentorDeleteModal, setOpenMentorDeleteModal] = useState(false)
 
-  
   const [mentorList, setMentorList] = useState([])
   const [projectManager, setProjectManager] = useState('Not Assigned')
   const [managerId, setManagerId] = useState(-1)
@@ -60,8 +67,6 @@ export default function TeamTabInkathon() {
     manager: null,
   })
 
-
-
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
@@ -70,6 +75,42 @@ export default function TeamTabInkathon() {
   const urlParams = new URLSearchParams(location.search)
   const currTeamId = urlParams.get('id')
   const tanBaseUrl = process.env.BASE_URL
+  const [progress, setProgress] = useState(0)
+
+  const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    height: 10,
+    borderRadius: 5,
+    [`&.${linearProgressClasses.colorPrimary}`]: {
+      backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+    },
+    [`& .${linearProgressClasses.bar}`]: {
+      borderRadius: 5,
+      backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
+    },
+  }));
+  
+  // LinearProgressWithLabel Component
+  function LinearProgressWithLabel(props) {
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ width: '100%', mr: 1 }}>
+          <BorderLinearProgress variant='determinate' {...props} />
+        </Box>
+        <Box sx={{ minWidth: 35 }}>
+          <Typography variant='body2' color='text.secondary'>{`${Math.round(
+            props.value,
+          )}%`}</Typography>
+        </Box>
+      </Box>
+    );
+  }
+  LinearProgressWithLabel.propTypes = {
+    /**
+     * The value of the progress indicator for the determinate and buffer variants.
+     * Value between 0 and 100.
+     */
+    value: PropTypes.number.isRequired,
+  }
 
   const createMember = async formData => {
     setOpenAddMemberForm(false)
@@ -140,9 +181,9 @@ export default function TeamTabInkathon() {
     setOpenSnackbar(null)
     console.log(formData)
     formData.append('teamId', currTeam.teamId)
-    if( managerId!==-1)
-    {formData.append('managerId', managerId)}
-    else{
+    if (managerId !== -1) {
+      formData.append('managerId', managerId)
+    } else {
       formData.append('managerId', -1)
     }
     try {
@@ -165,7 +206,7 @@ export default function TeamTabInkathon() {
       }
     } catch (error) {
       console.error('Error Adding Manager:', error)
-      setError(pm.message + ':'  )
+      setError(pm.message + ':')
     } finally {
       setIsLoading(false)
     }
@@ -359,10 +400,10 @@ export default function TeamTabInkathon() {
         } else {
           const team = await currTeamResponse.json()
           setCurrTeam(team)
+          setProgress(team.progress)
           setMemberList(team.members)
           setMentorList(team.mentor)
-          if(team.manager!=null)
-          {
+          if (team.manager != null) {
             setProjectManager(team.manager)
             setManagerId(team.manager.managerId)
           }
@@ -584,14 +625,13 @@ export default function TeamTabInkathon() {
               <h2 className='text-3xl text-[#0087D5] font-bold mb-3'>
                 PROJECT MANAGER: {projectManager.name}
                 <IconButton
-                onClick={() => {
-                  setOpenAddPmForm(true)
-                }}
-              >
-                <ChangeCircleIcon />
-              </IconButton>
+                  onClick={() => {
+                    setOpenAddPmForm(true)
+                  }}
+                >
+                  <ChangeCircleIcon />
+                </IconButton>
               </h2>
-              
             </div>
             <div className='w-full p-4 bg-gray-200'>
               <h2 className='text-3xl text-[#0087D5] font-bold mb-3'>
@@ -599,6 +639,14 @@ export default function TeamTabInkathon() {
                   ? `MEMBERS COUNT: ${currTeam.membersCount}`
                   : 'MEMBERS COUNT: 0'}
               </h2>
+              <br/>
+              <h2 className='text-3xl text-[#0087D5] font-bold mb-3'>
+                Progress:
+              </h2>
+              <br/>
+              <Box sx={{ width: '100%' }}>
+                <LinearProgressWithLabel value={progress} />
+              </Box>
             </div>
           </div>
         </div>

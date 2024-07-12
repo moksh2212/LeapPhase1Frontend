@@ -1179,6 +1179,12 @@ const TalentTable = () => {
     enableRowSelection: true,
     initialState: { columnVisibility: { talentId: true } },
     isLoading,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
     enableEditing: true,
