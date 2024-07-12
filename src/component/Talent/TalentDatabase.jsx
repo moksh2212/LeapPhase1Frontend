@@ -16,10 +16,13 @@ import {
   FormHelperText,
   Snackbar,
 } from '@mui/material'
-import {Group} from '@mui/icons-material';
+import { Group } from '@mui/icons-material'
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import { PieChart } from '@mui/x-charts/PieChart'
+import { useDrawingArea } from '@mui/x-charts/hooks'
+import { styled } from '@mui/material/styles'
 import { StatusForm } from './StatusForm'
 
 const TalentTable = () => {
@@ -31,6 +34,20 @@ const TalentTable = () => {
 
   const [talentToStatus, setTalentToStatus] = useState(false)
   const [openStatusForm, setOpenStatusForm] = useState(false)
+  const [summary, setSummary] = useState({
+    totalTalents: 0,
+    activeTalents: 0,
+    inactiveTalents: 0,
+    declinedTalents: 1,
+    resignedTalents: 0,
+    revokedTalents: 0,
+    talentLeftForBetterOffer: 0,
+    talentLeftForHigherStudies: 0,
+    talentLeftForFamilyReasons: 0,
+    talentLeftForHealthReasons: 0,
+    talentLeftForPerformanceIssues: 0,
+    talentLeftForOthers: 0,
+  })
 
   const [talentIdToDelete, setTalentIdToDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
@@ -40,6 +57,37 @@ const TalentTable = () => {
 
   const tanBaseUrl = process.env.BASE_URL2
   const token = useSelector(state => state.user.token)
+  const data = [
+    { value: summary.declinedTalents, label: 'Declined' },
+    { value: summary.resignedTalents, label: 'Resigned' },
+    { value: summary.revokedTalents, label: 'Revoked' }
+  ]
+  // const reasonsData = [
+  //   { value: 2, label: 'Better Offer' }
+    // { value: summary.talentLeftForHigherStudies, label: 'Higher Studies' },
+    // { value: summary.talentLeftForFamilyReasons, label: 'Family Reasons' },
+    // { value: summary.talentLeftForHealthReasons, label: 'Health Reasons' },
+    // { value: summary.talentLeftForPerformanceIssues, label: 'Performance Issues' },
+    // { value: summary.talentLeftForOthers, label: 'Others' },
+  // ];
+  const size = {
+    width: 400,
+    height: 200,
+  }
+  const StyledText = styled('text')(({ theme }) => ({
+    fill: theme.palette.text.primary,
+    textAnchor: 'middle',
+    dominantBaseline: 'central',
+    fontSize: 20,
+  }))
+  function PieCenterLabel({ children }) {
+    const { width, height, left, top } = useDrawingArea()
+    return (
+      <StyledText x={left + width / 2} y={top + height / 2}>
+        {children}
+      </StyledText>
+    )
+  }
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -333,7 +381,6 @@ const TalentTable = () => {
     </Dialog>
   )
 
-
   const createTalent = async newTalent => {
     setIsLoading(true)
     setError(null)
@@ -432,25 +479,31 @@ const TalentTable = () => {
     }
   }
 
-
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const talentResponse = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`, {
-          headers: {
-            Authorization: `Basic ${token}`,
+        const talentResponse = await fetch(
+          `${tanBaseUrl}/cpm/talents/alltalent`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
           },
-        })
-        const summaryResponse = await fetch(`${tanBaseUrl}/cpm/talents/summary`, {
-          headers: {
-            Authorization: `Basic ${token}`,
+        )
+        const summaryResponse = await fetch(
+          `${tanBaseUrl}/cpm/talents/summary`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
           },
-        })
+        )
         const talData = await talentResponse.json()
         setTalentList(talData)
 
-        
+        const sumData = await summaryResponse.json()
+        setSummary(sumData)
       } catch (error) {
         console.error('Error fetching data:', error)
         setError(error.message)
@@ -1317,24 +1370,32 @@ const TalentTable = () => {
       <div className='w-full p-4 bg-gray-100'>
         <div className='w-full p-4 bg-gray-200'>
           <div className='flex flex-row gap-x-6'>
-            <div className='w-full p-4 bg-gray-200'>
-              <h3 className='text-xl text-[#0087D5] font-bold mb-3'>
-                <Group/>Talents 
+            <div className='w-1/3 p-4 bg-gray-200'>
+              <div>
+                <h3 className='text-3xl text-[#0087D5] font-bold mb-3'>
+                  <Group />
+                  &nbsp;Talents&nbsp;:&nbsp;{summary.totalTalents}
+                </h3>
+              </div>
+              <h3 className='text-2xl text-[#309130] font-bold mb-3'>
+                Active&nbsp;:&nbsp;{summary.activeTalents}
+              </h3>
+              <h3 className='text-2xl text-[#D31C1C] font-bold mb-3'>
+                Inactive&nbsp;:&nbsp;{summary.inactiveTalents}
               </h3>
               <br />
-              <h3 className='text-xl text-[#0087D5] font-bold mb-3'>
-                Active 
-              </h3>
-              <h3 className='text-xl text-[#0087D5] font-bold mb-3'>
-                Inactive 
-              </h3>
-              <br />        
             </div>
-            <div className='w-full p-4 bg-gray-200'>
-              <h2 className='text-xl text-[#0087D5] font-bold mb-3'>
-                hello
-              </h2>
+            <div className='w-2/3 p-4 bg-gray-200'>
+              <PieChart series={[{ data, innerRadius: 80 }]} {...size}>
+              <PieCenterLabel>Inactive Dist.</PieCenterLabel>
+              </PieChart>
             </div>
+            {/* <div className='w-2/3 p-4 bg-gray-200'>
+              <PieChart series={[{ reasonsData, innerRadius: 80 }]} {...size}>
+              <PieCenterLabel>Reasons</PieCenterLabel>
+              </PieChart>
+            </div> */}
+
           </div>
         </div>
       </div>
