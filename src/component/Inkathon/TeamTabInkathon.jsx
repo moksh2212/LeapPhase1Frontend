@@ -29,7 +29,6 @@ import {
 } from '@mui/icons-material'
 import CircularProgress from '@mui/material/CircularProgress'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
 import { linearProgressClasses } from '@mui/material/LinearProgress';
 
 export default function TeamTabInkathon() {

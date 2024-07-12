@@ -150,7 +150,7 @@ const CollegeCalendarView = () => {
     setTimeout(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch(`${baseUrl}/api/interviewschedule/read`, {
+          const response = await fetch(`${baseUrl}/api/admin/interviewschedule/read`, {
             headers:{
               Authorization: `Basic ${token}`,
             }

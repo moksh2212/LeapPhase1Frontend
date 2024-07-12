@@ -324,7 +324,7 @@ export function UpdateScheduleForm({
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${baseUrl}/api/interviewer/read`, {
+        const response = await fetch(`${baseUrl}/api/admin/interviewer/read`, {
           headers:{
             Authorization: `Basic ${token}`,
           }

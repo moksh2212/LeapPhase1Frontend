@@ -31,10 +31,12 @@ export default function InkathonSidebar({ setShowInkathonSidebar }) {
           <Sidebar.ItemGroup>
             <Sidebar.Item
               as={'div'}
-              label={currentUser.adminCheck ? 'Admin' : 'User'}
+              label={
+                currentUser.roles.includes('ROLE_ADMIN') ? 'Admin' : 'User'
+              }
               labelColor='dark'
             >
-              {currentUser.name}
+              {currentUser.talentName}
             </Sidebar.Item>
             <Link to='?tab=inkathon'>
               <Sidebar.Item as={'div'} active={tab === 'inkathon'}>

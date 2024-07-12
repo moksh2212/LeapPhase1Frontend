@@ -29,6 +29,7 @@ import CollegeDBView from '../component/CollegeDB/CollegeDBView'
 
 import CombinedTalent from '../component/Assesments/CombinedTalent'
 import AssesmentCollege from '../component/CandidateAssesmentStages.jsx/AssesmentCollege'
+import CollegeTable from '../component/CollegeDB/CollegeDatabase'
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
@@ -52,7 +53,7 @@ export default function Dashboard() {
 
         <div className='overflow-auto w-full'>
           {tab === 'home' && <HomePage />}
-          {tab === 'college-and-contact' && <CollegeDBView />}
+          {tab === 'college-and-contact' && <CollegeTable />}
           {tab === 'candidates' && <CandidateDatabase />}
           {tab === 'assignments' && <FinalAssignmentview />}
           {tab === 'talent' && <TalentDatabase />}

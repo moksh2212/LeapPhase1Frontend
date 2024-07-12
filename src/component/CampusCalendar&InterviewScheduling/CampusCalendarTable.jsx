@@ -91,7 +91,7 @@ const CampusCalendarTable = () => {
       const fetchData = async () => {
         setIsLoading(true)
         try {
-          const response = await fetch(`${baseUrl}/api/interviewschedule/read`,{
+          const response = await fetch(`${baseUrl}/api/admin/interviewschedule/read`,{
             headers:
             {
               Authorization: `Basic ${token}`,
@@ -130,7 +130,7 @@ const CampusCalendarTable = () => {
         return;
       }
       
-      const response = await fetch(`${baseUrl}/api/interviewschedule/create`, {
+      const response = await fetch(`${baseUrl}/api/admin/interviewschedule/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +162,7 @@ const CampusCalendarTable = () => {
     console.log(scheduleToUpdate)
     try {
       const response = await fetch(
-        `${baseUrl}/api/interviewschedule/updateScheduling/${scheduleId}`,
+        `${baseUrl}/api/admin/interviewschedule/updateScheduling/${scheduleId}`,
         {
           method: 'PUT',
           headers: {
@@ -201,7 +201,7 @@ const CampusCalendarTable = () => {
     setOpenSnackbar(null)
     try {
       const response = await fetch(
-        `${baseUrl}/api/interviewschedule/delete/${scheduleId}`,
+        `${baseUrl}/api/admin/interviewschedule/delete/${scheduleId}`,
         {
           method: 'DELETE',
           headers:{

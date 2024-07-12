@@ -1,13 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react'
-import {
-  Label,
-  TextInput,
-  Button,
-  Modal,
-  Select,
-
-} from 'flowbite-react'
+import { Label, TextInput, Button, Modal, Select } from 'flowbite-react'
 import {
   Dialog,
   DialogTitle,
@@ -24,7 +17,6 @@ import { addDays, subDays, format } from 'date-fns'
 import WarningIcon from '@mui/icons-material/Warning'
 import { useSelector } from 'react-redux'
 
-
 export function CreateScheduleForm({
   openModal,
   setOpenModal,
@@ -37,168 +29,6 @@ export function CreateScheduleForm({
   const [interviewDate, setInterviewDate] = useState('')
   const [interviewer, setInterviewer] = useState('')
   const [collegeList, setCollegeList] = useState([])
-  // const [interviewerList, setInterviewerList] = useState([
-  //   {
-  //     interviewerId: 1,
-  //     interviewerName: 'Alice Johnson',
-  //     grade: 'A',
-  //     techRole: 'Frontend Developer',
-  //     techProficiency: 'Advanced',
-  //     location: 'New York',
-  //     region: 'North America',
-  //     workExperience: '5 years',
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'Harvard University',
-  //         pptDate: '2016-08-01',
-  //         assessmentDate: '2020-05-15',
-  //       },
-  //       {
-  //         collegeName: 'Stanford University',
-  //         pptDate: '2015-08-01',
-  //         assessmentDate: '2016-05-15',
-  //       },
-  //       {
-  //         collegeName: 'MIT',
-  //         pptDate: '2014-08-01',
-  //         assessmentDate: '2015-05-15',
-  //       },
-  //       {
-  //         collegeName: 'UC Berkeley',
-  //         pptDate: '2013-08-01',
-  //         assessmentDate: '2014-05-15',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     interviewerId: 2,
-  //     interviewerName: 'Bob Smith',
-  //     grade: 'B',
-  //     techRole: 'Backend Developer',
-  //     techProficiency: 'Intermediate',
-  //     location: 'San Francisco',
-  //     region: 'North America',
-  //     workExperience: '4 years',
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'University of California, San Diego',
-  //         pptDate: '2017-08-01',
-  //         assessmentDate: '2021-05-15',
-  //       },
-  //       {
-  //         collegeName: 'University of Southern California',
-  //         pptDate: '2016-08-01',
-  //         assessmentDate: '2017-05-15',
-  //       },
-  //       {
-  //         collegeName: 'UCLA',
-  //         pptDate: '2015-08-01',
-  //         assessmentDate: '2016-05-15',
-  //       },
-  //       {
-  //         collegeName: 'UC Irvine',
-  //         pptDate: '2014-08-01',
-  //         assessmentDate: '2015-05-15',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     interviewerId: 3,
-  //     interviewerName: 'Carol Williams',
-  //     grade: 'A',
-  //     techRole: 'Full Stack Developer',
-  //     techProficiency: 'Advanced',
-  //     location: 'Chicago',
-  //     region: 'North America',
-  //     workExperience: '6 years',
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'University of Chicago',
-  //         pptDate: '2018-08-01',
-  //         assessmentDate: '2022-05-15',
-  //       },
-  //       {
-  //         collegeName: 'Northwestern University',
-  //         pptDate: '2017-08-01',
-  //         assessmentDate: '2018-05-15',
-  //       },
-  //       {
-  //         collegeName: 'University of Illinois',
-  //         pptDate: '2016-08-01',
-  //         assessmentDate: '2017-05-15',
-  //       },
-  //       {
-  //         collegeName: 'DePaul University',
-  //         pptDate: '2015-08-01',
-  //         assessmentDate: '2016-05-15',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     interviewerId: 4,
-  //     interviewerName: 'David Brown',
-  //     grade: 'C',
-  //     techRole: 'DevOps Engineer',
-  //     techProficiency: 'Intermediate',
-  //     location: 'Seattle',
-  //     region: 'North America',
-  //     workExperience: '3 years',
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'University of Washington',
-  //         pptDate: '2019-08-01',
-  //         assessmentDate: '2023-05-15',
-  //       },
-  //       {
-  //         collegeName: 'Seattle University',
-  //         pptDate: '2018-08-01',
-  //         assessmentDate: '2019-05-15',
-  //       },
-  //       {
-  //         collegeName: 'Washington State University',
-  //         pptDate: '2017-08-01',
-  //         assessmentDate: '2018-05-15',
-  //       },
-  //       {
-  //         collegeName: 'Gonzaga University',
-  //         pptDate: '2016-08-01',
-  //         assessmentDate: '2017-05-15',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     interviewerId: 5,
-  //     interviewerName: 'Eva Green',
-  //     grade: 'B',
-  //     techRole: 'Data Scientist',
-  //     techProficiency: 'Advanced',
-  //     location: 'Boston',
-  //     region: 'North America',
-  //     workExperience: '7 years',
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'Harvard University',
-  //         pptDate: '2015-08-01',
-  //         assessmentDate: '2019-05-15',
-  //       },
-  //       {
-  //         collegeName: 'MIT',
-  //         pptDate: '2014-08-01',
-  //         assessmentDate: '2015-05-15',
-  //       },
-  //       {
-  //         collegeName: 'Boston University',
-  //         pptDate: '2013-08-01',
-  //         assessmentDate: '2014-05-15',
-  //       },
-  //       {
-  //         collegeName: 'Northeastern University',
-  //         pptDate: '2012-08-01',
-  //         assessmentDate: '2013-05-15',
-  //       },
-  //     ],
-  //   },
-  // ])
   const [interviewerList, setInterviewerList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -207,7 +37,7 @@ export function CreateScheduleForm({
 
   const baseUrl = process.env.BASE_URL
 
-  const token = useSelector(state=>state.user.token)
+  const token = useSelector(state => state.user.token)
 
   const checkDateConflicts = formData => {
     const newDates = [
@@ -280,7 +110,11 @@ export function CreateScheduleForm({
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${baseUrl}/admin/viewData`)
+        const response = await fetch(`${baseUrl}/admin/viewData`, {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        })
         const data = await response.json()
         setCollegeList(data)
         console.log(data)
@@ -300,10 +134,10 @@ export function CreateScheduleForm({
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${baseUrl}/api/interviewer/read`, {
-          headers:{
+        const response = await fetch(`${baseUrl}/api/admin/interviewer/read`, {
+          headers: {
             Authorization: `Basic ${token}`,
-          }
+          },
         })
         if (response.ok) {
           const data = await response.json()
@@ -428,14 +262,14 @@ export function CreateScheduleForm({
               <div className='mb-2 block'>
                 <Label htmlFor='pptDate' value='Pre Placement Talk Date' />
               </div>
-            
+
               <TextInput
                 id='pptDate'
                 type='date'
                 value={pptDate}
                 onChange={e => setPptDate(e.target.value)}
                 required
-                min= { new Date().toISOString().split('T')[0]}
+                min={new Date().toISOString().split('T')[0]}
               />
             </div>
             <div>

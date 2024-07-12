@@ -30,7 +30,7 @@ const ArchiveTable = () => {
     const fetchArchivedData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${baseUrl}/admin/viewData`, {
+        const response = await fetch(`${baseUrl}/admin/readarchievecollege`, {
           headers: {
             Authorization: `Basic ${token}`,
           },
@@ -59,7 +59,7 @@ const ArchiveTable = () => {
   const handleDelete = async () => {
     try {
       const selectedCollegeIds = Object.keys(rowSelection).map(index => archivedColleges[index].collegeId)
-      const response = await fetch(`${baseUrl}/admin/deleteMultipleArchivedData`, {
+      const response = await fetch(`${baseUrl}/admin/deleteandarchieve`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const ArchiveTable = () => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'collegeId',
+        accessorKey: 'id',
         header: 'College Id',
         enableHiding: true,
         hidden: true,

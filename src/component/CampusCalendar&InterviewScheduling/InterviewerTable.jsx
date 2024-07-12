@@ -159,7 +159,7 @@ export default function CollapsibleTable() {
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${baseUrl}/api/interviewer/read`, {
+        const response = await fetch(`${baseUrl}/api/admin/interviewer/read`, {
           headers: {
             Authorization: `Basic ${token}`,
           },
@@ -199,7 +199,7 @@ export default function CollapsibleTable() {
     setOpenSnackbar(null)
 
     try {
-      const response = await fetch(`${baseUrl}/api/interviewer/create`, {
+      const response = await fetch(`${baseUrl}/api/admin/interviewer/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -270,7 +270,7 @@ export default function CollapsibleTable() {
     console.log(interviewerId)
     try {
       const response = await fetch(
-        `${baseUrl}/api/interviewer/delete/${interviewerId}`,
+        `${baseUrl}/api/admin/interviewer/delete/${interviewerId}`,
         {
           method: 'DELETE',
           headers: {
@@ -303,7 +303,7 @@ export default function CollapsibleTable() {
     setOpenSnackbar(null)
     try {
       const response = await fetch(
-        `${baseUrl}/api/interviewer/update/${formData.interviewerId}`,
+        `${baseUrl}/api/admin/interviewer/update/${formData.interviewerId}`,
         {
           method: 'PUT',
           headers: {
