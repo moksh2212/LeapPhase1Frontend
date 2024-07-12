@@ -243,13 +243,13 @@ function Signup() {
                   {isLoading ? <Spinner /> : 'Create Account'}
                 </Button>
 
-                <Button
+                {/* <Button
                   type='button'
                   onClick={resetForm}
                   className='w-1/2 ml-2 flex justify-center rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
                 >
                   Reset Form
-                </Button>
+                </Button> */}
               </div>
             </>
           )}

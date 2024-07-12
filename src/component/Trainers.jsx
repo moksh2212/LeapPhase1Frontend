@@ -24,7 +24,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux'
 
 //Module completed testing done
-const baseUrl = process.env.BASE_URL2
+const baseUrl = "http://192.168.0.147:8080";
 const Trainers = () => {
   const [trainerList, setTrainerList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -32,13 +32,14 @@ const Trainers = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [error, setError] = useState()
 
+
   const [trainerIdToDelete, setTrainerIdToDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
   const [selectedRows, setSelectedRows] = useState(null)
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
-  const token = useSelector(state => state.user.token)
+  const token = useSelector(state=>state.user.token)
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -93,11 +94,13 @@ const Trainers = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${baseUrl}/api/trainers/getAll`, {
-          headers: {
-            Authorization: `Basic ${token}`,
-          },
-        })
+        const response = await fetch(`${baseUrl}/api/trainers/getAll`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          }
+        )
         const data = await response.json()
         setTrainerList(data)
       } catch (error) {
@@ -117,14 +120,12 @@ const Trainers = () => {
     setOpenSnackbar(null)
 
     try {
-      newTrainer.skills = newTrainer.skills
-        .split(',')
-        .map(skill => skill.trim())
+      newTrainer.skills = newTrainer.skills.split(',').map(skill => skill.trim());
       const response = await fetch(`${baseUrl}/api/trainers/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+            Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(newTrainer),
       })
@@ -149,9 +150,7 @@ const Trainers = () => {
     setOpenSnackbar(null)
     try {
       if (typeof trainerToUpdate.skills === 'string') {
-        trainerToUpdate.skills = trainerToUpdate.skills
-          .split(',')
-          .map(skill => skill.trim())
+        trainerToUpdate.skills = trainerToUpdate.skills.split(',').map(skill => skill.trim());
       }
       const response = await fetch(
         `${baseUrl}/api/trainers/update/${trainerToUpdate.trainerId}`,
@@ -163,27 +162,27 @@ const Trainers = () => {
           },
           body: JSON.stringify(trainerToUpdate),
         },
-      )
-
+      );
+  
       if (response.ok) {
-        const data = await response.json()
-        setValidationErrors({})
+        const data = await response.json();
+        setValidationErrors({});
         setTrainerList(prevTrainers =>
           prevTrainers.map(trainer =>
             trainer.trainerId === data.trainerId ? data : trainer,
           ),
-        )
-        setOpenSnackbar('Trainer updated successfully!')
-        setError(null)
+        );
+        setOpenSnackbar('Trainer updated successfully!');
+        setError(null);
       } else {
-        const errorData = await response.json()
-        setError(errorData.message || 'An error occurred')
+        const errorData = await response.json();
+        setError(errorData.message || 'An error occurred');
       }
     } catch (error) {
-      console.error('Error updating trainer:', error)
+      console.error('Error updating trainer:', error);
       //setError(error.message || 'An error occurred');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -192,15 +191,12 @@ const Trainers = () => {
     setError(null)
     setOpenSnackbar(null)
     try {
-      const response = await fetch(
-        `${baseUrl}/api/trainers/delete/${trainerId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Basic ${token}`,
-          },
-        },
-      )
+      const response = await fetch(`${baseUrl}/api/trainers/delete/${trainerId}`, {
+        method: 'DELETE',
+        headers:{
+          Authorization: `Basic ${token}`,
+        }
+      })
 
       if (response.ok) {
         setTrainerList(prevTrainers =>
@@ -242,8 +238,8 @@ const Trainers = () => {
     () => [
       {
         accessorKey: 'trainerId',
-        header: 'Trainer Id',
-        enableEditing: false,
+        header: 'Incture ID',
+        enableEditing: true,
         size: 150,
       },
       {
@@ -288,12 +284,12 @@ const Trainers = () => {
               skills: undefined,
             }),
           onBlur: event => {
-            const { value } = event.target
+            const { value } = event.target;
             if (!value) {
               setValidationErrors(prevErrors => ({
                 ...prevErrors,
                 skills: 'Skills cannot be empty',
-              }))
+              }));
             }
           },
         },
@@ -362,12 +358,12 @@ const Trainers = () => {
               designation: undefined,
             }),
           onBlur: event => {
-            const { value } = event.target
+            const { value } = event.target;
             if (!value) {
               setValidationErrors(prevErrors => ({
                 ...prevErrors,
                 designation: 'Designation cannot be empty.',
-              }))
+              }));
             }
           },
         },
@@ -390,16 +386,16 @@ const Trainers = () => {
       message: 'Invalid email format',
     },
     designation: {
-      required: true,
-      message: 'Designation cannot be empty',
-    },
+        required: true,
+        message: 'Designation cannot be empty',
+      },
   }
 
   const table = useMaterialReactTable({
     columns,
     data: trainerList,
     enableRowSelection: true,
-    initialState: { columnVisibility: { trainerId: false } },
+    initialState: { columnVisibility: { trainerId: true } },
     isLoading,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
@@ -438,7 +434,7 @@ const Trainers = () => {
         return
       }
 
-      setValidationErrors({})
+      setValidationErrors({}) 
       await createTrainer(values)
       table.setCreatingRow(null)
     },
@@ -581,7 +577,7 @@ const Trainers = () => {
               table.setCreatingRow(true)
             }}
           >
-            Create New Trainer
+            Add New Trainer
           </Button>
 
           <Button

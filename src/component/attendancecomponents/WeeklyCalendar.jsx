@@ -9,11 +9,11 @@ import TableRow from '@mui/material/TableRow'
 import Typography from '@mui/material/Typography'
 import { Button } from 'antd'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useEffect } from 'react'
 import { Card } from 'antd'
 import { useSelector } from 'react-redux'
+
 const columns = [
   { id: 'talentName', label: 'Talent Name', minWidth: 170 },
   { id: 'date', label: 'Date', minWidth: 170 },
@@ -24,7 +24,7 @@ const columns = [
   { id: 'officeLocation', label: 'Office Location', minWidth: 170 },
   { id: 'ekYear', label: 'Ek Year', minWidth: 170 },
 ]
- 
+
 function createData(
   talentName,
   talentCategory,
@@ -48,30 +48,34 @@ function createData(
     totalHours,
   }
 }
- 
+
 export default function WeeklyCalendar() {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(7)
   const [startDate, setStartDate] = useState(new Date())
   const [attendanceData, setAttendanceData] = useState([])
   const perBaseUrl = process.env.BASE_URL2
-  const token = useSelector(state=>state.user.token)
+  const token = useSelector((state) => state.user.token)
+
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
-        // it is talentid from attendance table on front edn to give your own value directly give in fetched
- 
         const urlParams = new URLSearchParams(window.location.search)
         const fetched = urlParams.get('talentId')
-        const start = new Date(startDate)
-        const end = new Date(startDate)
-        end.setDate(start.getDate() + 6)
+
+        // Calculate start and end of week
+        const currentDate = new Date(startDate)
+        const start = new Date(currentDate)
+        start.setDate(currentDate.getDate() - currentDate.getDay())
+        const end = new Date(currentDate)
+        end.setDate(currentDate.getDate() + (6 - currentDate.getDay()))
+
         console.log(
           `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
             start,
           )}&endDate=${formatDate(end)}&talentId=${fetched}`,
         )
- 
+
         const response = await axios.get(
           `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formatDate(
             start,
@@ -87,11 +91,11 @@ export default function WeeklyCalendar() {
         console.error('Error fetching attendance data:', error)
       }
     }
- 
+
     fetchAttendanceData()
-  }, [startDate])
- 
-  const rows = attendanceData.map(attendance =>
+  }, [startDate, token, perBaseUrl])
+
+  const rows = attendanceData.map((attendance) =>
     createData(
       attendance.talentName,
       attendance.talentCategory,
@@ -104,51 +108,63 @@ export default function WeeklyCalendar() {
       attendance.totalHours,
     ),
   )
+
   const totalWorkingMinutes = attendanceData.reduce((acc, curr) => {
     const totalHoursComponents = curr.totalHours.split(':') // Splitting hours and minutes
     const hours = parseInt(totalHoursComponents[0])
     const minutes = parseInt(totalHoursComponents[1])
- 
+
     // Adding hours and minutes to the accumulator
     return acc + (hours * 60 + minutes) // Convert hours to minutes
   }, 0)
- 
+
   // Convert total minutes to hours and remaining minutes
   const totalHours = Math.floor(totalWorkingMinutes / 60)
   const remainingMinutes = totalWorkingMinutes % 60
- 
-  // Format total working hours
+
   const formattedTotalHours = `${totalHours}hrs ${remainingMinutes}mins`
- 
+
   const decreaseWeek = () => {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() - 7)
+    newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
     setStartDate(newStartDate)
+    console.log("decrease=", newStartDate)
   }
- 
+
   const increaseWeek = () => {
     const newStartDate = new Date(startDate)
     newStartDate.setDate(newStartDate.getDate() + 7)
+    newStartDate.setDate(newStartDate.getDate() - newStartDate.getDay()) // Set to start of week
     setStartDate(newStartDate)
+    console.log("increase=", newStartDate)
   }
- 
-  const formatDate = date => {
+
+  const formatDate = (date) => {
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
     return `${year}-${month}-${day}`
   }
- 
-  const startOfWeek = new Date(startDate)
-  startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay())
-  const endOfWeek = new Date(startDate)
-  endOfWeek.setDate(startOfWeek.getDate() + 6)
- 
+
+  const currentDate = new Date(startDate) // Your input date
+  const startOfWeek = new Date(currentDate)
+  const endOfWeek = new Date(currentDate)
+
+  // Adjust to the start of the week (Sunday)
+  startOfWeek.setDate(currentDate.getDate() - currentDate.getDay())
+
+  // Adjust to the end of the week (Saturday)
+  endOfWeek.setDate(currentDate.getDate() + (6 - currentDate.getDay()))
+
+  console.log("Start of week:", startOfWeek)
+  console.log("End of week:", endOfWeek)
+
   return (
     <div>
       <div
         className='flex flex-row justify-center'
-        style={{ margin: '10px 90px',height:'167px' }}
+        style={{ margin: '10px 90px', height: '167px' }}
       >
         <div
           className='flex flex-row justify-between'
@@ -216,7 +232,7 @@ export default function WeeklyCalendar() {
           <Table stickyHeader aria-label='sticky table' className='mt-4'>
             <TableHead>
               <TableRow>
-                {columns.map(column => (
+                {columns.map((column) => (
                   <TableCell
                     key={column.id}
                     align={column.align}
@@ -235,7 +251,7 @@ export default function WeeklyCalendar() {
                 .map((row, index) => {
                   return (
                     <TableRow hover role='checkbox' tabIndex={-1} key={index}>
-                      {columns.map(column => {
+                      {columns.map((column) => {
                         const value = row[column.id]
                         let cellStyle = {}
                         if (column.id === 'status') {

@@ -1,11 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AccountCircle } from '@mui/icons-material'
-import { Link } from 'react-router-dom' // Import Link
+import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
+
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
 } from 'material-react-table'
+import CommentCell from './CommandCell'
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+
 import {
   Alert,
   Box,
@@ -23,50 +27,59 @@ import {
 } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux'
-
+import ScoreDropdown from './ScoreDropdown'
 const IndividualToogleAssesments = () => {
   const [talentList, setTalentList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [error, setError] = useState()
-
+const [x, setx] = useState(0)
   const [talentIdToDelete, setTalentIdToDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
   const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
+  const navigate = useNavigate(); // Use useNavigate hook
+
   const baseUrl = process.env.BASE_URL2
   const token = useSelector(state => state.user.token)
   const updateAssessment = async AssesmentToUpdate => {
     try {
-      const urlParams = new URLSearchParams(window.location.search)
-      const talentId = urlParams.get('talentId')
-      const response = await fetch(
-        `${baseUrl}/assessments/updateassessment/${AssesmentToUpdate.assessmentId}/${talentId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
-          },
-          body: JSON.stringify(AssesmentToUpdate),
+      const urlParams = new URLSearchParams(window.location.search);
+      const assesmentid = urlParams.get('assesmentid');
+  
+      // Create URL with query parameters
+      const url = new URL(`${baseUrl}/assessments/updateassessment/${assesmentid}/${AssesmentToUpdate.talentId}`);
+      url.searchParams.append('assessmentId', assesmentid);
+      url.searchParams.append('talentId', AssesmentToUpdate.talentId);
+      
+      // Get the latest score (which is the only score in the array)
+      
+      url.searchParams.append('score', AssesmentToUpdate.scores);
+      url.searchParams.append('reason', AssesmentToUpdate.reason || '');
+  
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Basic ${token}`,
         },
-      )
-
+      });
+  
       if (response.ok) {
-        const data = await response.json()
-        setValidationErrors({})
-        setTalentList(prevTalents =>
-          prevTalents.map(talent =>
-            talent.talentId === data.talentId ? data : talent,
-          ),
-        )
+        const data = await response.json();
+        setValidationErrors({});
+        setx(1)
+      
+      } else {
+        console.error('Error updating assessment:', response.statusText);
+        throw new Error(response.statusText);
       }
     } catch (error) {
-      console.error('Error updating talent:', error)
+      console.error('Error updating talent:', error);
+      throw error;
     }
-  }
+  };
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -147,7 +160,7 @@ const IndividualToogleAssesments = () => {
       }
     }
     fetchData()
-  }, [])
+  }, [x])
 
   const createTalent = async newTalent => {
     setIsLoading(true)
@@ -168,10 +181,14 @@ const IndividualToogleAssesments = () => {
       )
       if (response.ok) {
         setError(null)
-        const data = await response.json()
-        setValidationErrors({})
-        setTalentList(prevTalents => [...prevTalents, data])
-        setOpenSnackbar('Talent added successfully!')
+        const data = await response.json();
+        // Ensure that each item in the data array has a 'scores' property
+        const processedData = data.map(item => ({
+          ...item,
+          scores: Array.isArray(item.scores) ? item.scores : [item.score], // Fallback to single score if array not provided
+        }));     
+           setValidationErrors({})
+           setTalentList(processedData);        setOpenSnackbar('Talent added successfully!')
       }
     } catch (error) {
       console.error('Error creating talent:', error)
@@ -250,10 +267,20 @@ const IndividualToogleAssesments = () => {
             size: 100,
           },
           {
-            accessorKey: 'score',
-            header: 'Scores',
-            enableEditing: false,
-            size: 100,
+            accessorKey: 'scores',
+            header: 'Score',
+            enableEditing: true,
+            size: 170,
+            accessorFn: (row) => {
+              const scores = Array.isArray(row.scores) ? row.scores : [row.score];
+              return scores[scores.length-1];
+            },
+            Cell: ({ row }) => <ScoreDropdown scores={row.original.scores} />,
+            Header: ({ column }) => (
+              <Box className="ml-2">
+                {column.columnDef.header}
+              </Box>
+            ),
           },
           {
             accessorKey: 'assessmentSkill',
@@ -276,8 +303,18 @@ const IndividualToogleAssesments = () => {
           {
             accessorKey: 'comments',
             header: 'Log',
-            enableEditing: true,
-            size: 100,
+            enableEditing: false,
+            size: 250, // Increased size
+            Cell: ({ row }) => <CommentCell comments={row.original.comments} />,
+            Header: ({ column }) => (
+              <Box
+                sx={{
+                  marginLeft:"120px"
+                }}
+              >
+                {column.columnDef.header}
+              </Box>
+            ),
           },
           {
             accessorKey: 'assessmentDate',
@@ -285,33 +322,20 @@ const IndividualToogleAssesments = () => {
             enableEditing: false,
             size: 100,
           },
+          {
+            accessorKey: 'reason',
+            header: 'Reason',
+            enableEditing: true,
+
+            size: 250, // Adjust size as needed
+          },
         ],
       },
     ],
     [validationErrors],
   )
 
-  const validationRules = {
-    tenthPercent: {
-      required: true,
-      pattern: /^(100(\.\d{1,2})?|[1-9]?\d(\.\d{1,2})?)$/,
-      message: 'Tenth Percent must be a valid percentage between 0 and 100.',
-    },
-    currentLocation: {
-      required: true,
-      message: 'Current Location cannot be empty.',
-    },
-    dob: {
-      required: true,
-      pattern: /^\d{4}-\d{2}-\d{2}$/,
-      message: 'Invalid Date of Birth format. Must be in YYYY-MM-DD format.',
-    },
-    ekYear: {
-      required: true,
-      pattern: /^(19|20)\d{2}$/,
-      message: 'Invalid EK Year format. Must be a valid year.',
-    },
-  }
+
 
   const table = useMaterialReactTable({
     columns,
@@ -320,43 +344,32 @@ const IndividualToogleAssesments = () => {
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
     enableEditing: true,
+    initialState: { columnVisibility: { reason: false,talentId:false } },
+
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: async ({ values, table }) => {
-      console.log('Editing row save function called 1')
-      const errors = {}
+      try {
+        setValidationErrors({});
+        console.log("hello")
+        updateAssessment(values);
+        table.setEditingRow(null);
 
-      // Object.entries(values).forEach(([key, value]) => {
-      //   const temp = value ? value.toString().trim() : '' // Add a null check here
-      //   const rule = validationRules[key]
-
-      //   if (rule) {
-      //     if (rule.required && temp.length === 0) {
-      //       errors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} field cannot be empty`
-      //     } else if (rule.pattern && !rule.pattern.test(value)) {
-      //       errors[key] = rule.message
-      //     }
-      //   }
-      // // })
-      // console.log("Editing row save function called 2");
-
-      // if (Object.keys(errors).length > 0) {
-      //   console.log("Editing row save function called 3");
-
-      //   setValidationErrors(errors)
-      //   return
-      // }
-      // console.log("Editing row save function called 4");
-
-      setValidationErrors({})
-      await updateAssessment(values)
-      table.setEditingRow(null)
+        setOpenSnackbar('Assessment updated successfully!');
+      } catch (error) {
+        setError(`Failed to update assessment: ${error.message}`);
+      }
     },
   })
 
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
-      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>ScoreCard</h2>
-      <br></br>
+  <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>   <Button
+        color="primary"
+        onClick={() => navigate(-1)} // Navigate to the previous page
+        style={{width: '50px' }}
+      >
+        <KeyboardArrowLeftIcon/>
+      </Button>Indidvidual Assessment Wise Scorecard</h2>      <br></br>
       <br></br>
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>

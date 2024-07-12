@@ -52,9 +52,9 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
                 Alumni
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=candidate-assesment'>
-              <Sidebar.Item as={'div'} active={tab === 'candidate-assesment'}>
-                Assesments
+            <Link to='?tab=AssesmentCollege'>
+              <Sidebar.Item as={'div'} active={tab === 'AssesmentCollege'}>
+                Assessments
               </Sidebar.Item>
             </Link>
             

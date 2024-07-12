@@ -22,7 +22,7 @@ function Signin() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const signBaseUrl = process.env.BASE_URL2
+  const signBaseUrl = 'http://192.168.0.147:8080'
   const dispatch = useDispatch()
 
   const handleSubmit = async e => {

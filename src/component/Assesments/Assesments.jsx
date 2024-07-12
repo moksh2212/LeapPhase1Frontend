@@ -42,7 +42,7 @@ const style = {
 import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux';
 
-const TalentTable = () => {
+const TalentAssessment = () => {
   let navigate = useNavigate();
   const [talentList, setTalentList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -492,6 +492,9 @@ const TalentTable = () => {
           formData.append('file', selectedFile)
 
           const response = await fetch(`${tanBaseUrl}/assessments/uploadexcel`, {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
             method: 'POST',
             body: formData,
           })
@@ -535,15 +538,6 @@ const TalentTable = () => {
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                 <div>
                   <ButtonGroup>
-                  <div className='flex justify-center items-center p-2 border-3 border-gray-300 rounded bg-blue-500 text-gray-700 gap-1 mr-3'>
-                  <h2 className="text-white font-bold">Assessment Wise View</h2>
-
-                 
-                <div>
-                <Switch {...label} onChange={handleToggle} />
-                
-                </div>
-                </div>
                     <Button variant='contained' component='label'>
                       <label htmlFor='excelFile' className='excel-file-label'>
                         {selectedFile
@@ -591,9 +585,7 @@ const TalentTable = () => {
 
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
-      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>
-        Assessments
-      </h2><br></br><br></br>
+   
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
           <CircularProgress className='w-full mx-auto my-auto' />
@@ -644,4 +636,4 @@ const TalentTable = () => {
     </div>
   )
 }
-export default TalentTable
+export default TalentAssessment;

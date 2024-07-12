@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
-import { AccountCircle } from '@mui/icons-material'
-import { Link } from 'react-router-dom' // Import Link
+import { useEffect, useMemo, useState } from 'react';
+import { AccountCircle } from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
+import ScoreDropdown from './ScoreDropdown';
+import CommentCell from './CommandCell';
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
-} from 'material-react-table'
+} from 'material-react-table';
 import {
   Alert,
   Box,
   Button,
   Dialog,
-  MenuItem,
-  ListItemIcon,
   DialogActions,
   Typography,
   lighten,
@@ -20,71 +20,79 @@ import {
   DialogTitle,
   FormHelperText,
   Snackbar,
-} from '@mui/material'
-import CircularProgress from '@mui/material/CircularProgress'
-import { useSelector } from 'react-redux'
-const baseUrl = process.env.BASE_URL2
+} from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useSelector } from 'react-redux';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+const baseUrl = process.env.BASE_URL2;
 
-const IndividualAssesments = () => {
-  const [talentList, setTalentList] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [validationErrors, setValidationErrors] = useState({})
-  const [openDeleteModal, setOpenDeleteModal] = useState(false)
-  const [error, setError] = useState()
+const IndividualAssessments = () => {
+  const [talentList, setTalentList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [error, setError] = useState();
+  const [talentIdToDelete, setTalentIdToDelete] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(null);
+  const [rowSelection, setRowSelection] = useState({});
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false);
+  const [x, setx] = useState(0)
+  const token = useSelector(state => state.user.token);
+  const navigate = useNavigate(); // Use useNavigate hook
 
-  const [talentIdToDelete, setTalentIdToDelete] = useState(null)
-  const [openSnackbar, setOpenSnackbar] = useState(null)
-  const [rowSelection, setRowSelection] = useState({})
-  const [selectedRows, setSelectedRows] = useState([])
-  const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
-  const token = useSelector(state => state.user.token)
-
-  const updateAssessment = async AssesmentToUpdate => {
+  const updateAssessment = async assessmentToUpdate => {
     try {
-      const urlParams = new URLSearchParams(window.location.search)
-      const talentId = urlParams.get('talentId')
-      const response = await fetch(
-        `${baseUrl}/assessments/updateassessment/${AssesmentToUpdate.assessmentId}/${talentId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
-          },
-          body: JSON.stringify(AssesmentToUpdate),
+      const urlParams = new URLSearchParams(window.location.search);
+      const talentId = urlParams.get('talentId');
+      
+      // Create URL with query parameters
+      const url = new URL(`${baseUrl}/assessments/updateassessment/${assessmentToUpdate.assessmentId}/${talentId}`);
+      url.searchParams.append('assessmentId', assessmentToUpdate.assessmentId);
+      url.searchParams.append('talentId', talentId);
+      url.searchParams.append('score', assessmentToUpdate.scores); 
+      url.searchParams.append('reason', assessmentToUpdate.reason);
+  
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Basic ${token}`,
         },
-      )
-
+      });
+  
       if (response.ok) {
-        const data = await response.json()
-        setValidationErrors({})
+        const data = await response.json();
+        setValidationErrors({});
         setTalentList(prevTalents =>
           prevTalents.map(talent =>
             talent.talentId === data.talentId ? data : talent,
           ),
-        )
+        );
+        setx(1)
+      } else {
+        console.error('Error updating assessment:', response.statusText);
       }
     } catch (error) {
-      console.error('Error updating talent:', error)
+      console.error('Error updating assessment:', error);
     }
-  }
+  };
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
-      return
+      return;
     }
 
     if (error) {
-      setError(null)
+      setError(null);
     }
 
-    setOpenSnackbar(false)
-  }
+    setOpenSnackbar(false);
+  };
 
   const handleDelete = async () => {
-    await deleteTalent(talentIdToDelete)
-    setOpenDeleteModal(false)
-  }
+    await deleteTalent(talentIdToDelete);
+    setOpenDeleteModal(false);
+  };
 
   const renderDeleteModal = () => (
     <Dialog open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
@@ -96,8 +104,8 @@ const IndividualAssesments = () => {
         <Button onClick={() => setOpenDeleteModal(false)}>Cancel</Button>
         <Button
           onClick={() => {
-            console.log('Deleting talent with ID:', talentIdToDelete)
-            handleDelete()
+            console.log('Deleting talent with ID:', talentIdToDelete);
+            handleDelete();
           }}
           color='error'
         >
@@ -105,7 +113,8 @@ const IndividualAssesments = () => {
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
+
   const renderDeleteRowsModal = () => (
     <Dialog
       open={openDeleteRowsModal}
@@ -122,38 +131,43 @@ const IndividualAssesments = () => {
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
-        const urlParams = new URLSearchParams(window.location.search)
-        const talentId = urlParams.get('talentId')
+        const urlParams = new URLSearchParams(window.location.search);
+        const talentId = urlParams.get('talentId');
         const response = await fetch(
           `${baseUrl}/assessments/viewassessment/${talentId}`,
           {
-            headers:{
+            headers: {
               Authorization: `Basic ${token}`,
             }
           }
-        )
-        const data = await response.json()
-        setTalentList(data)
+        );
+        const data = await response.json();
+        // Ensure that each item in the data array has a 'scores' property
+        const processedData = data.map(item => ({
+          ...item,
+          scores: Array.isArray(item.scores) ? item.scores : [item.score], // Fallback to single score if array not provided
+        }));
+        setTalentList(processedData);
       } catch (error) {
-        console.error('Error fetching data:', error)
-        setError(error.message)
+        console.error('Error fetching data:', error);
+        setError(error.message);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-    fetchData()
-  }, [])
+    };
+    fetchData();
+  }, [x]);
 
   const createTalent = async newTalent => {
-    setIsLoading(true)
-    setError(null)
-    setOpenSnackbar(null)
+    setIsLoading(true);
+    setError(null);
+    setOpenSnackbar(null);
 
     try {
       const response = await fetch(
@@ -166,72 +180,72 @@ const IndividualAssesments = () => {
           },
           body: JSON.stringify(newTalent),
         },
-      )
+      );
       if (response.ok) {
-        setError(null)
-        const data = await response.json()
-        setValidationErrors({})
-        setTalentList(prevTalents => [...prevTalents, data])
-        setOpenSnackbar('Talent added successfully!')
+        setError(null);
+        const data = await response.json();
+        setValidationErrors({});
+        setTalentList(prevTalents => [...prevTalents, data]);
+        setOpenSnackbar('Talent added successfully!');
       }
     } catch (error) {
-      console.error('Error creating talent:', error)
-      setError(error.message)
+      console.error('Error creating talent:', error);
+      setError(error.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const deleteTalent = async talentId => {
-    setIsLoading(true)
-    setError(null)
-    setOpenSnackbar(null)
+    setIsLoading(true);
+    setError(null);
+    setOpenSnackbar(null);
     try {
       const response = await fetch(
         `${baseUrl}/cpm/talents/deletetalent/${talentId}`,
         {
           method: 'DELETE',
-          headers:{
+          headers: {
             Authorization: `Basic ${token}`,
           }
         },
-      )
+      );
 
       if (response.ok) {
         setTalentList(prevTalents =>
           prevTalents.filter(talent => talent.talentId !== talentId),
-        )
-        setOpenSnackbar('Talent deleted successfully!')
-        setError(null)
+        );
+        setOpenSnackbar('Talent deleted successfully!');
+        setError(null);
       }
     } catch (error) {
-      console.error('Error deleting talent:', error)
-      setError(error.message)
+      console.error('Error deleting talent:', error);
+      setError(error.message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleDeleteSelectedRows = async () => {
-    setOpenSnackbar(null)
-    setError(null)
-    setIsLoading(true)
-    setOpenDeleteRowsModal(false)
+    setOpenSnackbar(null);
+    setError(null);
+    setIsLoading(true);
+    setOpenDeleteRowsModal(false);
 
-    let count = 0
+    let count = 0;
     try {
       for (const row of selectedRows) {
-        await deleteTalent(row.talentId)
-        count++
+        await deleteTalent(row.talentId);
+        count++;
       }
     } catch (error) {
-      setError()
-      setError(`Failed to delete talent(s): ${error.message}`)
+      setError();
+      setError(`Failed to delete talent(s): ${error.message}`);
     }
 
-    setRowSelection([])
-    setOpenSnackbar(`${count} talent(s) deleted successfully.`)
-  }
+    setRowSelection([]);
+    setOpenSnackbar(`${count} talent(s) deleted successfully.`);
+  };
 
   const columns = useMemo(
     () => [
@@ -269,10 +283,20 @@ const IndividualAssesments = () => {
             size: 100,
           },
           {
-            accessorKey: 'score',
+            accessorKey: 'scores',
             header: 'Score',
             enableEditing: true,
-            size: 100,
+            size: 170,
+            accessorFn: (row) => {
+              const scores = Array.isArray(row.scores) ? row.scores : [row.score];
+              return scores[scores.length-1];
+            },
+            Cell: ({ row }) => <ScoreDropdown scores={row.original.scores} />,
+            Header: ({ column }) => (
+              <Box className="ml-2">
+                {column.columnDef.header}
+              </Box>
+            ),
           },
           {
             accessorKey: 'attempts',
@@ -283,8 +307,22 @@ const IndividualAssesments = () => {
           {
             accessorKey: 'comments',
             header: 'Log',
-            enableEditing: true,
-            size: 100,
+            enableEditing: false,
+            size: 250, // Increased size
+            Cell: ({ row }) => <CommentCell comments={row.original.comments} />,
+            Header: ({ column }) => (
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {column.columnDef.header}
+              </Box>
+            ),
           },
           {
             accessorKey: 'assessmentDate',
@@ -292,33 +330,18 @@ const IndividualAssesments = () => {
             enableEditing: false,
             size: 100,
           },
+          {
+            accessorKey: 'reason',
+            header: 'Reason',
+            enableEditing: true,
+
+            size: 250, // Adjust size as needed
+          },
         ],
       },
     ],
     [validationErrors],
-  )
-
-  const validationRules = {
-    tenthPercent: {
-      required: true,
-      pattern: /^(100(\.\d{1,2})?|[1-9]?\d(\.\d{1,2})?)$/,
-      message: 'Tenth Percent must be a valid percentage between 0 and 100.',
-    },
-    currentLocation: {
-      required: true,
-      message: 'Current Location cannot be empty.',
-    },
-    dob: {
-      required: true,
-      pattern: /^\d{4}-\d{2}-\d{2}$/,
-      message: 'Invalid Date of Birth format. Must be in YYYY-MM-DD format.',
-    },
-    ekYear: {
-      required: true,
-      pattern: /^(19|20)\d{2}$/,
-      message: 'Invalid EK Year format. Must be a valid year.',
-    },
-  }
+  );
 
   const table = useMaterialReactTable({
     columns,
@@ -327,42 +350,29 @@ const IndividualAssesments = () => {
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
     enableEditing: true,
+    initialState: { columnVisibility: { reason: false } },
+ 
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: async ({ values, table }) => {
-      console.log('Editing row save function called 1')
-      const errors = {}
+      console.log('Editing row save function called 1');
 
-      // Object.entries(values).forEach(([key, value]) => {
-      //   const temp = value ? value.toString().trim() : '' // Add a null check here
-      //   const rule = validationRules[key]
 
-      //   if (rule) {
-      //     if (rule.required && temp.length === 0) {
-      //       errors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} field cannot be empty`
-      //     } else if (rule.pattern && !rule.pattern.test(value)) {
-      //       errors[key] = rule.message
-      //     }
-      //   }
-      // // })
-      // console.log("Editing row save function called 2");
-
-      // if (Object.keys(errors).length > 0) {
-      //   console.log("Editing row save function called 3");
-
-      //   setValidationErrors(errors)
-      //   return
-      // }
-      // console.log("Editing row save function called 4");
-
-      setValidationErrors({})
-      await updateAssessment(values)
-      table.setEditingRow(null)
+      setValidationErrors({});
+      await updateAssessment(values);
+      table.setEditingRow(null);
     },
-  })
+  });
 
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
-      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>ScoreCard</h2>
+      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>   <Button
+        color="primary"
+        onClick={() => navigate(-1)} // Navigate to the previous page
+        style={{width: '50px' }}
+      >
+        <KeyboardArrowLeftIcon/>
+      </Button>Scorecard For Indidvidual Assessment</h2>
+    
       <br></br>
       <br></br>
       {isLoading && (
@@ -408,6 +418,7 @@ const IndividualAssesments = () => {
         </Alert>
       </Snackbar>
     </div>
-  )
-}
-export default IndividualAssesments
+  );
+};
+
+export default IndividualAssessments;

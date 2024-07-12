@@ -240,7 +240,6 @@ import {AddInkathon }from './AddInkathon'
   const table = useMaterialReactTable({
     columns,
     data: inkathonList,
-    enableRowSelection: true,
     initialState: { columnVisibility: { talentId: true, } },
     isLoading,
     createDisplayMode: 'modal',

@@ -16,9 +16,8 @@ import IndividualToogleAssesments from '../component/Assesments/IndividuaTooglel
 import Alumni from '../component/Alumni'
 import EmployeewiseAssignment from '../component/Assignments/EmployeewiseAssignment'
 import FinalAssignmentview from '../component/Assignments/FinalAssignmentview'
-import Perform from '../component/Perform'
 import CampusCalendarView from '../component/CampusCalendar&InterviewScheduling/CampusCalendarView'
-import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssesmentsCombined'
+import { CandidateAssesmentsCombined } from '../component/CandidateAssesmentStages.jsx/CandidateAssessmentsCombined'
 import TrainingAttendance from '../component/attendancecomponents/TrainingAttendance'
 import Trainers from '../component/Trainers'
 import InkathonDatabase from '../component/Inkathon/InkathonDatabase'
@@ -28,6 +27,8 @@ import TSView from '../component/TrainingSchedule/TSView'
 import HomePage from '../component/HomePage'
 import CollegeDBView from '../component/CollegeDB/CollegeDBView'
 
+import CombinedTalent from '../component/Assesments/CombinedTalent'
+import AssesmentCollege from '../component/CandidateAssesmentStages.jsx/AssesmentCollege'
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
@@ -71,7 +72,6 @@ export default function Dashboard() {
           )}
           {tab === 'alumni' && <Alumni />}
           {tab === 'EmployeewiseAssignment' && <EmployeewiseAssignment />}
-          {tab === 'Perform' && <Perform />}
           {tab === 'inkathon' && <InkathonDatabase />}
           {tab === 'createinkathon' && <CreateInkathon />}
           {tab === 'teamtabinkathon' && <TeamTabInkathon />}
@@ -81,6 +81,9 @@ export default function Dashboard() {
           {tab === 'campus-calendar' && <CampusCalendarView />}
           {tab === 'candidate-assesment' && <CandidateAssesmentsCombined />}
           {tab === 'training' && <TSView />}
+          {tab === 'candidate-assessment' && <CandidateAssesmentsCombined />}
+          {tab === 'CombinedTalent' && <CombinedTalent />}
+          {tab === 'AssesmentCollege' && <AssesmentCollege />}
         </div>
       </div>
     </>

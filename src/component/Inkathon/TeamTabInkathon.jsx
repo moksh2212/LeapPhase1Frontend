@@ -32,8 +32,8 @@ export default function TeamTabInkathon() {
   const [openAddMemberForm, setOpenAddMemberForm] = useState(false)
   const [teamToEdit, setTeamToEdit] = useState(false)
   const [openUpdateTeamForm, setOpenUpdateTeamForm] = useState(false)
-  const [teamIdToDelete, setTeamIdToDelete] = useState(null)
-  const [openTeamDeleteModal, setOpenTeamDeleteModal] = useState(false)
+  const [memberIdToDelete, setMemberIdToDelete] = useState(null)
+  const [openTeamDeleteModal, setOpenMemberDeleteModal] = useState(false)
 
   const [error, setError] = useState()
   const [currTeam, setCurrTeam] = useState({
@@ -108,6 +108,8 @@ export default function TeamTabInkathon() {
         setMemberList(prevMembers => [...prevMembers, data])
         setOpenSnackbar('Member added successfully!')
         setIsLoading(false)
+      }else{
+        setError('Error adding member: Talent already exists in another team')
       }
     } catch (error) {
       console.error('Error Adding Member:', error)
@@ -116,16 +118,16 @@ export default function TeamTabInkathon() {
       setIsLoading(false)
     }
   }
-  const handleTeamDelete = async () => {
-    await deleteTeam(teamIdToDelete)
-    setOpenTeamDeleteModal(false)
+  const handleMemberDelete = async () => {
+    await deleteMember(memberIdToDelete)
+    setOpenMemberDeleteModal(false)
   }
-  const deleteTeam = async teamId => {
+  const deleteMember = async memberId => {
     setIsLoading(true)
     setError(null)
     setOpenSnackbar(null)
     try {
-      const response = await fetch(`${tanBaseUrl}/api/teams/delete/${teamId}`, {
+      const response = await fetch(`${tanBaseUrl}/api/members/delete/${memberId}`, {
         
         method: 'DELETE',
         headers:{
@@ -134,31 +136,31 @@ export default function TeamTabInkathon() {
       })
 
       if (response.ok) {
-        setMemberList(prevTeams =>
-          prevTeams.filter(team => team.teamId !== teamId),
+        setMemberList(prevMembers =>
+          prevMembers.filter(member => member.memberId !== memberId),
         )
-        setOpenSnackbar('Team deleted successfully!')
+        setOpenSnackbar('Member deleted successfully!')
         setError(null)
       }
     } catch (error) {
-      console.error('Error deleting Team:', error)
+      console.error('Error deleting Member:', error)
       setError(error.message)
     } finally {
       setIsLoading(false)
     }
   }
-  const renderTeamDeleteModal = () => (
-    <Dialog open={openTeamDeleteModal} onClose={() => setOpenTeamDeleteModal(false)}>
-      <DialogTitle>Delete Team</DialogTitle>
+  const renderMemberDeleteModal = () => (
+    <Dialog open={openTeamDeleteModal} onClose={() => setOpenMemberDeleteModal(false)}>
+      <DialogTitle>Delete Member</DialogTitle>
       <DialogContent>
-        <p>Are you sure you want to delete this Team?</p>
+        <p>Are you sure you want to delete this Member?</p>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpenTeamDeleteModal(false)}>Cancel</Button>
+        <Button onClick={() => setOpenMemberDeleteModal(false)}>Cancel</Button>
         <Button
           onClick={() => {
-            console.log('Deleting Team with ID:', teamIdToDelete)
-            handleTeamDelete()
+            console.log('Deleting Member with ID:', memberIdToDelete)
+            handleMemberDelete()
           }}
           color='error'
         >
@@ -327,8 +329,8 @@ export default function TeamTabInkathon() {
           <EditIcon />
         </IconButton>
         <IconButton onClick={() => {
-          setTeamIdToDelete(row.original.teamId)
-          setOpenTeamDeleteModal(true)}}>
+          setMemberIdToDelete(row.original.memberId)
+          setOpenMemberDeleteModal(true)}}>
           <DeleteIcon />
         </IconButton>
       </Box>
@@ -416,7 +418,7 @@ export default function TeamTabInkathon() {
               <h2 className='text-3xl text-[#0087D5] font-bold mb-3'>
                 {currTeam && currTeam.membersCount  
                   ? `MEMBERS COUNT: ${currTeam.membersCount}`
-                  : 'MEMBERS COUNT: Loading...'}
+                  : 'MEMBERS COUNT: 0'}
               </h2>
             </div>
           </div>
@@ -448,7 +450,7 @@ export default function TeamTabInkathon() {
                   createMember={createMember}
                 />
               )}
-              {renderTeamDeleteModal()}
+              {renderMemberDeleteModal()}
             </div>
           </div>
         </div>
