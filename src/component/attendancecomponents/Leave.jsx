@@ -226,13 +226,13 @@ const LeaveRequestDetailModal = ({ request, onClose, onApprove, onReject }) => {
     </Dialog>
   )
 }
-
+const tanBaseUrl = process.env.BASE_URL
 const Leave = () => {
   const [leaveRequests, setLeaveRequests] = useState([])
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const [tabValue, setTabValue] = useState(0) // State for managing active tab
-  const API_URL = 'http://192.168.0.147:8080'
+  const API_URL = tanBaseUrl
   const token = useSelector(state => state.user.token)
   useEffect(() => {
     fetchLeaveRequests()
