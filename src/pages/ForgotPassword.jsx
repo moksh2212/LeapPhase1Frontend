@@ -13,6 +13,7 @@ function ForgotPassword() {
   const [newPassword, setNewPassword] = useState('')
   const [confirmNewPassword, setConfirmNewPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [btnLoading, setBtnLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [passwordMatchError, setPasswordMatchError] = useState(false)
   const [openSnackbar, setOpenSnackbar] = useState(null)
@@ -45,7 +46,7 @@ function ForgotPassword() {
       return
     }
 
-    setIsLoading(true)
+    setBtnLoading(true)
 
     try {
       const formdata = new FormData()
@@ -70,7 +71,7 @@ function ForgotPassword() {
       console.error('Error', error)
       setErrorMessage('Could not reset password. Please try again later.')
     } finally {
-      setIsLoading(false)
+      setBtnLoading(false)
     }
   }
 
@@ -185,7 +186,7 @@ function ForgotPassword() {
                   disabled={isLoading || !otpSent || otp.length !== 6}
                   className='w-full flex justify-center rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-gradient-to-r focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 mt-3'
                 >
-                  {isLoading ? <Spinner /> : 'Reset Password'}
+                  {btnLoading ? <Spinner /> : 'Reset Password'}
                 </Button>
               </div>
             </>

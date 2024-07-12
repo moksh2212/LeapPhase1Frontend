@@ -14,6 +14,7 @@ import {
 import Box from '@mui/material/Box'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid'
 import { useSelector } from 'react-redux'
+import { Spinner } from 'flowbite-react'
 
 const UserApprovalTable = ({ requests, onApprove, onReject, isPendingTab }) => {
   const theme = useTheme()
@@ -95,6 +96,7 @@ const Authorize = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
   const [tabValue, setTabValue] = useState(0)
+  const [loading, setLoading] = useState(false)
   const API_URL = process.env.BASE_URL2
   const token = useSelector(state => state.user.token)
 
@@ -103,6 +105,7 @@ const Authorize = () => {
   }, [])
 
   const fetchRequests = async () => {
+    setLoading(true)
     try {
       const response = await fetch(`${API_URL}/super/security/getAllRequests`, {
         headers: {
@@ -110,16 +113,19 @@ const Authorize = () => {
         },
       })
       if (!response.ok) {
+        setLoading(false)
         throw new Error('Failed to fetch requests')
       }
       const data = await response.json()
       setRequests(data)
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching requests:', error)
     }
   }
 
   const handleApproveRequest = async authorizationId => {
+    setLoading(true)
     try {
       const response = await fetch(
         `${API_URL}/super/security/approve?id=${authorizationId}`,
@@ -133,6 +139,7 @@ const Authorize = () => {
       )
 
       if (!response.ok) {
+        setLoading(false)
         throw new Error('Failed to approve request')
       }
 
@@ -142,7 +149,8 @@ const Authorize = () => {
           : request,
       )
       setRequests(updatedUsers)
-      setSnackbarMessage('User approved successfully')
+      setLoading(false)
+      setSnackbarMessage('User request approved successfully')
       setSnackbarOpen(true)
     } catch (error) {
       console.error('Error approving request:', error)
@@ -150,6 +158,7 @@ const Authorize = () => {
   }
 
   const handleDeclineRequest = async authorizationId => {
+    setLoading(true)
     try {
       const response = await fetch(
         `${API_URL}/super/security/decline?id=${authorizationId}`,
@@ -163,6 +172,7 @@ const Authorize = () => {
       )
 
       if (!response.ok) {
+        setLoading(false)
         throw new Error('Failed to decline request')
       }
 
@@ -172,8 +182,9 @@ const Authorize = () => {
           : request,
       )
       setRequests(updatedUsers)
-      setSnackbarMessage('User declineed successfully')
+      setSnackbarMessage('User request declined successfully')
       setSnackbarOpen(true)
+      setLoading(false)
     } catch (error) {
       console.error('Error declineing request:', error)
     }
@@ -212,14 +223,22 @@ const Authorize = () => {
             </Tabs>
           </Paper>
 
-          <Box mt={2}>
-            <UserApprovalTable
-              requests={filteredRequests}
-              onApprove={handleApproveRequest}
-              onReject={handleDeclineRequest}
-              isPendingTab={tabValue === 0}
-            />
-          </Box>
+          {!loading && (
+            <Box mt={2}>
+              <UserApprovalTable
+                requests={filteredRequests}
+                onApprove={handleApproveRequest}
+                onReject={handleDeclineRequest}
+                isPendingTab={tabValue === 0}
+              />
+            </Box>
+          )}
+
+          {loading && (
+            <div className='w-full h-[400px] flex justify-center items-center'>
+              <Spinner />
+            </div>
+          )}
 
           <Snackbar
             open={snackbarOpen}

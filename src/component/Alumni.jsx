@@ -33,7 +33,7 @@ const Alumni = () => {
   const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
-  const tanBaseUrl = process.env.BASE_URL
+  const tanBaseUrl = process.env.BASE_URL2
   const token = useSelector(state => state.user.token)
 
   const handleClose = (event, reason) => {
@@ -1147,8 +1147,7 @@ const Alumni = () => {
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
       <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>Alumni</h2>
-      <br></br>
-      <br></br>
+     
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
           <CircularProgress className='w-full mx-auto my-auto' />

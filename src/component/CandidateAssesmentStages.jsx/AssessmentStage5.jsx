@@ -18,6 +18,9 @@ import {
   lighten,
 } from '@mui/material'
 
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
+
+
 
 
 
@@ -89,6 +92,7 @@ const AssesTable = () => {
   const [text, setText] = useState('')
   const [open, setOpen] = useState(false);
   const [count, setCount] = useState(0);
+  const navigate = useNavigate()
 
   const token = useSelector(state => state.user.token)
 
@@ -332,12 +336,17 @@ const AssesTable = () => {
 
       return (
         <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300">
-          <div className='flex justify-between mb-2 rounded-md'>
-            <h2 className={`text-2xl text-[#0087D5] font-bold my-auto p-2`}>
-              Candidates selected for behavioural interview
-            </h2>
-            <div className='my-auto mr-2'></div>
-          </div>
+            <h2 className={`text-2xl text-[#0087D5] font-bold mb-3 flex items-center`}>
+            {' '}
+            <Button
+              color='primary'
+              onClick={() => navigate(-1)} // Navigate to the previous page
+              style={{ width: '50px' }}
+            >
+              <KeyboardArrowLeftIcon />
+            </Button>
+            Selected Candidates for Behavioural Interview
+          </h2>
           <Box
             sx={theme => ({
               backgroundColor: lighten(theme.palette.background.default, 0.05),
@@ -395,6 +404,7 @@ const AssesTable = () => {
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { useNavigate } from 'react-router-dom';
 
 const CandidatesAssesmentsStage5 = () => (
   <LocalizationProvider dateAdapter={AdapterDayjs}>
