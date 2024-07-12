@@ -332,7 +332,7 @@ const AssesTable = () => {
             >
               <KeyboardArrowLeftIcon />
             </Button>
-            Selected Candidates for Online Assessment
+            Online Assessment
           </h2>
           <Box
             sx={theme => ({
@@ -359,7 +359,7 @@ const AssesTable = () => {
                 </Button>
                 <div>
                   <ButtonGroup>
-                    <Button variant='contained' component='label'>
+                    <Button variant='contained' component='label' disabled={rows.length!==0}>
                       <label htmlFor='excelFile' className='excel-file-label'>
                         {selectedFile
                           ? `File Selected: ${selectedFile.name}`

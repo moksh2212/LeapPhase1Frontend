@@ -454,7 +454,7 @@ const AssesTable = () => {
             >
               <KeyboardArrowLeftIcon />
             </Button>
-            Selected Candidates for Stage 4
+            Stage 4
           </h2>
           <Box
             sx={theme => ({

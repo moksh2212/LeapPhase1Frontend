@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
+import { useState, useEffect, useMemo } from 'react'
+import Modal from '@mui/material/Modal'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Alert from '@mui/material/Alert'
 import { useSelector } from 'react-redux'
 
 import {
@@ -10,18 +10,13 @@ import {
   useMaterialReactTable,
   MRT_GlobalFilterTextField,
   MRT_ToggleFiltersButton,
-} from 'material-react-table';
-import PropTypes from 'prop-types';
-import {
-  Button,
-  Snackbar,
-  lighten,
-} from '@mui/material';
+} from 'material-react-table'
+import PropTypes from 'prop-types'
+import { Button, Snackbar, lighten } from '@mui/material'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 
-const canBaseUrl = process.env.BASE_URL2;
-const tanBaseUrl = process.env.BASE_URL2;
-
+const canBaseUrl = process.env.BASE_URL2
+const tanBaseUrl = process.env.BASE_URL2
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -34,15 +29,15 @@ const NameCell = ({ renderedCellValue }) => {
     >
       <span>{renderedCellValue}</span>
     </Box>
-  );
-};
+  )
+}
 
 NameCell.propTypes = {
   renderedCellValue: PropTypes.node.isRequired,
   row: PropTypes.shape({
     original: PropTypes.shape({}).isRequired,
   }).isRequired,
-};
+}
 
 const SalaryCell = ({ cell }) => {
   return (
@@ -53,8 +48,8 @@ const SalaryCell = ({ cell }) => {
           cell.getValue() < 0
             ? theme.palette.error.dark
             : cell.getValue() >= 0 && cell.getValue() < 70
-              ? theme.palette.warning.dark
-              : theme.palette.success.dark,
+            ? theme.palette.warning.dark
+            : theme.palette.success.dark,
         borderRadius: '0.25rem',
         color: '#fff',
         maxWidth: '9ch',
@@ -63,18 +58,18 @@ const SalaryCell = ({ cell }) => {
     >
       {cell.getValue()?.toLocaleString?.('en-US', {})}
     </Box>
-  );
-};
+  )
+}
 
 SalaryCell.propTypes = {
   cell: PropTypes.shape({
     getValue: PropTypes.func.isRequired,
   }).isRequired,
-};
+}
 
 const DateHeader = ({ column }) => {
-  return <em>{column.columnDef.header}</em>;
-};
+  return <em>{column.columnDef.header}</em>
+}
 
 DateHeader.propTypes = {
   column: PropTypes.shape({
@@ -82,67 +77,75 @@ DateHeader.propTypes = {
       header: PropTypes.node.isRequired,
     }).isRequired,
   }).isRequired,
-};
+}
 
 const AssesTable = () => {
-  const [data, setData] = useState([]);
-  const [validationErrors, setValidationErrors] = useState({});
-  const [open, setOpen] = useState(false);
+  const [data, setData] = useState([])
+  const [validationErrors, setValidationErrors] = useState({})
+  const [open, setOpen] = useState(false)
   const token = useSelector(state => state.user.token)
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(0)
   const navigate = useNavigate()
-
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
-      return;
+      return
     }
 
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`,{
-          headers: {
-            Authorization: `Basic ${token}`,
+        const response = await fetch(
+          `${canBaseUrl}/cpm2/assessment/getAllAssessments`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
           },
-        });
-        let jsonData = await response.json();
+        )
+        let jsonData = await response.json()
 
-        jsonData = jsonData.filter(assessment => assessment && assessment.assessmentLevelThree);
-        const arr = jsonData.map(assessment => assessment.assessmentLevelThree);
-        setData(arr);
-        console.log(jsonData);
+        jsonData = jsonData.filter(
+          assessment => assessment && assessment.assessmentLevelThree,
+        )
+        const arr = jsonData.map(assessment => assessment.assessmentLevelThree)
+        setData(arr)
+        console.log(jsonData)
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error)
       }
-    };
+    }
 
-    fetchData();
-  }, []);
-  const validate = (values) => {
-    const errors = {};
-    const requiredFields = ['problemSolving', 'analyticalSkills'];
-  
-    requiredFields.forEach((key) => {
-      if (values[key] === undefined || values[key] === null || values[key] === '') {
-        errors[key] = `${key} is required`;
+    fetchData()
+  }, [])
+  const validate = values => {
+    const errors = {}
+    const requiredFields = ['problemSolving', 'analyticalSkills']
+
+    requiredFields.forEach(key => {
+      if (
+        values[key] === undefined ||
+        values[key] === null ||
+        values[key] === ''
+      ) {
+        errors[key] = `${key} is required`
       } else {
-        const numValue = Number(values[key]);
+        const numValue = Number(values[key])
         if (isNaN(numValue)) {
-          errors[key] = `${key} must be a number`;
+          errors[key] = `${key} must be a number`
         } else if (numValue > 10) {
-          errors[key] = `${key} should not be greater than 10`;
+          errors[key] = `${key} should not be greater than 10`
         } else if (numValue < 0) {
-          errors[key] = `${key} should not be less than 0`;
+          errors[key] = `${key} should not be less than 0`
         }
       }
-    });
-  
-    return errors;
-  };
+    })
+
+    return errors
+  }
 
   const columns = useMemo(
     () => [
@@ -156,29 +159,20 @@ const AssesTable = () => {
             size: 100,
             enableEditing: false,
             isVisible: false,
-            Cell: ({ cell }) => (
-              <div className='ml-3'>
-                {cell.getValue()}
-              </div>
-            ),
+            Cell: ({ cell }) => <div className='ml-3'>{cell.getValue()}</div>,
           },
           {
             accessorKey: 'candidateName',
             header: 'Candidate Name',
             size: 100,
             enableEditing: false,
-            Cell: ({ cell }) => (
-              <div className='ml-11'>
-                {cell.getValue()}
-              </div>
-            ),
+            Cell: ({ cell }) => <div className='ml-11'>{cell.getValue()}</div>,
           },
           {
             accessorKey: 'email',
             header: 'Email',
             size: 100,
             enableEditing: false,
-            
           },
           {
             accessorKey: 'problemSolving',
@@ -186,19 +180,15 @@ const AssesTable = () => {
             enableColumnFilter: true,
             enableSorting: true,
             size: 100,
-            Cell: ({ cell }) => (
-              <div className='ml-11'>
-                {cell.getValue()}
-              </div>
-            ),
+            Cell: ({ cell }) => <div className='ml-11'>{cell.getValue()}</div>,
             muiEditTextFieldProps: ({ cell }) => ({
               error: !!validationErrors[cell.column.id],
               helperText: validationErrors[cell.column.id],
               onFocus: () => {
                 if (validationErrors[cell.column.id]) {
-                  const newValidationErrors = { ...validationErrors };
-                  delete newValidationErrors[cell.column.id];
-                  setValidationErrors(newValidationErrors);
+                  const newValidationErrors = { ...validationErrors }
+                  delete newValidationErrors[cell.column.id]
+                  setValidationErrors(newValidationErrors)
                 }
               },
             }),
@@ -214,17 +204,13 @@ const AssesTable = () => {
               helperText: validationErrors[cell.column.id],
               onFocus: () => {
                 if (validationErrors[cell.column.id]) {
-                  const newValidationErrors = { ...validationErrors };
-                  delete newValidationErrors[cell.column.id];
-                  setValidationErrors(newValidationErrors);
+                  const newValidationErrors = { ...validationErrors }
+                  delete newValidationErrors[cell.column.id]
+                  setValidationErrors(newValidationErrors)
                 }
               },
             }),
-            Cell: ({ cell }) => (
-              <div className='ml-11'>
-                {cell.getValue()}
-              </div>
-            ),
+            Cell: ({ cell }) => <div className='ml-11'>{cell.getValue()}</div>,
           },
           {
             accessorKey: 'totalScore',
@@ -232,17 +218,13 @@ const AssesTable = () => {
             enableSorting: true,
             enableColumnFilter: true,
             size: 100,
-            Cell: ({ cell }) => (
-              <div className='ml-11'>
-                {cell.getValue()}
-              </div>
-            ),
+            Cell: ({ cell }) => <div className='ml-11'>{cell.getValue()}</div>,
           },
         ],
       },
     ],
     [validationErrors],
-  );
+  )
 
   const table = useMaterialReactTable({
     columns,
@@ -258,43 +240,45 @@ const AssesTable = () => {
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
         '&:hover': {
-          backgroundColor: row.original.selectedForNextStage ? 'rgba(0, 135, 213, 0.2)' : undefined,
+          backgroundColor: row.original.selectedForNextStage
+            ? 'rgba(0, 135, 213, 0.2)'
+            : undefined,
         },
       },
     }),
     onEditingRowSave: async ({ table, values }) => {
-      const errors = validate(values);
+      const errors = validate(values)
       if (Object.keys(errors).length) {
-        setValidationErrors(errors);
-        return;
+        setValidationErrors(errors)
+        return
       }
-setValidationErrors({})
+      setValidationErrors({})
       try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const collegeId = urlParams.get('collegeId');
-        const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`, {
-
+        const urlParams = new URLSearchParams(window.location.search)
+        const collegeId = urlParams.get('collegeId')
+        const response = await fetch(
+          `${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`,
+          {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Basic ${token}`,
-
             },
             body: JSON.stringify(values),
           },
-        );
+        )
         if (!response.ok) {
-          throw new Error('Failed to update candidate');
+          throw new Error('Failed to update candidate')
         } else {
-          alert('Edited successfully');
+          alert('Edited successfully')
         }
-        table.setEditingRow(null);
+        table.setEditingRow(null)
       } catch (error) {
-        console.error(error);
+        console.error(error)
       }
     },
     onEditingRowCancel: () => {
-      setValidationErrors({});
+      setValidationErrors({})
     },
     initialState: {
       showColumnFilters: false,
@@ -313,13 +297,13 @@ setValidationErrors({})
       variant: 'outlined',
     },
     renderTopToolbar: ({ table }) => {
-      const [hasSelectedRows, setHasSelectedRows] = useState(false);
+      const [hasSelectedRows, setHasSelectedRows] = useState(false)
 
       const handleActivate = async () => {
-        let arr = [];
-        table.getSelectedRowModel().flatRows.map((row) => {
-          arr.push(row.original);
-        });
+        let arr = []
+        table.getSelectedRowModel().flatRows.map(row => {
+          arr.push(row.original)
+        })
         const response = await fetch(
           `${tanBaseUrl}/cpm2/assessment/selectLevelThree`,
           {
@@ -327,30 +311,34 @@ setValidationErrors({})
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Basic ${token}`,
-
             },
             body: JSON.stringify(arr),
-          }
-        );
-        setData(prevData => prevData.map(row => ({
-          ...row,
-          selectedForNextStage: arr.some(selectedRow => selectedRow.id === row.id)
-        })));
+          },
+        )
+        setData(prevData =>
+          prevData.map(row => ({
+            ...row,
+            selectedForNextStage: arr.some(
+              selectedRow => selectedRow.id === row.id,
+            ),
+          })),
+        )
         setCount(table.getSelectedRowModel().rows.length)
 
-        setOpen(true);
-        table.toggleAllRowsSelected(false);
+        setOpen(true)
+        table.toggleAllRowsSelected(false)
+      }
 
-      };
-
-      const selectedRowCount = table.getSelectedRowModel().flatRows.length;
+      const selectedRowCount = table.getSelectedRowModel().flatRows.length
       useEffect(() => {
-        setHasSelectedRows(selectedRowCount > 0);
-      }, [selectedRowCount]);
+        setHasSelectedRows(selectedRowCount > 0)
+      }, [selectedRowCount])
 
       return (
-        <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbar-thumb-slate-300">
-         <h2 className={`text-2xl text-[#0087D5] font-bold mb-3 flex items-center`}>
+        <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbar-thumb-slate-300'>
+          <h2
+            className={`text-2xl text-[#0087D5] font-bold mb-3 flex items-center`}
+          >
             {' '}
             <Button
               color='primary'
@@ -359,7 +347,7 @@ setValidationErrors({})
             >
               <KeyboardArrowLeftIcon />
             </Button>
-            Selected Candidates for Stage 3
+            Stage 3
           </h2>
           <Box
             sx={theme => ({
@@ -390,17 +378,21 @@ setValidationErrors({})
           {hasSelectedRows && (
             <Snackbar
               open={hasSelectedRows}
-              message="Rows are selected"
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              message='Rows are selected'
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             />
           )}
           {open && (
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}   anchorOrigin={{ vertical: 'top', horizontal: 'center' }}  
->
+            <Snackbar
+              open={open}
+              autoHideDuration={6000}
+              onClose={handleClose}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
               <Alert
                 onClose={handleClose}
-                severity="success"
-                variant="filled"
+                severity='success'
+                variant='filled'
                 sx={{ width: '100%' }}
               >
                 {count === 1
@@ -410,21 +402,21 @@ setValidationErrors({})
             </Snackbar>
           )}
         </div>
-      );
+      )
     },
-  });
+  })
 
-  return <MaterialReactTable table={table} />;
-};
+  return <MaterialReactTable table={table} />
+}
 
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { useNavigate } from 'react-router-dom';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { useNavigate } from 'react-router-dom'
 
 const CandidatesAssesmentsStage3 = () => (
   <LocalizationProvider dateAdapter={AdapterDayjs}>
     <AssesTable />
   </LocalizationProvider>
-);
+)
 
-export default CandidatesAssesmentsStage3;
+export default CandidatesAssesmentsStage3

@@ -478,7 +478,7 @@ const AssesTable = () => {
             >
               <KeyboardArrowLeftIcon />
             </Button>
-            Selected Candidates for Design Exercise
+            Design Exercise
           </h2>
           <Box
             sx={theme => ({

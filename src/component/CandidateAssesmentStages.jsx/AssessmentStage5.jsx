@@ -345,7 +345,7 @@ const AssesTable = () => {
             >
               <KeyboardArrowLeftIcon />
             </Button>
-            Selected Candidates for Behavioural Interview
+            Behavioural Interview
           </h2>
           <Box
             sx={theme => ({
