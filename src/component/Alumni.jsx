@@ -179,7 +179,14 @@ const Alumni = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`)
+        const response = await fetch(
+          `${tanBaseUrl}/cpm/talents/alltalent`,
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          },
+        )
         const data = await response.json()
         setTalentList(data)
       } catch (error) {
@@ -955,7 +962,13 @@ const Alumni = () => {
   const table = useMaterialReactTable({
     columns,
     data: talentList,
-    enableRowSelection: true,
+    enableRowSelection: false,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     initialState: {
       columnVisibility: {
         alternateNumber: false,

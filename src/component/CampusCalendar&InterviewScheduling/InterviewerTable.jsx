@@ -159,7 +159,7 @@ export default function CollapsibleTable() {
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${baseUrl}/api/interviewer/read`, {
+        const response = await fetch(`${baseUrl}/api/admin/interviewer/read`, {
           headers: {
             Authorization: `Basic ${token}`,
           },
@@ -199,7 +199,7 @@ export default function CollapsibleTable() {
     setOpenSnackbar(null)
 
     try {
-      const response = await fetch(`${baseUrl}/api/interviewer/create`, {
+      const response = await fetch(`${baseUrl}/api/admin/interviewer/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
