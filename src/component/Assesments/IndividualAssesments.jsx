@@ -372,9 +372,6 @@ const IndividualAssessments = () => {
       >
         <KeyboardArrowLeftIcon/>
       </Button>Scorecard For Individual Assessment</h2>
-    
-      <br></br>
-      <br></br>
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
           <CircularProgress className='w-full mx-auto my-auto' />

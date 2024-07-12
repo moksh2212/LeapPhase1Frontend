@@ -11,6 +11,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [inctureId, setInctureId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [btnLoading, setBtnLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [passwordMatchError, setPasswordMatchError] = useState(false)
   const [openSnackbar, setOpenSnackbar] = useState(null)
@@ -35,6 +36,18 @@ function Signup() {
     setErrorMessage('')
     setPasswordMatchError(false)
   }
+  const isFormValid =
+    inctureId && talentName && email && password && confirmPassword
+
+  console.log(
+    inctureId,
+    email,
+    talentName,
+    password,
+    confirmPassword,
+  )
+
+  console.log(isFormValid);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -58,7 +71,7 @@ function Signup() {
       return
     }
 
-    setIsLoading(true)
+    setBtnLoading(true)
 
     try {
       const formdata = new FormData()
@@ -91,14 +104,14 @@ function Signup() {
           (await response.text()) ||
             'Could not create account. Please try again.',
         )
-        setIsLoading(false)
+        setBtnLoading(false)
         return
       }
     } catch (error) {
       console.error('Error', error)
       setErrorMessage('Could not create account. Please try again later.')
     } finally {
-      setIsLoading(false)
+      setBtnLoading(false)
     }
   }
 
@@ -134,9 +147,6 @@ function Signup() {
       setIsLoading(false)
     }
   }
-
-  const isFormValid =
-    talentName && email && password && confirmPassword && inctureId
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 '>
@@ -236,23 +246,24 @@ function Signup() {
                 <Button
                   type='submit'
                   disabled={
-                    !isFormValid || isLoading || !otpSent || otp.length !== 6
+                    isLoading || !otpSent || otp.length !== 6
                   }
                   className='w-full flex justify-center rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-gradient-to-r focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 mt-3'
                 >
-                  {isLoading ? <Spinner /> : 'Create Account'}
-                </Button>
-
-                <Button
-                  type='button'
-                  onClick={resetForm}
-                  className='w-1/2 ml-2 flex justify-center rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
-                >
-                  Reset Form
+                  {btnLoading ? <Spinner /> : 'Create Account'}
                 </Button>
               </div>
             </>
           )}
+          <div className='w-full flex justify-end'>
+            <p
+              type='button'
+              onClick={resetForm}
+              className='w-full mt-1 rounded-md text-sm text-end text-red-600 hover:cursor-pointer'
+            >
+              Reset Form
+            </p>
+          </div>
         </form>
 
         {errorMessage && (

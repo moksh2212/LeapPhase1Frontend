@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AccountCircle } from '@mui/icons-material'
-import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
+import { Link, useNavigate } from 'react-router-dom' // Import Link and useNavigate
 
 import {
   MRT_EditActionButtons,
@@ -8,7 +8,7 @@ import {
   useMaterialReactTable,
 } from 'material-react-table'
 import CommentCell from './CommandCell'
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 
 import {
   Alert,
@@ -34,52 +34,53 @@ const IndividualToogleAssesments = () => {
   const [validationErrors, setValidationErrors] = useState({})
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [error, setError] = useState()
-const [x, setx] = useState(0)
+  const [x, setx] = useState(0)
   const [talentIdToDelete, setTalentIdToDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
   const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
-  const navigate = useNavigate(); // Use useNavigate hook
+  const navigate = useNavigate() // Use useNavigate hook
 
   const baseUrl = process.env.BASE_URL2
   const token = useSelector(state => state.user.token)
   const updateAssessment = async AssesmentToUpdate => {
     try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const assesmentid = urlParams.get('assesmentid');
-  
+      const urlParams = new URLSearchParams(window.location.search)
+      const assesmentid = urlParams.get('assesmentid')
+
       // Create URL with query parameters
-      const url = new URL(`${baseUrl}/assessments/updateassessment/${assesmentid}/${AssesmentToUpdate.talentId}`);
-      url.searchParams.append('assessmentId', assesmentid);
-      url.searchParams.append('talentId', AssesmentToUpdate.talentId);
-      
+      const url = new URL(
+        `${baseUrl}/assessments/updateassessment/${assesmentid}/${AssesmentToUpdate.talentId}`,
+      )
+      url.searchParams.append('assessmentId', assesmentid)
+      url.searchParams.append('talentId', AssesmentToUpdate.talentId)
+
       // Get the latest score (which is the only score in the array)
-      
-      url.searchParams.append('score', AssesmentToUpdate.scores);
-      url.searchParams.append('reason', AssesmentToUpdate.reason || '');
-  
+
+      url.searchParams.append('score', AssesmentToUpdate.scores)
+      url.searchParams.append('reason', AssesmentToUpdate.reason || '')
+
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
-          'Authorization': `Basic ${token}`,
+          Authorization: `Basic ${token}`,
         },
-      });
-  
+      })
+
       if (response.ok) {
-        const data = await response.json();
-        setValidationErrors({});
+        const data = await response.json()
+        setValidationErrors({})
         setx(1)
-      
       } else {
-        console.error('Error updating assessment:', response.statusText);
-        throw new Error(response.statusText);
+        console.error('Error updating assessment:', response.statusText)
+        throw new Error(response.statusText)
       }
     } catch (error) {
-      console.error('Error updating talent:', error);
-      throw error;
+      console.error('Error updating talent:', error)
+      throw error
     }
-  };
+  }
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -181,14 +182,15 @@ const [x, setx] = useState(0)
       )
       if (response.ok) {
         setError(null)
-        const data = await response.json();
+        const data = await response.json()
         // Ensure that each item in the data array has a 'scores' property
         const processedData = data.map(item => ({
           ...item,
           scores: Array.isArray(item.scores) ? item.scores : [item.score], // Fallback to single score if array not provided
-        }));     
-           setValidationErrors({})
-           setTalentList(processedData);        setOpenSnackbar('Talent added successfully!')
+        }))
+        setValidationErrors({})
+        setTalentList(processedData)
+        setOpenSnackbar('Talent added successfully!')
       }
     } catch (error) {
       console.error('Error creating talent:', error)
@@ -271,15 +273,15 @@ const [x, setx] = useState(0)
             header: 'Score',
             enableEditing: true,
             size: 170,
-            accessorFn: (row) => {
-              const scores = Array.isArray(row.scores) ? row.scores : [row.score];
-              return scores[scores.length-1];
+            accessorFn: row => {
+              const scores = Array.isArray(row.scores)
+                ? row.scores
+                : [row.score]
+              return scores[scores.length - 1]
             },
             Cell: ({ row }) => <ScoreDropdown scores={row.original.scores} />,
             Header: ({ column }) => (
-              <Box className="ml-2">
-                {column.columnDef.header}
-              </Box>
+              <Box className='ml-2'>{column.columnDef.header}</Box>
             ),
           },
           {
@@ -309,7 +311,7 @@ const [x, setx] = useState(0)
             Header: ({ column }) => (
               <Box
                 sx={{
-                  marginLeft:"120px"
+                  marginLeft: '120px',
                 }}
               >
                 {column.columnDef.header}
@@ -335,8 +337,6 @@ const [x, setx] = useState(0)
     [validationErrors],
   )
 
-
-
   const table = useMaterialReactTable({
     columns,
     data: talentList,
@@ -344,33 +344,36 @@ const [x, setx] = useState(0)
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
     enableEditing: true,
-    initialState: { columnVisibility: { reason: false,talentId:false } },
+    initialState: { columnVisibility: { reason: false, talentId: false } },
 
     onEditingRowCancel: () => setValidationErrors({}),
     onEditingRowSave: async ({ values, table }) => {
       try {
-        setValidationErrors({});
-        console.log("hello")
-        updateAssessment(values);
-        table.setEditingRow(null);
+        setValidationErrors({})
+        console.log('hello')
+        updateAssessment(values)
+        table.setEditingRow(null)
 
-        setOpenSnackbar('Assessment updated successfully!');
+        setOpenSnackbar('Assessment updated successfully!')
       } catch (error) {
-        setError(`Failed to update assessment: ${error.message}`);
+        setError(`Failed to update assessment: ${error.message}`)
       }
     },
   })
 
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
-  <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>   <Button
-        color="primary"
-        onClick={() => navigate(-1)} // Navigate to the previous page
-        style={{width: '50px' }}
-      >
-        <KeyboardArrowLeftIcon/>
-      </Button>Indidvidual Assessment Wise Scorecard</h2>      <br></br>
-      <br></br>
+      <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>
+        {' '}
+        <Button
+          color='primary'
+          onClick={() => navigate(-1)} // Navigate to the previous page
+          style={{ width: '50px' }}
+        >
+          <KeyboardArrowLeftIcon />
+        </Button>
+        Indidvidual Assessment Wise Scorecard
+      </h2>
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
           <CircularProgress className='w-full mx-auto my-auto' />
