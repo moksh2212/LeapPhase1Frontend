@@ -9,6 +9,7 @@ import {
   Grid,
   FormControl,
   FormHelperText,
+  MenuItem,
 } from '@mui/material'
 import { styled } from '@mui/system'
 import Select, { components } from 'react-select'
@@ -52,32 +53,27 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
   const [trainingTech, setTrainingTech] = useState(null)
   const [trainer, setTrainer] = useState(null)
   const [selectedEmployees, setSelectedEmployees] = useState([])
+  const [weekNumber, setWeekNumber] = useState('')
+  const [trainingStatus, setTrainingStatus] = useState('')
+  const [comments, setComments] = useState('')
   const [trainerList, setTrainerList] = useState([
     {
-        "trainerId": "INC2767",
-        "trainerName": "Abhay Kandari",
-        "skills": [
-            "Java",
-            "SpringBoot",
-            "C++",
-            "C"
-        ],
-        "location": "Chandigarh",
-        "email": "abhay@gmail.com",
-        "designation": "ASE"
+      trainerId: 'INC2767',
+      trainerName: 'Abhay Kandari',
+      skills: ['Java', 'SpringBoot', 'C++', 'C'],
+      location: 'Chandigarh',
+      email: 'abhay@gmail.com',
+      designation: 'ASE',
     },
     {
-        "trainerId": "INC34",
-        "trainerName": "Siddhi Vinayak Gupta",
-        "skills": [
-            "Java",
-            "React",
-            "Node"
-        ],
-        "location": "Lucknow",
-        "email": "siddhi@gmail.com",
-        "designation": "SDE3"
-    }])
+      trainerId: 'INC34',
+      trainerName: 'Siddhi Vinayak Gupta',
+      skills: ['Java', 'React', 'Node'],
+      location: 'Lucknow',
+      email: 'siddhi@gmail.com',
+      designation: 'SDE3',
+    },
+  ])
   const [talentList, setTalentList] = useState([])
   const [error, setError] = useState(null)
   const [formErrors, setFormErrors] = useState({})
@@ -125,13 +121,10 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
   const employees = talentList.map(talent => ({
     value: talent.talentId,
     label: talent.talentName,
-    ...talent
+    ...talent,
   }))
 
-  const employeeOptions = [
-    { value: 'all', label: 'Select All' },
-    ...employees
-  ]
+  const employeeOptions = [{ value: 'all', label: 'Select All' }, ...employees]
 
   const techOptions = [
     { value: 'java', label: 'Java' },
@@ -154,11 +147,13 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
       setSelectedEmployees([])
       return
     }
-  
-    const normalOptions = selectedOptions.filter(option => option.value !== 'all')
+
+    const normalOptions = selectedOptions.filter(
+      option => option.value !== 'all',
+    )
     const allOption = selectedOptions.find(option => option.value === 'all')
     const allSelected = normalOptions.length === employees.length
-  
+
     if (allOption && !allSelected) {
       setSelectedEmployees(employees)
     } else if (allOption && allSelected) {
@@ -176,7 +171,10 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
     if (!trainingTopic) errors.trainingTopic = 'Training topic is required'
     if (!trainingTech) errors.trainingTech = 'Training tech is required'
     if (!trainer) errors.trainer = 'Trainer is required'
-    if (selectedEmployees.length === 0) errors.selectedEmployees = 'Select at least one trainee'
+    if (selectedEmployees.length === 0)
+      errors.selectedEmployees = 'Select at least one trainee'
+    if (!weekNumber) errors.weekNumber = 'Week number is required'
+    if (!trainingStatus) errors.trainingStatus = 'Training status is required'
     setFormErrors(errors)
     return Object.keys(errors).length === 0
   }
@@ -191,23 +189,46 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
         trainingTopic,
         trainingTech: trainingTech ? trainingTech.value : null,
         trainerId: trainer ? trainer.trainerId : null,
-        traineesIds: selectedEmployees.map(employee => employee.value)
+        traineesIds: selectedEmployees.map(employee => employee.value),
+        weekNumber,
+        trainingStatus: trainingStatus.label,
+        comments,
       }
       console.log(submissionData)
       // Add your submission logic here
     }
   }
-  
+
+  const statusOptions = [
+    { value: 'scheduled', label: 'Scheduled' },
+    { value: 'inProgress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' },
+    { value: 'delayed', label: 'Delayed' },
+  ]
+
   return (
     <Dialog
       open={open}
-      onClose={()=>setOpen(false)}
+      onClose={() => setOpen(false)}
       aria-labelledby='form-dialog-title'
     >
       <DialogTitle id='form-dialog-title'>Create Training Schedule</DialogTitle>
       <DialogContent>
         <StyledForm onSubmit={handleSubmit}>
           <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label='Week Number'
+                type='String'
+                value={weekNumber}
+                required
+                onChange={e => setWeekNumber(e.target.value)}
+                error={!!formErrors.weekNumber}
+                helperText={formErrors.weekNumber}
+              />
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -219,13 +240,14 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                 inputProps={{
+                inputProps={{
                   min: new Date().toISOString().split('T')[0],
                 }}
                 error={!!formErrors.trainingDate}
                 helperText={formErrors.trainingDate}
               />
             </Grid>
+
             <Grid item xs={6}>
               <TextField
                 fullWidth
@@ -267,6 +289,32 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
                 helperText={formErrors.trainingTopic}
               />
             </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label='Comments'
+                multiline
+                rows={2}
+                value={comments}
+                onChange={e => setComments(e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormControl fullWidth error={!!formErrors.trainingStatus}>
+                <StyledSelect
+                  options={statusOptions}
+                  value={trainingStatus}
+                  onChange={setTrainingStatus}
+                  placeholder='Select Training Status'
+                />
+                {formErrors.trainingStatus && (
+                  <FormHelperText>{formErrors.trainingStatus}</FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+
             <Grid item xs={12}>
               <FormControl fullWidth error={!!formErrors.trainingTech}>
                 <StyledSelect
@@ -311,7 +359,9 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
                   placeholder='Select Trainees'
                 />
                 {formErrors.selectedEmployees && (
-                  <FormHelperText>{formErrors.selectedEmployees}</FormHelperText>
+                  <FormHelperText>
+                    {formErrors.selectedEmployees}
+                  </FormHelperText>
                 )}
               </FormControl>
             </Grid>
@@ -319,7 +369,7 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
         </StyledForm>
       </DialogContent>
       <DialogActions>
-        <Button onClick={()=>setOpen(false)} color='primary'>
+        <Button onClick={() => setOpen(false)} color='primary'>
           Cancel
         </Button>
         <Button onClick={handleSubmit} color='primary' variant='contained'>

@@ -53,7 +53,7 @@ export default function Dashboard() {
 
         <div className='overflow-auto w-full'>
           {tab === 'home' && <HomePage />}
-          {tab === 'college-and-contact' && <CollegeTable />}
+          {tab === 'college-and-contact' && <CollegeDBView />}
           {tab === 'candidates' && <CandidateDatabase />}
           {tab === 'assignments' && <FinalAssignmentview />}
           {tab === 'talent' && <TalentDatabase />}

@@ -359,7 +359,7 @@ const AssesTable = () => {
                 </Button>
                 <div>
                   <ButtonGroup>
-                    <Button variant='contained' component='label' disabled={rows.length!==0}>
+                    <Button variant='contained' component='label'>
                       <label htmlFor='excelFile' className='excel-file-label'>
                         {selectedFile
                           ? `File Selected: ${selectedFile.name}`
