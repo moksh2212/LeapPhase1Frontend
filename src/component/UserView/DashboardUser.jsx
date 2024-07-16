@@ -21,7 +21,7 @@ const dashboardItems = [
   { title: 'Assignments', icon: Assignment, color: '#42a5f5', link: '/assignments' },
   { title: 'Attendance', icon: EventNote, color: '#ffb74d', link: '/attendance' },
   { title: 'Performance', icon: TrendingUp, color: '#ef5350', link: '/performance' },
-  { title: 'Daily Work Tracker', icon: Work, color: '#ab47bc', link: '/daily-work-tracker' },
+  // { title: 'Daily Work Tracker', icon: Work, color: '#ab47bc', link: '/daily-work-tracker' },
   // { title: 'Skills', icon: DescriptionTwoTone, color: '#78909c', link: '/skills' },
 ];
 

@@ -27,7 +27,7 @@ const PerformancePage = () => {
       try {
         const response = await axios.get(`http://192.168.0.147:8080/cpm/performance/getPerformanceById?talentId=${currentUser.talentId}`, {
           headers: {
-            Authorization: `Basic ${token}`
+            Authorization: `Bearer ${token}`
           }
         });
         setData(response.data);
@@ -64,26 +64,24 @@ const PerformancePage = () => {
       </Typography>
 
       {data && (
-        <Grid container spacing={4} justifyContent="center">
-          <Grid item xs={12} md={6}>
-            <Pie data={pieData} />
-          </Grid>
+        <Grid container spacing={1} justifyContent="center">
+
           <Grid item xs={12} md={6}>
             <Grid container spacing={4}>
               <Grid item xs={12}>
-                <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
+                <Paper elevation={3} sx={{ p: 5, textAlign: 'center' }}>
                   <Typography variant="h6">Average Assessment Score</Typography>
                   <Typography variant="h4">{data.assessmentScore}%</Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12}>
-                <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
+                <Paper elevation={3} sx={{ p: 5, textAlign: 'center' }}>
                   <Typography variant="h6">Average Assignment Score</Typography>
                   <Typography variant="h4">{data.assignmentScore}%</Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12}>
-                <Paper elevation={3} sx={{ p: 2, textAlign: 'center' }}>
+                <Paper elevation={3} sx={{ p: 5, textAlign: 'center' }}>
                   <Typography variant="h6">Attendance Score</Typography>
                   <Typography variant="h4">{data.averageAttendance}%</Typography>
                 </Paper>

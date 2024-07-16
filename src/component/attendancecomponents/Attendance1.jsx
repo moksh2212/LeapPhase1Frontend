@@ -26,8 +26,9 @@ import {
   lighten,
 } from '@mui/material'
 import { useSelector } from 'react-redux'
+const tanBaseUrl = process.env.BASE_URL
 
-const attd = 'http://192.168.0.147:8080'
+const attd = tanBaseUrl
 const Attendance1 = ({ employees }) => {
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -65,7 +66,7 @@ const Attendance1 = ({ employees }) => {
           //`${attd}/cpm/attendance/getAllAttendanceWRTrm?date=${value.format('YYYY-MM-DD')}&rm=${currentUser.name}`
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )
@@ -225,11 +226,11 @@ const Attendance1 = ({ employees }) => {
 
             <div className='my-auto mr-2'>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-                <Link to='/dashboard?tab=trainingAttendance'>
+                {/* <Link to='/dashboard?tab=trainingAttendance'>
                   <Button color='primary' variant='contained'>
                     Training Attendance
                   </Button>
-                </Link>
+                </Link> */}
                 <Link to='/dashboard?tab=regularization'>
                   <Button
                     color='primary'

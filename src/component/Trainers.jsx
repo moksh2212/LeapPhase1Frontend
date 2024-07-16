@@ -97,7 +97,7 @@ const Trainers = () => {
         const response = await fetch(`${baseUrl}/api/trainers/getAll`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         )
@@ -125,7 +125,7 @@ const Trainers = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newTrainer),
       })
@@ -158,7 +158,7 @@ const Trainers = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(trainerToUpdate),
         },
@@ -194,7 +194,7 @@ const Trainers = () => {
       const response = await fetch(`${baseUrl}/api/trainers/delete/${trainerId}`, {
         method: 'DELETE',
         headers:{
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         }
       })
 

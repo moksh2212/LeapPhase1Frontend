@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import { TablePagination } from '@mui/material'
 import {
   Checkbox,
   TextField,
@@ -132,224 +133,6 @@ function Row(props) {
 }
 
 export default function CollapsibleTable() {
-  // const [interviewerList, setInterviewerList] = useState([
-  //   {
-  //     interviewerId: 1,
-  //     interviewerName: 'Alice Johnson',
-  //     grade: 'A',
-  //     techRole: 'Frontend Developer',
-  //     techProficiency: 'Advanced',
-  //     location: 'New York',
-  //     region: 'North America',
-  //     workExperience: '5 years',
-  //     email: 'alice.johnson@example.com',
-  //     mobileNumber: '+1 (555) 123-4567',
-  //     prevBatches: ['Batch 2022', 'Batch 2021', 'Batch 2020'],
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'College A',
-  //         pptDate: '2020-09-15',
-  //         designDate: '2020-09-20',
-  //         interviewDate: '2020-09-25',
-  //         assessmentDate: '2020-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College B',
-  //         pptDate: '2019-09-15',
-  //         designDate: '2019-09-20',
-  //         interviewDate: '2019-09-25',
-  //         assessmentDate: '2019-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College C',
-  //         pptDate: '2018-09-15',
-  //         designDate: '2018-09-20',
-  //         interviewDate: '2018-09-25',
-  //         assessmentDate: '2018-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College D',
-  //         pptDate: '2017-09-15',
-  //         designDate: '2017-09-20',
-  //         interviewDate: '2017-09-25',
-  //         assessmentDate: '2017-09-30',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     interviewerId: 2,
-  //     interviewerName: 'Bob Smith',
-  //     grade: 'B',
-  //     techRole: 'Backend Developer',
-  //     techProficiency: 'Intermediate',
-  //     location: 'San Francisco',
-  //     region: 'North America',
-  //     workExperience: '4 years',
-  //     email: 'bob.smith@example.com',
-  //     mobileNumber: '+1 (555) 987-6543',
-  //     prevBatches: ['Batch 2021', 'Batch 2020', 'Batch 2019'],
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'College E',
-  //         pptDate: '2021-09-15',
-  //         designDate: '2021-09-20',
-  //         interviewDate: '2021-09-25',
-  //         assessmentDate: '2021-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College F',
-  //         pptDate: '2020-09-15',
-  //         designDate: '2020-09-20',
-  //         interviewDate: '2020-09-25',
-  //         assessmentDate: '2020-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College G',
-  //         pptDate: '2019-09-15',
-  //         designDate: '2019-09-20',
-  //         interviewDate: '2019-09-25',
-  //         assessmentDate: '2019-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College H',
-  //         pptDate: '2018-09-15',
-  //         designDate: '2018-09-20',
-  //         interviewDate: '2018-09-25',
-  //         assessmentDate: '2018-09-30',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     interviewerId: 3,
-  //     interviewerName: 'Carol Williams',
-  //     grade: 'A',
-  //     techRole: 'Full Stack Developer',
-  //     techProficiency: 'Advanced',
-  //     location: 'Chicago',
-  //     region: 'North America',
-  //     workExperience: '6 years',
-  //     email: 'carol.williams@example.com',
-  //     mobileNumber: '+1 (555) 456-7890',
-  //     prevBatches: ['Batch 2022', 'Batch 2020', 'Batch 2019'],
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'College I',
-  //         pptDate: '2021-09-15',
-  //         designDate: '2021-09-20',
-  //         interviewDate: '2021-09-25',
-  //         assessmentDate: '2021-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College J',
-  //         pptDate: '2020-09-15',
-  //         designDate: '2020-09-20',
-  //         interviewDate: '2020-09-25',
-  //         assessmentDate: '2020-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College K',
-  //         pptDate: '2019-09-15',
-  //         designDate: '2019-09-20',
-  //         interviewDate: '2019-09-25',
-  //         assessmentDate: '2019-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College L',
-  //         pptDate: '2018-09-15',
-  //         designDate: '2018-09-20',
-  //         interviewDate: '2018-09-25',
-  //         assessmentDate: '2018-09-30',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     interviewerId: 4,
-  //     interviewerName: 'David Brown',
-  //     grade: 'C',
-  //     techRole: 'DevOps Engineer',
-  //     techProficiency: 'Intermediate',
-  //     location: 'Seattle',
-  //     region: 'North America',
-  //     workExperience: '3 years',
-  //     email: 'david.brown@example.com',
-  //     mobileNumber: '+1 (555) 234-5678',
-  //     prevBatches: ['Batch 2021', 'Batch 2020'],
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'College M',
-  //         pptDate: '2021-09-15',
-  //         designDate: '2021-09-20',
-  //         interviewDate: '2021-09-25',
-  //         assessmentDate: '2021-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College N',
-  //         pptDate: '2020-09-15',
-  //         designDate: '2020-09-20',
-  //         interviewDate: '2020-09-25',
-  //         assessmentDate: '2020-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College O',
-  //         pptDate: '2019-09-15',
-  //         designDate: '2019-09-20',
-  //         interviewDate: '2019-09-25',
-  //         assessmentDate: '2019-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College P',
-  //         pptDate: '2018-09-15',
-  //         designDate: '2018-09-20',
-  //         interviewDate: '2018-09-25',
-  //         assessmentDate: '2018-09-30',
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     interviewerId: 5,
-  //     interviewerName: 'Eva Green',
-  //     grade: 'B',
-  //     techRole: 'Data Scientist',
-  //     techProficiency: 'Advanced',
-  //     location: 'Boston',
-  //     region: 'North America',
-  //     workExperience: '7 years',
-  //     email: 'eva.green@example.com',
-  //     mobileNumber: '+1 (555) 789-0123',
-  //     prevBatches: ['Batch 2022', 'Batch 2021', 'Batch 2020', 'Batch 2019'],
-  //     scheduleDetails: [
-  //       {
-  //         collegeName: 'College Q',
-  //         pptDate: '2021-09-15',
-  //         designDate: '2021-09-20',
-  //         interviewDate: '2021-09-25',
-  //         assessmentDate: '2021-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College R',
-  //         pptDate: '2020-09-15',
-  //         designDate: '2020-09-20',
-  //         interviewDate: '2020-09-25',
-  //         assessmentDate: '2020-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College S',
-  //         pptDate: '2019-09-15',
-  //         designDate: '2019-09-20',
-  //         interviewDate: '2019-09-25',
-  //         assessmentDate: '2019-09-30',
-  //       },
-  //       {
-  //         collegeName: 'College T',
-  //         pptDate: '2018-09-15',
-  //         designDate: '2018-09-20',
-  //         interviewDate: '2018-09-25',
-  //         assessmentDate: '2018-09-30',
-  //       },
-  //     ],
-  //   },
-  // ])
-
   const [interviewerList, setInterviewerList] = useState([])
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState('interviewerId')
@@ -364,6 +147,8 @@ export default function CollapsibleTable() {
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
   const [selectedInterviewer, setSelectedInteverviewer] = useState({})
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
 
   const token = useSelector(state => state.user.token)
 
@@ -374,9 +159,9 @@ export default function CollapsibleTable() {
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${baseUrl}/api/interviewer/read`, {
+        const response = await fetch(`${baseUrl}/api/admin/interviewer/read`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         if (response.ok) {
@@ -414,11 +199,11 @@ export default function CollapsibleTable() {
     setOpenSnackbar(null)
 
     try {
-      const response = await fetch(`${baseUrl}/api/interviewer/create`, {
+      const response = await fetch(`${baseUrl}/api/admin/interviewer/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       })
@@ -470,7 +255,14 @@ export default function CollapsibleTable() {
 
     setSelected(newSelected)
   }
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage)
+  }
 
+  const handleChangeRowsPerPage = event => {
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPage(0)
+  }
   const handleDelete = async interviewerId => {
     setIsLoading(true)
     setError(null)
@@ -478,11 +270,11 @@ export default function CollapsibleTable() {
     console.log(interviewerId)
     try {
       const response = await fetch(
-        `${baseUrl}/api/interviewer/delete/${interviewerId}`,
+        `${baseUrl}/api/admin/interviewer/delete/${interviewerId}`,
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -511,12 +303,12 @@ export default function CollapsibleTable() {
     setOpenSnackbar(null)
     try {
       const response = await fetch(
-        `${baseUrl}/api/interviewer/update/${formData.interviewerId}`,
+        `${baseUrl}/api/admin/interviewer/update/${formData.interviewerId}`,
         {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(formData),
         },
@@ -609,7 +401,10 @@ export default function CollapsibleTable() {
     }
     return 0
   })
-
+  const paginatedData = sortedData.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage,
+  )
   return (
     <Box>
       <Box
@@ -815,20 +610,28 @@ export default function CollapsibleTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedData &&
-              sortedData.map(row => (
-                <Row
-                  key={row.interviewerId}
-                  row={row}
-                  selected={selected.some(
-                    item => item.interviewerId === row.interviewerId,
-                  )}
-                  onSelectChange={() => handleSelect(row)}
-                />
-              ))}
+            {paginatedData.map(row => (
+              <Row
+                key={row.interviewerId}
+                row={row}
+                selected={selected.some(
+                  item => item.interviewerId === row.interviewerId,
+                )}
+                onSelectChange={() => handleSelect(row)}
+              />
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component='div'
+        count={sortedData.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
 
       {renderDeleteRowsModal()}
 

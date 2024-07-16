@@ -303,7 +303,7 @@ export function UpdateScheduleForm({
       try {
         const response = await fetch(`${baseUrl}/admin/viewData`, {
           headers:{
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         })
         const data = await response.json()
@@ -324,9 +324,9 @@ export function UpdateScheduleForm({
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(`${baseUrl}/api/interviewer/read`, {
+        const response = await fetch(`${baseUrl}/api/admin/interviewer/read`, {
           headers:{
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         })
         if (response.ok) {
@@ -434,7 +434,7 @@ export function UpdateScheduleForm({
                 type='date'
                 value={pptDate}
                 onChange={e => setPptDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
+                // min={new Date().toISOString().split('T')[0]}
                 required
               />
             </div>
@@ -449,7 +449,7 @@ export function UpdateScheduleForm({
                 type='date'
                 value={assessmentDate}
                 onChange={e => setAssessmentDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
+                // min={new Date().toISOString().split('T')[0]}
                 required
               />
             </div>
@@ -464,7 +464,7 @@ export function UpdateScheduleForm({
                 type='date'
                 value={designDate}
                 onChange={e => setDesignDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
+                // min={new Date().toISOString().split('T')[0]}
                 required
               />
             </div>
@@ -479,7 +479,7 @@ export function UpdateScheduleForm({
                 type='date'
                 value={interviewDate}
                 onChange={e => setInterviewDate(e.target.value)}
-                min={new Date().toISOString().split('T')[0]}
+                // min={new Date().toISOString().split('T')[0]}
                 required
               />
             </div>

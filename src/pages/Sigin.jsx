@@ -1,5 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import {
   TextInput,
   Button,
@@ -7,13 +7,14 @@ import {
   Label,
   Spinner,
   Alert,
-} from 'flowbite-react';
-import { useDispatch, useSelector } from 'react-redux';
+} from 'flowbite-react'
+import {jwtDecode} from 'jwt-decode'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   signInStart,
   signInSuccess,
   signInFailure,
-} from '../redux/user/userSlice';
+} from '../redux/user/userSlice'
 
 function Signin() {
   const navigate = useNavigate()
@@ -26,55 +27,69 @@ function Signin() {
   const dispatch = useDispatch()
 
 
-  
+  const decodeToken = (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      return decoded;
+    } catch (error) {
+      console.error("Invalid token", error);
+      return null;
+    }
+  };
+
   const handleSubmit = async e => {
-    e.preventDefault();
+    e.preventDefault()
 
     const formData = {
       email: email,
       password: password,
-    };
-    if (!formData.email || !formData.password) {
-      setErrorMessage('All fields are required.');
-      return;
     }
-    const token = btoa(`${formData.email}:${formData.password}`);
-    console.log(token);
+    if (!formData.email || !formData.password) {
+      setErrorMessage('All fields are required.')
+      return
+    }
+    
     setIsLoading(true)
     try {
-      dispatch(signInStart());
+      dispatch(signInStart())
       const response = await fetch(`${signBaseUrl}/security/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(formData),
         // credentials: 'include'
       })
 
       if (response.ok) {
-
-        const data = await response.json();
-        console.log(data)
-        dispatch(signInSuccess({user:data, token:token}))
-        if (data.roles && data.roles.includes('USER') && !data.roles.includes('ADMIN')) {
-          navigate('/user');
+        const token = await response.text();
+        const data = decodeToken(token);
+        const user = data.user;
+        console.log('====================================');
+        console.log(data);
+        console.log('====================================');
+        dispatch(signInSuccess({ user: user, token: token }))
+        if (
+          user.roles &&
+          user.roles.includes('USER') &&
+          !user.roles.includes('ADMIN') &&
+          !user.roles.includes('SUPERADMIN')
+        ) {
+          navigate('/user')
         } else {
-          navigate('/');
+          navigate('/')
         }
-      }
-
-      else{
-        dispatch(signInFailure());
-        setErrorMessage("Email or password not correct")
+      } else if (response.status === 401) {
+        setErrorMessage('Email or Password not correct or your account is pending from admin approval')
+      } else {
+        dispatch(signInFailure())
       }
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage(error.message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
@@ -140,6 +155,15 @@ function Signin() {
               {isLoading ? <Spinner /> : 'Signin'}
             </Button>
           </div>
+
+          <p className='text-end text-sm mt-1 space-y-[-8]'>
+              <Link
+                to='/forgotpassword'
+                className='text-indigo-600 hover:text-indigo-500'
+              >
+                Forgot Password?{' '}
+              </Link>
+            </p>
         </form>
 
         {errorMessage && (
@@ -163,7 +187,7 @@ function Signin() {
         </p>
       </div>
     </div>
-  );
+  )
 }
 
-export default Signin;
+export default Signin

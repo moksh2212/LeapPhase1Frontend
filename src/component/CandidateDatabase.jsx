@@ -12,21 +12,32 @@ import {
 import PropTypes from 'prop-types'
 //Material UI Imports
 import {
+  Alert,
   Button,
   ButtonGroup,
-  ListItemIcon,
-  MenuItem,
   Snackbar,
   lighten,
 } from '@mui/material'
 
-//Icons Imports
-import { AccountCircle, Send } from '@mui/icons-material'
-
 //Mock Data
 //import { data } from './makeData';
-const canBaseUrl = process.env.BASE_URL2
-const tanBaseUrl = process.env.BASE_URL2
+
+
+const Example = () => {
+  const [error, setError] = useState()
+  const [data, setData] = useState([])
+  const [validationErrors, setValidationErrors] = useState({})
+  const [hasSelectedRows, setHasSelectedRows] = useState(false)
+  const [text, setText] = useState('')
+  const phoneRegex = /^[0-9]{10}$/
+  const aadhaarRegex = /^[0-9]{12}$/
+  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const dobRegex = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2}$/
+  const [openSnackbar, setOpenSnackbar] = useState(null)
+
+  const token = useSelector(state => state.user.token)
+  const canBaseUrl = process.env.BASE_URL2
 const style = {
   position: 'absolute',
   left: '50%',
@@ -77,27 +88,27 @@ DateHeader.propTypes = {
     }).isRequired,
   }).isRequired,
 }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+  
+    if (error) {
+      setError(null)
+    }
+  
+    setOpenSnackbar(false)
+  }
 
-const Example = () => {
-  const [data, setData] = useState([])
-  const [validationErrors, setValidationErrors] = useState({})
-  const [hasSelectedRows, setHasSelectedRows] = useState(false)
-  const [text, setText] = useState('')
-  const phoneRegex = /^[0-9]{10}$/
-  const aadhaarRegex = /^[0-9]{12}$/
-  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  const dobRegex = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2}$/
-  const [openSnackbar, setOpenSnackbar] = useState(null)
 
-  const token = useSelector(state => state.user.token)
+
   useEffect(() => {
     // Make API call to fetch data
     const fetchData = async () => {
       try {
         const response = await fetch(`${canBaseUrl}/candidates/getAll`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         let jsonData = await response.json()
@@ -105,6 +116,7 @@ const Example = () => {
         setData(jsonData)
         console.log(jsonData) // Log the fetched data
       } catch (error) {
+        setError(error)
         console.error('Error fetching data:', error)
       }
     }
@@ -128,24 +140,6 @@ const Example = () => {
             accessorKey: 'candidateName', //accessorFn used to join multiple data into a single cell
             header: 'Name',
             enableSorting: false,
-            size: 100,
-          },
-          {
-            accessorKey: 'status', //hey a simple column for once
-            header: 'Status',
-            enableSorting: false,
-            editVariant: 'select',
-            filterVariant: 'select',
-            editSelectOptions: [
-              'Interview pending',
-              'Interviewed',
-              'Rejected',
-              'Selected',
-            ],
-            muiEditTextFieldProps: {
-              select: true,
-              helperText: 'select',
-            },
             size: 100,
           },
           {
@@ -419,6 +413,12 @@ const Example = () => {
     enableRowActions: true,
     enableRowSelection: true,
     enableEditing: true,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     onEditingRowSave: async ({ table, values }) => {
       //validate data alternateNumber
       const errors = {}
@@ -444,19 +444,19 @@ const Example = () => {
       if (Object.keys(errors).length) {
         setValidationErrors(errors)
         if (errors.email) {
-          alert('Invalid email')
+          setError('Invalid email')
           setText('Invalid email')
         } else if (errors.phoneNumber || errors.alternateNumber) {
-          alert('Invalid phone number')
+          setError('Invalid phone number')
           setText('Invalid phone number')
         } else if (errors.aadhaarNumber) {
-          alert('Invalid Aadhaar number')
+          setError('Invalid Aadhaar number')
           setText('Invalid Aadhaar number')
         } else if (errors.panNumber) {
-          alert('Invalid PAN number')
+          setError('Invalid PAN number')
           setText('Invalid PAN number')
         } else if (errors.dob) {
-          alert('Invalid dob number')
+          setError('Invalid dob number')
           setText('Invalid dob number')
         }
         return
@@ -469,7 +469,7 @@ const Example = () => {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(values),
           },
@@ -478,7 +478,7 @@ const Example = () => {
           console.log(text)
           throw new Error('Failed to update candidate')
         } else {
-          alert('Edited successfully')
+          setOpenSnackbar('Edited successfully')
         }
         table.setEditingRow(null)
       } catch (error) {
@@ -504,32 +504,7 @@ const Example = () => {
       shape: 'rounded',
       variant: 'outlined',
     },
-    renderRowActionMenuItems: ({ closeMenu }) => [
-      <MenuItem
-        key={0}
-        onClick={() => {
-          closeMenu()
-        }}
-        sx={{ m: 0 }}
-      >
-        <ListItemIcon>
-          <AccountCircle />
-        </ListItemIcon>
-        View Profile
-      </MenuItem>,
-      <MenuItem
-        key={1}
-        onClick={() => {
-          closeMenu()
-        }}
-        sx={{ m: 0 }}
-      >
-        <ListItemIcon>
-          <Send />
-        </ListItemIcon>
-        Send Email
-      </MenuItem>,
-    ],
+
     renderTopToolbar: ({ table }) => {
       const [hasSelectedRows, setHasSelectedRows] = useState(false)
       const [openConvertModal, setOpenConvertModal] = useState(false)
@@ -545,31 +520,13 @@ const Example = () => {
               {
                 method: 'DELETE',
                 headers:{
-                  Authorization: `Basic ${token}`,
+                  Authorization: `Bearer ${token}`,
                 }
               },
             )
             window.location.reload()
           })
         }
-      }
-
-      const handleActivate = () => {
-        table.getSelectedRowModel().flatRows.map(async row => {
-          //alert('deactivating ' + row.getValue('name'))
-          const response = await fetch(
-            `${tanBaseUrl}/cpm/talents/addtalentfromcandidate`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Basic ${token}`,
-              },
-              body: JSON.stringify(row.original),
-            },
-          )
-        })
-        setOpenConvertModal(true) // Open the modal
       }
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const [selectedFile, setSelectedFile] = useState(null)
@@ -580,7 +537,7 @@ const Example = () => {
       const handleUpload = async () => {
         try {
           if (!selectedFile) {
-            alert('Please select a file.')
+            setError('Please select a file.')
             return
           }
 
@@ -590,16 +547,16 @@ const Example = () => {
           const response = await fetch(`${canBaseUrl}/candidates/upload`, {
             method: 'POST',
             headers:{
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
             body: formData,
           })
           console.log(response)
           if (response.ok) {
-            alert('File uploaded successfully.')
+            setOpenSnackbar('File uploaded successfully.')
             window.location.reload()
           } else {
-            alert('Failed to upload file.')
+            setError('Failed to upload file.')
           }
         } catch (error) {
           console.error('Error uploading file:', error)
@@ -638,19 +595,11 @@ const Example = () => {
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
                 <Button
                   color='error'
-                  disabled={!table.getIsSomeRowsSelected()}
+                  disabled={selectedRowCount === 0}
                   onClick={handleDeactivate}
                   variant='contained'
                 >
                   Delete
-                </Button>
-                <Button
-                  color='success'
-                  disabled={!table.getIsSomeRowsSelected()}
-                  onClick={handleActivate}
-                  variant='contained'
-                >
-                  Convert to Talent
                 </Button>
                 <div>
                   <ButtonGroup>
@@ -705,6 +654,38 @@ const Example = () => {
               </Typography>
             </Box>
           </Modal>
+          <Snackbar
+        open={!!openSnackbar} // Convert openSnackbar to a boolean value
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleClose}
+          severity='success'
+          variant='filled'
+          sx={{ width: '100%' }}
+        >
+          {openSnackbar}
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={error}
+        autoHideDuration={5000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleClose}
+          severity='error'
+          variant='filled'
+          color='error'
+          sx={{ width: '100%' }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
         </div>
       )
     },

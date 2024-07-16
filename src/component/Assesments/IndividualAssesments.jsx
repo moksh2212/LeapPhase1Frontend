@@ -56,7 +56,7 @@ const IndividualAssessments = () => {
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
-          'Authorization': `Basic ${token}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
   
@@ -143,7 +143,7 @@ const IndividualAssessments = () => {
           `${baseUrl}/assessments/viewassessment/${talentId}`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             }
           }
         );
@@ -176,7 +176,7 @@ const IndividualAssessments = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(newTalent),
         },
@@ -206,7 +206,7 @@ const IndividualAssessments = () => {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         },
       );
@@ -371,10 +371,7 @@ const IndividualAssessments = () => {
         style={{width: '50px' }}
       >
         <KeyboardArrowLeftIcon/>
-      </Button>Scorecard For Indidvidual Assessment</h2>
-    
-      <br></br>
-      <br></br>
+      </Button>Scorecard For Individual Assessment</h2>
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
           <CircularProgress className='w-full mx-auto my-auto' />

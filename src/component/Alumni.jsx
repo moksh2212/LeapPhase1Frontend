@@ -33,7 +33,7 @@ const Alumni = () => {
   const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
 
-  const tanBaseUrl = process.env.BASE_URL
+  const tanBaseUrl = process.env.BASE_URL2
   const token = useSelector(state => state.user.token)
 
   const handleClose = (event, reason) => {
@@ -58,7 +58,7 @@ const Alumni = () => {
         `${tanBaseUrl}/cpm/talents/viewmarksheet/${talentId}`,
         {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -179,7 +179,14 @@ const Alumni = () => {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`)
+        const response = await fetch(
+          `${tanBaseUrl}/cpm/talents/alltalent`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
         const data = await response.json()
         setTalentList(data)
       } catch (error) {
@@ -955,7 +962,13 @@ const Alumni = () => {
   const table = useMaterialReactTable({
     columns,
     data: talentList,
-    enableRowSelection: true,
+    enableRowSelection: false,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     initialState: {
       columnVisibility: {
         alternateNumber: false,
@@ -1147,8 +1160,7 @@ const Alumni = () => {
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
       <h2 className={`text-3xl text-[#0087D5] font-bold mb-3`}>Alumni</h2>
-      <br></br>
-      <br></br>
+     
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
           <CircularProgress className='w-full mx-auto my-auto' />

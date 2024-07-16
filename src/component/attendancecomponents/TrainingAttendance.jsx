@@ -32,7 +32,7 @@ import {
 } from '@mui/material'
 import { useSelector } from 'react-redux'
 
-const baseUrl = 'http://192.168.0.147:8080'
+const baseUrl = process.env.BASE_URL
 
 const TrainingAttendance = () => {
   const [data, setData] = useState([])
@@ -64,7 +64,7 @@ const TrainingAttendance = () => {
           )}`, // Place the URL here
           {
             headers: {
-              Authorization: `Basic ${token}`, // Assuming 'Bearer' token type; change if necessary
+              Authorization: `Bearer ${token}`, // Assuming 'Bearer' token type; change if necessary
               'Content-Type': 'application/json',
             },
           },
@@ -178,7 +178,7 @@ const TrainingAttendance = () => {
         method: 'POST',
         body: formData,
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
 
@@ -211,7 +211,7 @@ const TrainingAttendance = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(newAttendance),
         },
@@ -239,7 +239,7 @@ const TrainingAttendance = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(values),
         },

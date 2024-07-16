@@ -122,7 +122,7 @@ const TalentAssessment = () => {
       try {
         const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`, {
           headers:{
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         })
         const data = await response.json()
@@ -148,7 +148,7 @@ const TalentAssessment = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newTalent),
       })
@@ -178,7 +178,7 @@ const TalentAssessment = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(talentToUpdate),
         },
@@ -211,7 +211,7 @@ const TalentAssessment = () => {
       const response = await fetch(`${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`, {
         method: 'DELETE',
         headers:{
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         }
       })
   
@@ -493,7 +493,7 @@ const TalentAssessment = () => {
 
           const response = await fetch(`${tanBaseUrl}/assessments/uploadexcel`, {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
             method: 'POST',
             body: formData,

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { Label, TextInput, Button, Modal, Select } from 'flowbite-react'
 import { ImCross } from 'react-icons/im'
 import { useSelector } from 'react-redux'
-export function AddMembers({ openModal, setOpenModal, createMember }) {
+export function AddMentors({ openModal, setOpenModal, createMentor }) {
   const [talentId, setTalentId] = useState('')
   const [role, setRole] = useState('')
   const [selectedto, setSelectedTo] = useState('')
@@ -41,7 +41,6 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
 
       // Append the talentId and role to the FormData
       formData.append('talentId', talent.talentId)
-      formData.append('role', role)
 
       // Log the FormData entries for debugging purposes
       for (let pair of formData.entries()) {
@@ -50,7 +49,7 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
 
       try {
         // Call the createMember function and handle the submission
-        await createMember(formData)
+        await createMentor(formData)
         console.log(
           `Form submitted successfully for talentId: ${talent.talentId}`,
         )
@@ -112,25 +111,6 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
         <form onSubmit={handleSubmit} className='flex max-w-md flex-col gap-4'>
           <div>
             <div className='mb-2 block'>
-              <Label htmlFor='memberRole' value='Member Role' />
-            </div>
-            <Select
-              id='role'
-              value={role}
-              onChange={e => setRole(e.target.value)}
-              required
-              size='sm'
-            >
-              {' '}
-              <option value='' selected>
-                Select Role
-              </option>
-              <option>Backend Developer</option>
-              <option>Frontend Developer</option>
-            </Select>
-          </div>
-          <div>
-            <div className='mb-2 block'>
               <Label htmlFor='filterOptionS' value='Filters:' />
             </div>
             <Select
@@ -148,7 +128,7 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
           </div>
           <div>
             <div className='mb-2 block'>
-              <Label htmlFor='selectedto' value='Select members for team' />
+              <Label htmlFor='selectedto' value='Select mentors for team' />
             </div>
             <Select
               id='selectedto'
@@ -189,7 +169,7 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
             )}
           </div>
           <Button type='submit' color={'blue'} size={'sm'}>
-            Add Member
+            Add Mentor
           </Button>
         </form>
       </Modal.Body>

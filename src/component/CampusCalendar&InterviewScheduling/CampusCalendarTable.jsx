@@ -19,248 +19,7 @@ import { useSelector } from 'react-redux'
 //Module completed testing done
 
 const CampusCalendarTable = () => {
-  // const [scheduleList, setScheduleList] = useState([
-  //   {
-  //     scheduleId: 'SCH001',
-  //     collegeName: 'Harvard University',
-  //     location: 'Cambridge, MA',
-  //     region: 'Northeast',
-  //     pptDate: '2024-07-10',
-  //     assessmentDate: '2024-07-15',
-  //     designDate: '2024-07-20',
-  //     interviewDate: '2024-07-25',
-  //     interviewerName: 'John Smith',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH002',
-  //     collegeName: 'Stanford University',
-  //     location: 'Stanford, CA',
-  //     region: 'West',
-  //     pptDate: '2024-07-11',
-  //     assessmentDate: '2024-07-16',
-  //     designDate: '2024-07-21',
-  //     interviewDate: '2024-07-26',
-  //     interviewerName: 'Jane Doe',
-  //     grade: 'B',
-  //   },
-  //   {
-  //     scheduleId: 'SCH003',
-  //     collegeName: 'Massachusetts Institute of Technology',
-  //     location: 'Cambridge, MA',
-  //     region: 'Northeast',
-  //     pptDate: '2024-07-12',
-  //     assessmentDate: '2024-07-17',
-  //     designDate: '2024-07-22',
-  //     interviewDate: '2024-07-27',
-  //     interviewerName: 'Alice Johnson',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH004',
-  //     collegeName: 'University of California, Berkeley',
-  //     location: 'Berkeley, CA',
-  //     region: 'West',
-  //     pptDate: '2024-07-13',
-  //     assessmentDate: '2024-07-18',
-  //     designDate: '2024-07-23',
-  //     interviewDate: '2024-07-28',
-  //     interviewerName: 'Bob Brown',
-  //     grade: 'B',
-  //   },
-  //   {
-  //     scheduleId: 'SCH005',
-  //     collegeName: 'University of Chicago',
-  //     location: 'Chicago, IL',
-  //     region: 'Midwest',
-  //     pptDate: '2024-07-14',
-  //     assessmentDate: '2024-07-19',
-  //     designDate: '2024-07-24',
-  //     interviewDate: '2024-07-29',
-  //     interviewerName: 'Carol Davis',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH006',
-  //     collegeName: 'California Institute of Technology',
-  //     location: 'Pasadena, CA',
-  //     region: 'West',
-  //     pptDate: '2024-07-15',
-  //     assessmentDate: '2024-07-20',
-  //     designDate: '2024-07-25',
-  //     interviewDate: '2024-07-30',
-  //     interviewerName: 'David Wilson',
-  //     grade: 'B',
-  //   },
-  //   {
-  //     scheduleId: 'SCH007',
-  //     collegeName: 'Princeton University',
-  //     location: 'Princeton, NJ',
-  //     region: 'Northeast',
-  //     pptDate: '2024-07-16',
-  //     assessmentDate: '2024-07-21',
-  //     designDate: '2024-07-26',
-  //     interviewDate: '2024-07-31',
-  //     interviewerName: 'Eve Clark',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH008',
-  //     collegeName: 'Yale University',
-  //     location: 'New Haven, CT',
-  //     region: 'Northeast',
-  //     pptDate: '2024-07-17',
-  //     assessmentDate: '2024-07-22',
-  //     designDate: '2024-07-27',
-  //     interviewDate: '2024-08-01',
-  //     interviewerName: 'Frank Lewis',
-  //     grade: 'B',
-  //   },
-  //   {
-  //     scheduleId: 'SCH009',
-  //     collegeName: 'Columbia University',
-  //     location: 'New York, NY',
-  //     region: 'Northeast',
-  //     pptDate: '2024-07-18',
-  //     assessmentDate: '2024-07-23',
-  //     designDate: '2024-07-28',
-  //     interviewDate: '2024-08-02',
-  //     interviewerName: 'Grace Walker',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH010',
-  //     collegeName: 'University of Pennsylvania',
-  //     location: 'Philadelphia, PA',
-  //     region: 'Northeast',
-  //     pptDate: '2024-07-19',
-  //     assessmentDate: '2024-07-24',
-  //     designDate: '2024-07-29',
-  //     interviewDate: '2024-08-03',
-  //     interviewerName: 'Hank Hall',
-  //     grade: 'B',
-  //   },
-  //   {
-  //     scheduleId: 'SCH011',
-  //     collegeName: 'University of Michigan',
-  //     location: 'Ann Arbor, MI',
-  //     region: 'Midwest',
-  //     pptDate: '2024-07-20',
-  //     assessmentDate: '2024-07-25',
-  //     designDate: '2024-07-30',
-  //     interviewDate: '2024-08-04',
-  //     interviewerName: 'Ivy Young',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH012',
-  //     collegeName: 'Duke University',
-  //     location: 'Durham, NC',
-  //     region: 'South',
-  //     pptDate: '2024-07-21',
-  //     assessmentDate: '2024-07-26',
-  //     designDate: '2024-07-31',
-  //     interviewDate: '2024-08-05',
-  //     interviewerName: 'Jack Allen',
-  //     grade: 'B',
-  //   },
-  //   {
-  //     scheduleId: 'SCH013',
-  //     collegeName: 'Northwestern University',
-  //     location: 'Evanston, IL',
-  //     region: 'Midwest',
-  //     pptDate: '2024-07-22',
-  //     assessmentDate: '2024-07-27',
-  //     designDate: '2024-08-01',
-  //     interviewDate: '2024-08-06',
-  //     interviewerName: 'Kelly Wright',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH014',
-  //     collegeName: 'Cornell University',
-  //     location: 'Ithaca, NY',
-  //     region: 'Northeast',
-  //     pptDate: '2024-07-23',
-  //     assessmentDate: '2024-07-28',
-  //     designDate: '2024-08-02',
-  //     interviewDate: '2024-08-07',
-  //     interviewerName: 'Liam Green',
-  //     grade: 'B',
-  //   },
-  //   {
-  //     scheduleId: 'SCH015',
-  //     collegeName: 'University of Texas at Austin',
-  //     location: 'Austin, TX',
-  //     region: 'South',
-  //     pptDate: '2024-07-24',
-  //     assessmentDate: '2024-07-29',
-  //     designDate: '2024-08-03',
-  //     interviewDate: '2024-08-08',
-  //     interviewerName: 'Mia Harris',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH016',
-  //     collegeName: 'University of Washington',
-  //     location: 'Seattle, WA',
-  //     region: 'West',
-  //     pptDate: '2024-07-25',
-  //     assessmentDate: '2024-07-30',
-  //     designDate: '2024-08-04',
-  //     interviewDate: '2024-08-09',
-  //     interviewerName: 'Noah Martinez',
-  //     grade: 'B',
-  //   },
-  //   {
-  //     scheduleId: 'SCH017',
-  //     collegeName: 'University of Southern California',
-  //     location: 'Los Angeles, CA',
-  //     region: 'West',
-  //     pptDate: '2024-07-26',
-  //     assessmentDate: '2024-07-31',
-  //     designDate: '2024-08-05',
-  //     interviewDate: '2024-08-10',
-  //     interviewerName: 'Olivia Lee',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH018',
-  //     collegeName: 'University of North Carolina at Chapel Hill',
-  //     location: 'Chapel Hill, NC',
-  //     region: 'South',
-  //     pptDate: '2024-07-27',
-  //     assessmentDate: '2024-08-01',
-  //     designDate: '2024-08-06',
-  //     interviewDate: '2024-08-11',
-  //     interviewerName: 'Paul King',
-  //     grade: 'B',
-  //   },
-  //   {
-  //     scheduleId: 'SCH019',
-  //     collegeName: 'University of Florida',
-  //     location: 'Gainesville, FL',
-  //     region: 'South',
-  //     pptDate: '2024-07-28',
-  //     assessmentDate: '2024-08-02',
-  //     designDate: '2024-08-07',
-  //     interviewDate: '2024-08-12',
-  //     interviewerName: 'Quinn Baker',
-  //     grade: 'A',
-  //   },
-  //   {
-  //     scheduleId: 'SCH020',
-  //     collegeName: 'University of Illinois at Urbana-Champaign',
-  //     location: 'Champaign, IL',
-  //     region: 'Midwest',
-  //     pptDate: '2024-07-29',
-  //     assessmentDate: '2024-08-03',
-  //     designDate: '2024-08-08',
-  //     interviewDate: '2024-08-13',
-  //     interviewerName: 'Ryan Scott',
-  //     grade: 'B',
-  //   },
-  // ])
+ 
   const [scheduleList, setScheduleList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
@@ -332,10 +91,10 @@ const CampusCalendarTable = () => {
       const fetchData = async () => {
         setIsLoading(true)
         try {
-          const response = await fetch(`${baseUrl}/api/interviewschedule/read`,{
+          const response = await fetch(`${baseUrl}/api/admin/interviewschedule/read`,{
             headers:
             {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             }
           })
           if (response.ok) {
@@ -371,11 +130,11 @@ const CampusCalendarTable = () => {
         return;
       }
       
-      const response = await fetch(`${baseUrl}/api/interviewschedule/create`, {
+      const response = await fetch(`${baseUrl}/api/admin/interviewschedule/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newSchedule),
       })
@@ -403,12 +162,12 @@ const CampusCalendarTable = () => {
     console.log(scheduleToUpdate)
     try {
       const response = await fetch(
-        `${baseUrl}/api/interviewschedule/updateScheduling/${scheduleId}`,
+        `${baseUrl}/api/admin/interviewschedule/updateScheduling/${scheduleId}`,
         {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(scheduleToUpdate),
         },
@@ -442,11 +201,11 @@ const CampusCalendarTable = () => {
     setOpenSnackbar(null)
     try {
       const response = await fetch(
-        `${baseUrl}/api/interviewschedule/delete/${scheduleId}`,
+        `${baseUrl}/api/admin/interviewschedule/delete/${scheduleId}`,
         {
           method: 'DELETE',
           headers:{
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         },
       )
@@ -569,63 +328,7 @@ const CampusCalendarTable = () => {
       animation: 'pulse',
       height: 28,
     },
-    onCreatingRowCancel: () => setValidationErrors({}),
-    onEditingRowCancel: () => setValidationErrors({}),
-
-    onCreatingRowSave: async ({ values, table }) => {
-      const errors = {}
-
-      Object.entries(values).forEach(([key, value]) => {
-        const rule = validationRules[key]
-        if (rule) {
-          if (rule.required && !value.trim()) {
-            errors[key] = `${
-              key.charAt(0).toUpperCase() + key.slice(1)
-            } field cannot be empty`
-          }
-          if (rule.pattern && !rule.pattern.test(value)) {
-            errors[key] = rule.message
-          }
-        }
-      })
-
-      if (Object.keys(errors).length > 0) {
-        setValidationErrors(errors)
-        return
-      }
-
-      setValidationErrors({}) // Clear any previous errors
-      await createSchedule(values)
-      table.setCreatingRow(null)
-    },
-
-    onEditingRowSave: async ({ values, table }) => {
-      const errors = {}
-
-      Object.entries(values).forEach(([key, value]) => {
-        const temp = value.toString().trim() // Convert value to string and remove leading/trailing whitespaces
-        const rule = validationRules[key]
-
-        if (rule) {
-          if (rule.required && temp.length === 0) {
-            errors[key] = `${
-              key.charAt(0).toUpperCase() + key.slice(1)
-            } field cannot be empty`
-          } else if (rule.pattern && !rule.pattern.test(value)) {
-            errors[key] = rule.message
-          }
-        }
-      })
-
-      if (Object.keys(errors).length > 0) {
-        setValidationErrors(errors)
-        return
-      }
-
-      setValidationErrors({})
-      await updateSchedule(values)
-      table.setEditingRow(null)
-    },
+  
 
     renderRowActionMenuItems: ({ row, table, closeMenu }) => (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
