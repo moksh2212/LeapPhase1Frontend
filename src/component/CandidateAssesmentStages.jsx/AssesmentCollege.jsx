@@ -258,31 +258,6 @@ const columns = useMemo(
       },
     },
     {
-      accessorKey: 'region',
-      header: 'Region',
-      editVariant: 'select',
-      editSelectOptions: selectRegion,
-      muiEditTextFieldProps: {
-        required: true,
-        error: !!validationErrors?.region,
-        helperText: validationErrors?.region,
-        onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            region: undefined,
-          }),
-        onBlur: event => {
-          const { value } = event.target;
-          if (!value) {
-            setValidationErrors(prevErrors => ({
-              ...prevErrors,
-              region: 'Region cannot be empty',
-            }));
-          }
-        },
-      },
-    },
-    {
       accessorKey: 'location',
       header: 'Location',
       muiEditTextFieldProps: {
@@ -305,58 +280,7 @@ const columns = useMemo(
         },
       },
     },
-    {
-      accessorKey: 'state',
-      header: 'State',
-      editVariant: 'select',
-      editSelectOptions: indStates,
-      muiEditTextFieldProps: {
-        required: true,
-        select: true,
-        error: !!validationErrors?.state,
-        helperText: validationErrors?.state,
-        onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            state: undefined,
-          }),
-        onBlur: event => {
-          const { value } = event.target;
-          if (!value) {
-            setValidationErrors(prevErrors => ({
-              ...prevErrors,
-              state: 'State cannot be empty',
-            }));
-          }
-        },
-      },
-    },
-    {
-      accessorKey: 'tier',
-      header: 'Tier',
-      editVariant: 'select',
-      editSelectOptions: selectTier,
-      muiEditTextFieldProps: {
-        required: true,
-        select: true,
-        error: !!validationErrors?.tier,
-        helperText: validationErrors?.tier,
-        onFocus: () =>
-          setValidationErrors({
-            ...validationErrors,
-            tier: undefined,
-          }),
-        onBlur: event => {
-          const { value } = event.target;
-          if (!value) {
-            setValidationErrors(prevErrors => ({
-              ...prevErrors,
-              tier: 'Tier cannot be empty',
-            }));
-          }
-        },
-      },
-    },
+    
     {
       accessorKey: 'tpoName',
       header: 'TPO Contact Name',
@@ -399,7 +323,7 @@ const columns = useMemo(
       ),
     },
   ],
-  [validationErrors, selectRegion, indStates, selectTier]
+  [validationErrors]
 );
 
 
