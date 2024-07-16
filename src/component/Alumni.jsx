@@ -58,7 +58,7 @@ const Alumni = () => {
         `${tanBaseUrl}/cpm/talents/viewmarksheet/${talentId}`,
         {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -183,7 +183,7 @@ const Alumni = () => {
           `${tanBaseUrl}/cpm/talents/alltalent`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )

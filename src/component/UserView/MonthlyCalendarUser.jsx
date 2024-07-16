@@ -61,7 +61,7 @@ const MonthlyCalendarUser = () => {
  
             const response = await axios.get(`${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formattedStartDate}&endDate=${formattedEndDate}&talentId=${currentUser.talentId}`, {
               headers:{
-                Authorization: `Basic ${token}`
+                Authorization: `Bearer ${token}`
               }
             });
  

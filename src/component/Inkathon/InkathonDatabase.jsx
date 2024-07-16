@@ -78,7 +78,7 @@ import {AddInkathon }from './AddInkathon'
       const response = await fetch(`${tanBaseUrl}/api/inkathons/create`, {
         method: 'POST',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
         
@@ -120,7 +120,7 @@ import {AddInkathon }from './AddInkathon'
       const response = await fetch(`${tanBaseUrl}/api/inkathons/delete/${inkathonId}`, {
         method: 'DELETE',
         headers:{
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
 
@@ -164,7 +164,7 @@ import {AddInkathon }from './AddInkathon'
       try {
         const response = await fetch(`${tanBaseUrl}/api/inkathons`,{
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         if (response.status !== 200) {

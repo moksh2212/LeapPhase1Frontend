@@ -27,7 +27,9 @@ const HistoryDialog = ({ open, onClose, history }) => {
     <Dialog open={open} onClose={onClose} maxWidth='md' fullWidth>
       <DialogTitle>History</DialogTitle>
       <DialogContent>
-        {history.length===0 && <Typography gutterBottom>No History</Typography>}
+        {history.length === 0 && (
+          <Typography gutterBottom>No History</Typography>
+        )}
         {history.map((entry, index) => (
           <Typography key={index} gutterBottom>
             {entry.logEntry}{' '}
@@ -62,7 +64,7 @@ const UserApprovalTable = ({ requests, onApprove, onReject, isPendingTab }) => {
       headerName: 'Status',
       flex: 1,
       minWidth: 100,
-    
+
       renderCell: params => (
         <Typography
           variant='body2'
@@ -95,7 +97,7 @@ const UserApprovalTable = ({ requests, onApprove, onReject, isPendingTab }) => {
       renderCell: params => (
         <Box display='flex' align='center'>
           <HistoryIcon
-            style={{ cursor: 'pointer'}}
+            style={{ cursor: 'pointer' }}
             onClick={() => handleHistoryClick(params.row.history)}
           />
         </Box>
@@ -183,7 +185,7 @@ const Authorize = () => {
     try {
       const response = await fetch(`${API_URL}/super/security/getAllRequests`, {
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
       if (!response.ok) {
@@ -193,12 +195,12 @@ const Authorize = () => {
       const data = await response.json()
       // Transform the data to match the expected format
       const transformedData = data.map(item => ({
-        id: item.user.id,
-        inctureId: item.user.inctureId,
-        email: item.user.email,
-        talentName: item.user.talentName,
-        status: item.user.status,
-        roles: item.user.roles,
+        id: item.userDto.id,
+        inctureId: item.userDto.inctureId,
+        email: item.userDto.email,
+        talentName: item.userDto.talentName,
+        status: item.userDto.status,
+        roles: item.userDto.roles,
         history: item.history,
         // latestLogEntry: item.history.length > 0
         //   ? `${item.history[item.history.length-1].logEntry} ${moment(item.history[0].timestamp).format('MMMM Do YYYY, h:mm:ss a')}`
@@ -220,7 +222,7 @@ const Authorize = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -253,7 +255,7 @@ const Authorize = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )

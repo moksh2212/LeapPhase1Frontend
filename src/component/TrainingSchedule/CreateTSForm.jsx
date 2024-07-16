@@ -85,7 +85,7 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
       try {
         const response = await fetch(`${baseUrl}/api/trainers/getAll`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         const data = await response.json()
@@ -104,7 +104,7 @@ const TrainingScheduleForm = ({ open, setOpen }) => {
       try {
         const response = await fetch(`${baseUrl}/cpm/talents/alltalent`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         const data = await response.json()

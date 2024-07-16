@@ -108,7 +108,7 @@ console.log(feedbacksend)
       try {
         const response = await fetch(`${baseUrl}/employee-assignments/getall`,{
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         const data = await response.json()
@@ -140,7 +140,7 @@ console.log(feedbacksend)
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
 
           },
           body: JSON.stringify(formData),
@@ -177,7 +177,7 @@ console.log(feedbacksend)
           method: 'DELETE',
 
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )

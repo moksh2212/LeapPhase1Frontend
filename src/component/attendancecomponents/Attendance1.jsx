@@ -66,7 +66,7 @@ const Attendance1 = ({ employees }) => {
           //`${attd}/cpm/attendance/getAllAttendanceWRTrm?date=${value.format('YYYY-MM-DD')}&rm=${currentUser.name}`
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )

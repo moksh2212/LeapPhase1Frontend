@@ -8,6 +8,7 @@ import {
   Spinner,
   Alert,
 } from 'flowbite-react'
+import {jwtDecode} from 'jwt-decode'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   signInStart,
@@ -25,6 +26,17 @@ function Signin() {
   const signBaseUrl = process.env.BASE_URL2
   const dispatch = useDispatch()
 
+
+  const decodeToken = (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      return decoded;
+    } catch (error) {
+      console.error("Invalid token", error);
+      return null;
+    }
+  };
+
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -36,8 +48,7 @@ function Signin() {
       setErrorMessage('All fields are required.')
       return
     }
-    const token = btoa(`${formData.email}:${formData.password}`)
-    console.log(token)
+    
     setIsLoading(true)
     try {
       dispatch(signInStart())
@@ -45,20 +56,24 @@ function Signin() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
         },
         body: JSON.stringify(formData),
         // credentials: 'include'
       })
 
       if (response.ok) {
-        const data = await response.json()
-        dispatch(signInSuccess({ user: data, token: token }))
+        const token = await response.text();
+        const data = decodeToken(token);
+        const user = data.user;
+        console.log('====================================');
+        console.log(data);
+        console.log('====================================');
+        dispatch(signInSuccess({ user: user, token: token }))
         if (
-          data.roles &&
-          data.roles.includes('USER') &&
-          !data.roles.includes('ADMIN') &&
-          !data.roles.includes('SUPERADMIN')
+          user.roles &&
+          user.roles.includes('USER') &&
+          !user.roles.includes('ADMIN') &&
+          !user.roles.includes('SUPERADMIN')
         ) {
           navigate('/user')
         } else {

@@ -242,7 +242,7 @@ const Leave = () => {
     try {
       const response = await fetch(`${API_URL}/cpm/leaves/getAll`, {
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
       if (!response.ok) {
@@ -262,7 +262,7 @@ const Leave = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status: 'Approved' }),
       })
@@ -294,7 +294,7 @@ const Leave = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
   

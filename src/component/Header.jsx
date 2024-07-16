@@ -16,7 +16,7 @@ export default function Header() {
       const response = await fetch(`${signBaseUrl}/security/logout`, {
         method: 'POST',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
 

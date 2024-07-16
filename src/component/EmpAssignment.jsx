@@ -211,7 +211,7 @@ const CandidateTable = () => {
       try {
         const response = await fetch(`${baseUrl}/admin/viewData`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         const data = await response.json()
@@ -239,7 +239,7 @@ const CandidateTable = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(newCollege),
         },
@@ -271,7 +271,7 @@ const CandidateTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(collegeToUpdate),
         },
@@ -307,7 +307,7 @@ const CandidateTable = () => {
         {
           method: 'DELETE',
           headers:{
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         },
       )
