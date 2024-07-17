@@ -86,6 +86,7 @@ const CollegeTable = () => {
   const token = useSelector(state => state.user.token)
   const baseUrl = process.env.BASE_URL
 
+
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -142,7 +143,7 @@ const CollegeTable = () => {
         try {
           const response = await fetch(`${baseUrl}/admin/viewData`, {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           })
           const data = await response.json()
@@ -169,7 +170,7 @@ const CollegeTable = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newCollege),
       })
@@ -199,7 +200,7 @@ const CollegeTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(collegeToUpdate),
         },
@@ -233,7 +234,7 @@ const CollegeTable = () => {
       const response = await fetch(`${baseUrl}/admin/deleteData/${collegeId}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
 
@@ -719,19 +720,6 @@ const CollegeTable = () => {
     },
     onCreatingRowCancel: () => setValidationErrors({}),
     onEditingRowCancel: () => setValidationErrors({}),
-
-    // onCreatingRowSave: async ({ values, table }) => {
-    //   setValidationErrors({})
-    //   await createCollege(values)
-    //   table.setCreatingRow(null)
-    // },
-
-    // onEditingRowSave: async ({ values, table }) => {
-    //   setValidationErrors({})
-    //   console.log(values)
-    //   await updateCollege(values)
-    //   table.setEditingRow(null)
-    // },
 
     onCreatingRowSave: async ({ values, table }) => {
       const errors = {}

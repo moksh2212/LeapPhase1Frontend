@@ -68,7 +68,7 @@ const MonthlyCalendar = () => {
           `${perBaseUrl}/cpm/attendance/getAttendanceByDateRangeAndTalent?startDate=${formattedStartDate}&endDate=${formattedEndDate}&talentId=${fetched}`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )

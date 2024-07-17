@@ -45,8 +45,19 @@ const Option = props => {
 }
 
 const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
+
+  const statusOptions = [
+    { value: 'scheduled', label: 'Scheduled' },
+    { value: 'inProgress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' },
+    { value: 'delayed', label: 'Delayed' },
+  ]
   const [trainingDate, setTrainingDate] = useState(
     currentSchedule.trainingDate || '',
+  )
+  const [actualTrainingDate, setActualTrainingDate] = useState(
+    currentSchedule.actualTrainingDate || '',
   )
   const [startTime, setStartTime] = useState(currentSchedule.startTime || '')
   const [endTime, setEndTime] = useState(currentSchedule.endTime || '')
@@ -60,6 +71,15 @@ const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
   const [selectedEmployees, setSelectedEmployees] = useState(
     currentSchedule.selectedEmployees || [],
   )
+  const [weekNumber, setWeekNumber] = useState(currentSchedule.weekNumber || '')
+  const [trainingStatus, setTrainingStatus] = useState(() => {
+    const status = currentSchedule.trainingStatus || ''
+    return (
+      statusOptions.find(option => option.label === status ||
+      null
+    ))
+  })
+  const [comments, setComments] = useState(currentSchedule.comments || '')
   const [trainerList, setTrainerList] = useState([])
   const [talentList, setTalentList] = useState([])
   const [error, setError] = useState(null)
@@ -72,7 +92,7 @@ const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
       try {
         const response = await fetch(`${baseUrl}/api/trainers/getAll`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         const data = await response.json()
@@ -91,7 +111,7 @@ const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
       try {
         const response = await fetch(`${baseUrl}/cpm/talents/alltalent`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         const data = await response.json()
@@ -129,6 +149,9 @@ const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
     label: trainer.trainerName,
     ...trainer,
   }))
+
+  
+
   const handleSelectChange = selectedOptions => {
     if (!selectedOptions) {
       setSelectedEmployees([])
@@ -160,6 +183,8 @@ const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
     if (!trainer) errors.trainer = 'Trainer is required'
     if (selectedEmployees.length === 0)
       errors.selectedEmployees = 'Select at least one trainee'
+    if (!weekNumber) errors.weekNumber = 'Week number is required'
+    if (!trainingStatus) errors.trainingStatus = 'Training status is required'
     setFormErrors(errors)
     return Object.keys(errors).length === 0
   }
@@ -169,12 +194,16 @@ const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
     if (validateForm()) {
       const submissionData = {
         trainingDate,
+        actualTrainingDate,
         startTime,
         endTime,
         trainingTopic,
         trainingTech: trainingTech ? trainingTech.value : null,
         trainerId: trainer ? trainer.trainerId : null,
         traineesIds: selectedEmployees.map(employee => employee.value),
+        weekNumber,
+        trainingStatus: trainingStatus ? trainingStatus.label : null,
+        comments,
       }
       console.log(submissionData)
       // Add your submission logic here
@@ -194,6 +223,18 @@ const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
+                label='Week Number'
+                type='String'
+                value={weekNumber}
+                required
+                onChange={e => setWeekNumber(e.target.value)}
+                error={!!formErrors.weekNumber}
+                helperText={formErrors.weekNumber}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
                 label='Training Date'
                 type='date'
                 value={trainingDate}
@@ -202,11 +243,20 @@ const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                inputProps={{
-                  min: new Date().toISOString().split('T')[0],
-                }}
                 error={!!formErrors.trainingDate}
                 helperText={formErrors.trainingDate}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label='Actual Training Date'
+                type='date'
+                value={actualTrainingDate}
+                onChange={e => setActualTrainingDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
               />
             </Grid>
             <Grid item xs={6}>
@@ -251,10 +301,33 @@ const TrainingScheduleUpdateForm = ({ open, setOpen, currentSchedule }) => {
               />
             </Grid>
             <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label='Comments'
+                multiline
+                rows={2}
+                value={comments}
+                onChange={e => setComments(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControl fullWidth error={!!formErrors.trainingStatus}>
+                <StyledSelect
+                  options={statusOptions}
+                  value={trainingStatus}
+                  onChange={setTrainingStatus}
+                  placeholder='Select Training Status'
+                />
+                {formErrors.trainingStatus && (
+                  <FormHelperText>{formErrors.trainingStatus}</FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
               <FormControl fullWidth error={!!formErrors.trainingTech}>
                 <StyledSelect
-                  options={techOptions}
                   value={trainingTech}
+                  options={techOptions}
                   onChange={setTrainingTech}
                   placeholder='Select Training Tech'
                 />

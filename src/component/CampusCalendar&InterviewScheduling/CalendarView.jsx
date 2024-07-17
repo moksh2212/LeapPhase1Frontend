@@ -152,7 +152,7 @@ const CollegeCalendarView = () => {
         try {
           const response = await fetch(`${baseUrl}/api/admin/interviewschedule/read`, {
             headers:{
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             }
           })
           if (response.ok) {

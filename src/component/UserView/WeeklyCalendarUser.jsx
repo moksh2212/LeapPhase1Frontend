@@ -78,7 +78,7 @@ export default function WeeklyCalendarUser() {
           )}&endDate=${formatDate(end)}&talentId=${currentUser.talentId}`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         );

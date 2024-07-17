@@ -122,7 +122,7 @@ export default function TeamTabInkathon() {
       const response = await fetch(`${tanBaseUrl}/api/members/add`, {
         method: 'POST',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       })
@@ -153,7 +153,7 @@ export default function TeamTabInkathon() {
       const response = await fetch(`${tanBaseUrl}/api/mentors/addMentor`, {
         method: 'POST',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       })
@@ -189,7 +189,7 @@ export default function TeamTabInkathon() {
       const response = await fetch(`${tanBaseUrl}/api/manager/addManager`, {
         method: 'POST',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       })
@@ -228,7 +228,7 @@ export default function TeamTabInkathon() {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -257,7 +257,7 @@ export default function TeamTabInkathon() {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -343,7 +343,7 @@ export default function TeamTabInkathon() {
         {
           method: 'PUT',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(talentToUpdate),
@@ -375,7 +375,7 @@ export default function TeamTabInkathon() {
           `${tanBaseUrl}/api/teams/${currTeamId}`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )

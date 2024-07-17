@@ -163,7 +163,7 @@ const Regularize = () => {
     try {
       const response = await fetch(`${API_URL}/cpm/regularize/getAll`, {
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
       if (!response.ok) {
@@ -185,7 +185,7 @@ const Regularize = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -219,7 +219,7 @@ const Regularize = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )

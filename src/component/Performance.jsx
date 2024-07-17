@@ -42,7 +42,7 @@ const Perfromancetable = () => {
           `${perBaseUrl}/cpm/performance/getAllPerformance`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )
@@ -404,7 +404,7 @@ const Perfromancetable = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // Set the correct Content-Type header
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(transformedData),
         },
@@ -453,7 +453,7 @@ const Perfromancetable = () => {
           headers: {
             'Content-Type': 'application/json',
 
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(transformedData),
         },
@@ -494,7 +494,7 @@ const Perfromancetable = () => {
           headers: {
             'Content-Type': 'application/json',
 
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(performanceData),
         },

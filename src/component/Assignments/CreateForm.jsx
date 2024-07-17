@@ -71,7 +71,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     try {
       const response = await fetch(`${baseUrl}/cpm/talents/alltalent`, {
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       if (!response.ok) {
@@ -89,7 +89,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     try {
       const response = await fetch(`${baseUrl}/api/trainers/getAll`, {
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
       const data = await response.json()
@@ -218,7 +218,7 @@ export function CreateForm({ openModal, setOpenModal, createAssignment }) {
     try {
       const response = await fetch(`${baseUrl}/api/admin/evaluator/getallevaluator`, {
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       if (!response.ok) {

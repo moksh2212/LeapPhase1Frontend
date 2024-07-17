@@ -10,27 +10,98 @@ import {
   Alert,
   useTheme,
   useMediaQuery,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material'
 import Box from '@mui/material/Box'
 import { DataGrid, GridToolbar } from '@mui/x-data-grid'
 import { useSelector } from 'react-redux'
 import { Spinner } from 'flowbite-react'
+import HistoryIcon from '@mui/icons-material/History'
+import moment from 'moment'
+
+const HistoryDialog = ({ open, onClose, history }) => {
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth='md' fullWidth>
+      <DialogTitle>History</DialogTitle>
+      <DialogContent>
+        {history.length === 0 && (
+          <Typography gutterBottom>No History</Typography>
+        )}
+        {history.map((entry, index) => (
+          <Typography key={index} gutterBottom>
+            {entry.logEntry}{' '}
+            {moment(entry.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
+          </Typography>
+        ))}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  )
+}
 
 const UserApprovalTable = ({ requests, onApprove, onReject, isPendingTab }) => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const [historyDialogOpen, setHistoryDialogOpen] = useState(false)
+  const [selectedHistory, setSelectedHistory] = useState([])
+
+  const handleHistoryClick = history => {
+    setSelectedHistory(history)
+    setHistoryDialogOpen(true)
+  }
 
   const columns = [
     { field: 'inctureId', headerName: 'Incture ID', flex: 1, minWidth: 120 },
     { field: 'email', headerName: 'Email', flex: 1, minWidth: 180 },
     { field: 'talentName', headerName: 'Name', flex: 1, minWidth: 120 },
-    { field: 'status', headerName: 'Status', flex: 1, minWidth: 100 },
+    {
+      field: 'status',
+      headerName: 'Status',
+      flex: 1,
+      minWidth: 100,
+
+      renderCell: params => (
+        <Typography
+          variant='body2'
+          sx={{
+            color:
+              params.value === 'Approved'
+                ? 'success.main'
+                : params.value === 'Declined'
+                ? 'error.main'
+                : 'warning.main',
+            fontWeight: 'medium',
+          }}
+        >
+          {params.value}
+        </Typography>
+      ),
+    },
     {
       field: 'roles',
       headerName: 'Roles',
       flex: 1,
       minWidth: 150,
       renderCell: params => params.value.join(', '),
+    },
+    {
+      field: 'latestLogEntry',
+      headerName: 'History',
+      flex: 1,
+      minWidth: 200,
+      renderCell: params => (
+        <Box display='flex' align='center'>
+          <HistoryIcon
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleHistoryClick(params.row.history)}
+          />
+        </Box>
+      ),
     },
     isPendingTab && {
       field: 'actions',
@@ -43,7 +114,6 @@ const UserApprovalTable = ({ requests, onApprove, onReject, isPendingTab }) => {
             variant='contained'
             color='success'
             onClick={() => onApprove(params.row.id)}
-            // onClick={() => {}}
             size='small'
             fullWidth={isMobile}
           >
@@ -53,7 +123,6 @@ const UserApprovalTable = ({ requests, onApprove, onReject, isPendingTab }) => {
             variant='contained'
             color='error'
             onClick={() => onReject(params.row.id)}
-            // onClick={() => {}}
             size='small'
             fullWidth={isMobile}
           >
@@ -72,6 +141,8 @@ const UserApprovalTable = ({ requests, onApprove, onReject, isPendingTab }) => {
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5, 10, 25]}
+          disableSelectionOnClick
+          disableRowSelectionOnClick
           components={{
             Toolbar: GridToolbar,
           }}
@@ -87,6 +158,11 @@ const UserApprovalTable = ({ requests, onApprove, onReject, isPendingTab }) => {
           }}
         />
       </Box>
+      <HistoryDialog
+        open={historyDialogOpen}
+        onClose={() => setHistoryDialogOpen(false)}
+        history={selectedHistory}
+      />
     </Paper>
   )
 }
@@ -109,7 +185,7 @@ const Authorize = () => {
     try {
       const response = await fetch(`${API_URL}/super/security/getAllRequests`, {
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
       if (!response.ok) {
@@ -117,7 +193,20 @@ const Authorize = () => {
         throw new Error('Failed to fetch requests')
       }
       const data = await response.json()
-      setRequests(data)
+      // Transform the data to match the expected format
+      const transformedData = data.map(item => ({
+        id: item.userDto.id,
+        inctureId: item.userDto.inctureId,
+        email: item.userDto.email,
+        talentName: item.userDto.talentName,
+        status: item.userDto.status,
+        roles: item.userDto.roles,
+        history: item.history,
+        // latestLogEntry: item.history.length > 0
+        //   ? `${item.history[item.history.length-1].logEntry} ${moment(item.history[0].timestamp).format('MMMM Do YYYY, h:mm:ss a')}`
+        //   : 'No history',
+      }))
+      setRequests(transformedData)
       setLoading(false)
     } catch (error) {
       console.error('Error fetching requests:', error)
@@ -133,7 +222,7 @@ const Authorize = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -166,7 +255,7 @@ const Authorize = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -178,7 +267,7 @@ const Authorize = () => {
 
       const updatedUsers = requests.map(request =>
         request.id === authorizationId
-          ? { ...request, status: 'eclined' }
+          ? { ...request, status: 'Declined' }
           : request,
       )
       setRequests(updatedUsers)
@@ -186,7 +275,7 @@ const Authorize = () => {
       setSnackbarOpen(true)
       setLoading(false)
     } catch (error) {
-      console.error('Error declineing request:', error)
+      console.error('Error declining request:', error)
     }
   }
 

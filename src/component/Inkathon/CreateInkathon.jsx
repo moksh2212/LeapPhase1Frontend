@@ -140,7 +140,7 @@ export default function CreateInkathon() {
       const response = await fetch(`${tanBaseUrl}/api/projects/create/${inkathonId}`, {
         method: 'POST',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
         
@@ -169,7 +169,7 @@ export default function CreateInkathon() {
       const response = await fetch(`${tanBaseUrl}/api/projects/update/${projectId}`, {
         method: 'PUT',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       })
@@ -201,7 +201,7 @@ export default function CreateInkathon() {
       const response = await fetch(`${tanBaseUrl}/api/projects/delete/${projectId}`, {
         method: 'DELETE',
         headers:{
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
 
@@ -251,7 +251,7 @@ export default function CreateInkathon() {
       const response = await fetch(`${tanBaseUrl}/api/teams/create/${inkathonId}/${formData.projectId}`, {
         method: 'POST',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
@@ -280,7 +280,7 @@ export default function CreateInkathon() {
       const response = await fetch(`${tanBaseUrl}/api/teams/${formData.teamId}/${formData.projectId}`, {
         method: 'PUT',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
@@ -311,7 +311,7 @@ export default function CreateInkathon() {
         
         method: 'DELETE',
         headers:{
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         }
       })
 
@@ -372,7 +372,7 @@ export default function CreateInkathon() {
         {
           method: 'PUT',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(talentToUpdate),
@@ -402,17 +402,17 @@ export default function CreateInkathon() {
       try {
         const inkResponse = await fetch(`${tanBaseUrl}/api/inkathons/${inkathonId}`,{
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         const projectResponse = await fetch(`${tanBaseUrl}/api/projects/getInkathonProject/${inkathonId}`,{
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         const teamResponse = await fetch(`${tanBaseUrl}/api/teams/getInkathonTeams/${inkathonId}`,{
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
   

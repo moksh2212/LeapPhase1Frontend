@@ -105,7 +105,7 @@ const AssesTable = () => {
           `${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )
@@ -264,7 +264,7 @@ const AssesTable = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(arr),
           },
@@ -301,7 +301,7 @@ const AssesTable = () => {
             method: 'POST',
             body: formData,
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           })
           console.log(response)
