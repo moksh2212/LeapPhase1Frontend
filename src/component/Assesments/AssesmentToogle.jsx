@@ -410,6 +410,12 @@ const AssesmentToogle = () => {
     isLoading,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     enableRowActions: true,
 
     renderRowActionMenuItems: ({ closeMenu, row }) => [

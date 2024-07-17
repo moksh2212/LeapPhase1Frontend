@@ -98,6 +98,9 @@
                 onChange={e => setSelectedTalentId(e.target.value)}
                 size='sm'
               >
+                            <option value='' disabled selected>
+              Select a member
+            </option>
                 {filteredTalentList.map(talent => (
                   <option key={talent.talentId} value={talent.talentId}>
                     INC{talent.talentId} - {talent.ekYear} - {talent.talentName} -{' '}

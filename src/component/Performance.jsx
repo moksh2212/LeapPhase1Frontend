@@ -522,6 +522,12 @@ const Perfromancetable = () => {
     data: datax,
     createDisplayMode: 'modal', //default ('row', and 'custom' are also available)
     editDisplayMode: 'modal',
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     enableEditing: true,
     getRowId: row => row.id,
     muiTableContainerProps: {

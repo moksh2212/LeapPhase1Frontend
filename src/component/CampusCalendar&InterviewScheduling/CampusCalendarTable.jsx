@@ -314,6 +314,12 @@ const CampusCalendarTable = () => {
     initialState: { columnVisibility: { scheduleId: false } },
     isLoading,
     enableEditing: false,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     enableRowActions: true,
     onRowSelectionChange: setRowSelection,
 

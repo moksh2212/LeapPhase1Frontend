@@ -430,6 +430,12 @@ console.log(feedbacksend)
     enableRowSelection: true,
     initialState: { columnVisibility: { employeeAssignmentId: false } },
     isLoading,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     enableEditing: false,
     enableRowActions: true, // Enable the row action column
     onRowSelectionChange: setRowSelection,

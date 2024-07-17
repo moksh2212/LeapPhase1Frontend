@@ -432,6 +432,12 @@ const TalentAssessment = () => {
     columns,
     data: talentList,
     isLoading,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
     enableRowActions: true,
@@ -440,7 +446,6 @@ const TalentAssessment = () => {
       <MenuItem
         key={0}
         onClick={() => {
-          handleModalOpen();
           closeMenu();
         }}
         sx={{ m: 0 }}

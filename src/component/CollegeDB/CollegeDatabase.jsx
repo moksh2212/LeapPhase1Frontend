@@ -85,7 +85,7 @@ const CollegeTable = () => {
 
   const token = useSelector(state => state.user.token)
   const baseUrl = process.env.BASE_URL
-  
+
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -696,10 +696,10 @@ const CollegeTable = () => {
     isLoading,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
-    muiTableHeadCellProps:{
+    muiTableHeadCellProps: {
       align: 'center',
     },
-    muiTableBodyCellProps:{
+    muiTableBodyCellProps: {
       align: 'center',
     },
     enableEditing: false,
@@ -930,6 +930,7 @@ const CollegeTable = () => {
 
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
+      <h2 className='text-3xl text-[#0087D5] font-bold mb-3'>College Schedules</h2>
       <MaterialReactTable
         table={table}
         updateCollege={updateCollege}

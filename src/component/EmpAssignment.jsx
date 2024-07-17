@@ -515,6 +515,12 @@ const CandidateTable = () => {
     enableRowSelection: true,
     initialState: { columnVisibility: { assignmentId: false } },
     isLoading,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     createDisplayMode: 'row',
     editDisplayMode: 'row',
     enableEditing: true,

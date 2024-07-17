@@ -348,6 +348,12 @@ const IndividualAssessments = () => {
     data: talentList,
     isLoading,
     createDisplayMode: 'modal',
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     editDisplayMode: 'modal',
     enableEditing: true,
     initialState: { columnVisibility: { reason: false } },

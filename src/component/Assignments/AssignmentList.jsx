@@ -317,6 +317,12 @@ const Assignment = () => {
     enableRowSelection: true,
     initialState: { columnVisibility: { assignmentId: false } },
     isLoading,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     enableEditing: false,
     enableRowActions: true, // Enable the row action column
     onRowSelectionChange: setRowSelection,
