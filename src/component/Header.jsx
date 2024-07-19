@@ -3,30 +3,23 @@ import { TbLogout } from 'react-icons/tb'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { signoutSuccess } from '../redux/user/userSlice'
+import { useState } from 'react'
 export default function Header() {
   const path = useLocation().pathname
   const { currentUser } = useSelector(state => state.user)
+  console.log(currentUser)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [imageSrc, setImageSrc] = useState('')
 
-  const signBaseUrl = 'http://192.168.0.147:8080'
-  const token = useSelector(state => state.user.token)
+  // const imageBlob = new Blob([currentUser.profileImage], { type: 'image/jpeg' }) // Adjust type as necessary
+  // const imageUrl = URL.createObjectURL(imageBlob)
+  // setImageSrc(imageUrl)
+
+
   const handleSignout = async () => {
-    try {
-      const response = await fetch(`${signBaseUrl}/security/logout`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        dispatch(signoutSuccess('Signed out successfully'))
-        navigate('/signin')
-      }
-    } catch (error) {
-      console.log(error.message)
-    }
+    dispatch(signoutSuccess('Signed out successfully'))
+    navigate('/signin')
   }
   return (
     <>

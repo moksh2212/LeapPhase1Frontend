@@ -65,9 +65,6 @@ function Signin() {
         const token = await response.text();
         const data = decodeToken(token);
         const user = data.user;
-        console.log('====================================');
-        console.log(data);
-        console.log('====================================');
         dispatch(signInSuccess({ user: user, token: token }))
         if (
           user.roles &&
@@ -79,7 +76,7 @@ function Signin() {
         } else {
           navigate('/')
         }
-      } else if (response.status === 401) {
+      } else if (response.status === 401 || response.status===400) {
         setErrorMessage('Email or Password not correct or your account is pending from admin approval')
       } else {
         dispatch(signInFailure())

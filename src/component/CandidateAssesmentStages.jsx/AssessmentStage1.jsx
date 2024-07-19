@@ -361,15 +361,7 @@ const AssesTable = () => {
                 </Button>
                 <div>
                   <ButtonGroup>
-<<<<<<< HEAD
-                    <Button
-                      variant='contained'
-                      component='label'
-                      disabled={count !== 0}
-                    >
-=======
                     <Button variant='contained' component='label' >
->>>>>>> 471a5257debf3358e0e557b2a062967ac2fee040
                       <label htmlFor='excelFile' className='excel-file-label'>
                         {selectedFile
                           ? `File Selected: ${selectedFile.name}`
