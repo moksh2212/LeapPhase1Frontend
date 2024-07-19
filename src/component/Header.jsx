@@ -3,19 +3,25 @@ import { TbLogout } from 'react-icons/tb'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { signoutSuccess } from '../redux/user/userSlice'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 export default function Header() {
   const path = useLocation().pathname
   const { currentUser } = useSelector(state => state.user)
   console.log(currentUser)
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const [imageSrc, setImageSrc] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
 
-  // const imageBlob = new Blob([currentUser.profileImage], { type: 'image/jpeg' }) // Adjust type as necessary
-  // const imageUrl = URL.createObjectURL(imageBlob)
-  // setImageSrc(imageUrl)
-
+  useEffect(() => {
+    if (currentUser && currentUser.photo) {
+      const url = `data:image/jpeg;base64,${currentUser.photo}`
+      setImageUrl(url)
+    }
+    else {
+      setImageUrl('https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg?t=st=1714456930~exp=1714460530~hmac=7615ea45a09625b4c166c6233ece24749c78362f76d29e1429e3b5d3b035156f&w=740')
+    }
+  }, [currentUser]);
+  
 
   const handleSignout = async () => {
     dispatch(signoutSuccess('Signed out successfully'))
@@ -53,7 +59,7 @@ export default function Header() {
             label={
               <Avatar
                 alt='User settings'
-                img='https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg?t=st=1714456930~exp=1714460530~hmac=7615ea45a09625b4c166c6233ece24749c78362f76d29e1429e3b5d3b035156f&w=740'
+                img={imageUrl}
                 rounded
               />
             }

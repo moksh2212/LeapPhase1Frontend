@@ -201,9 +201,6 @@ const Authorize = () => {
         status: item.user.status,
         roles: item.user.roles,
         history: item.history,
-        // latestLogEntry: item.history.length > 0
-        //   ? `${item.history[item.history.length-1].logEntry} ${moment(item.history[0].timestamp).format('MMMM Do YYYY, h:mm:ss a')}`
-        //   : 'No history',
       }))
       setRequests(transformedData)
       setLoading(false)

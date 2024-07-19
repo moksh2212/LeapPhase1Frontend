@@ -8,34 +8,66 @@ import {
   Spinner,
   Alert,
 } from 'flowbite-react'
-import {jwtDecode} from 'jwt-decode'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   signInStart,
   signInSuccess,
   signInFailure,
+  signoutSuccess,
 } from '../redux/user/userSlice'
 
 function Signin() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const signBaseUrl = process.env.BASE_URL2
-  const dispatch = useDispatch()
 
-
-  const decodeToken = (token) => {
-    try {
-      const decoded = jwtDecode(token);
-      return decoded;
-    } catch (error) {
-      console.error("Invalid token", error);
-      return null;
+  useEffect(() => {
+    const logoutTime = localStorage.getItem('logoutTime')
+    if (logoutTime && Date.now() > parseInt(logoutTime, 10)) {
+      handleLogout()
     }
-  };
+
+    window.addEventListener('focus', checkLogoutTime)
+    window.addEventListener('beforeunload', clearDataOnUnload)
+
+    return () => {
+      window.removeEventListener('focus', checkLogoutTime)
+      window.removeEventListener('beforeunload', clearDataOnUnload)
+    }
+  }, [])
+
+  const setLogoutTimer = () => {
+    const LOGOUT_TIME = 60 * 60 * 1000 
+    const logoutTime = Date.now() + LOGOUT_TIME
+    localStorage.setItem('logoutTime', logoutTime.toString())
+
+    return setTimeout(() => {
+      handleLogout()
+    }, LOGOUT_TIME)
+  }
+
+  const checkLogoutTime = () => {
+    const logoutTime = localStorage.getItem('logoutTime')
+    if (logoutTime && Date.now() > parseInt(logoutTime, 10)) {
+      handleLogout()
+    }
+  }
+
+  const clearDataOnUnload = () => {
+    dispatch(signoutSuccess())
+    localStorage.removeItem('logoutTime')
+  }
+
+  const handleLogout = () => {
+    dispatch(signoutSuccess())
+    localStorage.removeItem('logoutTime')
+    navigate('/signin')
+  }
 
   const handleSubmit = async e => {
     e.preventDefault()
@@ -58,14 +90,13 @@ function Signin() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
-        // credentials: 'include'
       })
 
       if (response.ok) {
-        const token = await response.text();
-        const data = decodeToken(token);
-        const user = data.user;
+        const token = response.headers.get('authorization');
+        const user = await response.json()
         dispatch(signInSuccess({ user: user, token: token }))
+        setLogoutTimer() // Set the logout timer after successful login
         if (
           user.roles &&
           user.roles.includes('USER') &&

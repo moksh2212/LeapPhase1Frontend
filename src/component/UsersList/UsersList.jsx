@@ -51,6 +51,7 @@ const UserTable = () => {
   const [filterAnchorEl, setFilterAnchorEl] = useState(null)
   const [filters, setFilters] = useState({})
   const [roleFilter, setRoleFilter] = useState('')
+  const [uniqueRoles, setUniqueRoles] = useState([])
 
   const token = useSelector(state => state.user.token)
   const baseUrl = process.env.BASE_URL
@@ -60,6 +61,10 @@ const UserTable = () => {
   useEffect(() => {
     fetchUsers()
   }, [])
+
+  useEffect(() => {
+    setUniqueRoles(getUniqueRoles(users))
+  }, [users])
 
   const fetchUsers = async () => {
     setIsLoading(true)
@@ -122,25 +127,23 @@ const UserTable = () => {
 
   const handleDeleteConfirm = async () => {
     setIsLoading(true)
-    console.log(selected);
+    console.log(selected)
     try {
-      const response = await fetch(`${baseUrl}/super/security/deleteUsers`,{
+      const response = await fetch(`${baseUrl}/super/security/deleteUsers`, {
         method: 'DELETE',
-        headers:{
+        headers: {
           Authorization: `Bearer ${token}`,
+          'Content-type' : 'application/json'
         },
-        body:{
-          selected
-        }
+        body: JSON.stringify(selected)
       })
-      if(response.ok){
-        setOpenSnackbar('Users deleted successfully')
+      if (response.ok) {
+        const updatedUsers = users.filter(user => !selected.some(selectedUser => selectedUser.id === user.id))
+        setUsers(updatedUsers)
+        setOpenSnackbar('User(s) deleted successfully')
         setSelected([])
       }
-      console.log('====================================');
-      console.log('hellllooo');
-      console.log('====================================');
-     
+
     } catch (error) {
       setError('Failed to delete users')
     } finally {
@@ -157,10 +160,9 @@ const UserTable = () => {
 
   const handleEditConfirm = async updatedUser => {
     const formdata = new FormData()
-    let newRoles = updatedUser.roles.join(", ");
-    formdata.append("id", updatedUser.id)
-    formdata.append("newRoles", newRoles)
-  
+    let newRoles = updatedUser.roles.join(', ')
+    formdata.append('id', updatedUser.id)
+    formdata.append('newRoles', newRoles)
 
     setIsLoading(true)
     setSelected([])
@@ -171,7 +173,7 @@ const UserTable = () => {
           Authorization: `Bearer ${token}`,
         },
 
-        body: formdata
+        body: formdata,
       })
 
       if (response.ok) {
@@ -191,9 +193,7 @@ const UserTable = () => {
   }
 
   const handleRoleFilterChange = event => {
-    const selectedRole = event.target.value
-    const selectedUser = users.find(user => user.roles.includes(selectedRole))
-    setRoleFilter(selectedUser || '')
+    setRoleFilter(event.target.value)
   }
 
   const handleChangePage = (event, newPage) => {
@@ -213,6 +213,11 @@ const UserTable = () => {
 
   const handleFilterClose = () => {
     setFilterAnchorEl(null)
+  }
+
+  const getUniqueRoles = users => {
+    const allRoles = users.flatMap(user => user.roles)
+    return [...new Set(allRoles)]
   }
 
   const handleFilterApply = newFilters => {
@@ -289,9 +294,9 @@ const UserTable = () => {
               <MenuItem value=''>
                 <em>None</em>
               </MenuItem>
-              {users.map(user => (
-                <MenuItem key={user.id} value={user.roles}>
-                  {user.roles.join(', ')}
+              {uniqueRoles.map(role => (
+                <MenuItem key={role} value={role}>
+                  {role}
                 </MenuItem>
               ))}
             </Select>
