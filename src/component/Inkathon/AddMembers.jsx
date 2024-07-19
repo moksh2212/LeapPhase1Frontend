@@ -67,7 +67,7 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
     try {
       const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`, {
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
       if (!response.ok) {

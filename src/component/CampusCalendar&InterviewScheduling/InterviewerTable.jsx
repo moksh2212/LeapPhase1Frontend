@@ -161,7 +161,7 @@ export default function CollapsibleTable() {
       try {
         const response = await fetch(`${baseUrl}/api/admin/interviewer/read`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         if (response.ok) {
@@ -203,7 +203,7 @@ export default function CollapsibleTable() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       })
@@ -274,7 +274,7 @@ export default function CollapsibleTable() {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -308,7 +308,7 @@ export default function CollapsibleTable() {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(formData),
         },

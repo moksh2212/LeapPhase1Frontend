@@ -108,7 +108,7 @@ DateHeader.propTypes = {
       try {
         const response = await fetch(`${canBaseUrl}/candidates/getAll`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         let jsonData = await response.json()
@@ -469,7 +469,7 @@ DateHeader.propTypes = {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify(values),
           },
@@ -520,7 +520,7 @@ DateHeader.propTypes = {
               {
                 method: 'DELETE',
                 headers:{
-                  Authorization: `Basic ${token}`,
+                  Authorization: `Bearer ${token}`,
                 }
               },
             )
@@ -547,7 +547,7 @@ DateHeader.propTypes = {
           const response = await fetch(`${canBaseUrl}/candidates/upload`, {
             method: 'POST',
             headers:{
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
             body: formData,
           })

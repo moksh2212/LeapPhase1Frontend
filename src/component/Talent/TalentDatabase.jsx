@@ -153,7 +153,7 @@ const TalentTable = () => {
         {
           method: 'PUT',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         },
@@ -181,7 +181,7 @@ const TalentTable = () => {
         `${tanBaseUrl}/cpm/talents/viewmarksheet/${talentId}`,
         {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -204,7 +204,7 @@ const TalentTable = () => {
         `${tanBaseUrl}/cpm/talents/uploadmarksheet/${talentId}`,
         {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           method: 'PUT',
           body: formData,
@@ -268,7 +268,7 @@ const TalentTable = () => {
         `${tanBaseUrl}/cpm/talents/viewresume/${talentId}`,
         {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -291,7 +291,7 @@ const TalentTable = () => {
         `${tanBaseUrl}/cpm/talents/uploadresume/${talentId}`,
         {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           method: 'PUT',
           body: formData,
@@ -391,7 +391,7 @@ const TalentTable = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newTalent),
       })
@@ -421,7 +421,7 @@ const TalentTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(talentToUpdate),
         },
@@ -459,7 +459,7 @@ const TalentTable = () => {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )
@@ -487,7 +487,7 @@ const TalentTable = () => {
           `${tanBaseUrl}/cpm/talents/alltalent`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )
@@ -495,7 +495,7 @@ const TalentTable = () => {
           `${tanBaseUrl}/cpm/talents/summary`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )

@@ -101,7 +101,7 @@ const Assignment = () => {
       try {
         const response = await fetch(`${baseUrl}/assignments/ReadAll`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         const data = await response.json()
@@ -128,7 +128,7 @@ const Assignment = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       })
@@ -160,7 +160,7 @@ const Assignment = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
 
           },
           body: JSON.stringify(formData),
@@ -196,7 +196,7 @@ const Assignment = () => {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
         
@@ -317,6 +317,12 @@ const Assignment = () => {
     enableRowSelection: true,
     initialState: { columnVisibility: { assignmentId: false } },
     isLoading,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     enableEditing: false,
     enableRowActions: true, // Enable the row action column
     onRowSelectionChange: setRowSelection,

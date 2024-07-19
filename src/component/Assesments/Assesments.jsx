@@ -121,9 +121,15 @@ const TalentAssessment = () => {
       setIsLoading(true)
       try {
         const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`, {
+<<<<<<< HEAD
           headers: {
             Authorization: `Basic ${token}`,
           },
+=======
+          headers:{
+            Authorization: `Bearer ${token}`,
+          }
+>>>>>>> 471a5257debf3358e0e557b2a062967ac2fee040
         })
         const data = await response.json()
         setTalentList(data)
@@ -148,7 +154,7 @@ const TalentAssessment = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newTalent),
       })
@@ -178,7 +184,7 @@ const TalentAssessment = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(talentToUpdate),
         },
@@ -208,6 +214,7 @@ const TalentAssessment = () => {
     setError(null)
     setOpenSnackbar(null)
     try {
+<<<<<<< HEAD
       const response = await fetch(
         `${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`,
         {
@@ -218,6 +225,15 @@ const TalentAssessment = () => {
         },
       )
 
+=======
+      const response = await fetch(`${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`, {
+        method: 'DELETE',
+        headers:{
+          Authorization: `Bearer ${token}`,
+        }
+      })
+  
+>>>>>>> 471a5257debf3358e0e557b2a062967ac2fee040
       if (response.ok) {
         setTalentList(prevTalents =>
           prevTalents.filter(talent => talent.talentId !== talentId),
@@ -435,6 +451,12 @@ const TalentAssessment = () => {
     columns,
     data: talentList,
     isLoading,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
     enableRowActions: true,
@@ -443,7 +465,11 @@ const TalentAssessment = () => {
       <MenuItem
         key={0}
         onClick={() => {
+<<<<<<< HEAD
           closeMenu()
+=======
+          closeMenu();
+>>>>>>> 471a5257debf3358e0e557b2a062967ac2fee040
         }}
         sx={{ m: 0 }}
       >
@@ -494,6 +520,7 @@ const TalentAssessment = () => {
           const formData = new FormData()
           formData.append('file', selectedFile)
 
+<<<<<<< HEAD
           const response = await fetch(
             `${tanBaseUrl}/assessments/uploadexcel`,
             {
@@ -502,6 +529,11 @@ const TalentAssessment = () => {
               },
               method: 'POST',
               body: formData,
+=======
+          const response = await fetch(`${tanBaseUrl}/assessments/uploadexcel`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+>>>>>>> 471a5257debf3358e0e557b2a062967ac2fee040
             },
           )
           console.log(response)

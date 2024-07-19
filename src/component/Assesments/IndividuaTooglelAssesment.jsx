@@ -64,7 +64,7 @@ const IndividualToogleAssesments = () => {
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
 
@@ -147,7 +147,7 @@ const IndividualToogleAssesments = () => {
           `${baseUrl}/assessments/assessment/${assessmentId}`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           },
         )
@@ -175,7 +175,7 @@ const IndividualToogleAssesments = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(newTalent),
         },
@@ -210,7 +210,7 @@ const IndividualToogleAssesments = () => {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       )

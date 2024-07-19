@@ -303,7 +303,7 @@ export function UpdateScheduleForm({
       try {
         const response = await fetch(`${baseUrl}/admin/viewData`, {
           headers:{
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         })
         const data = await response.json()
@@ -326,7 +326,7 @@ export function UpdateScheduleForm({
       try {
         const response = await fetch(`${baseUrl}/api/admin/interviewer/read`, {
           headers:{
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         })
         if (response.ok) {

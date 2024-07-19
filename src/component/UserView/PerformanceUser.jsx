@@ -27,7 +27,7 @@ const PerformancePage = () => {
       try {
         const response = await axios.get(`http://192.168.0.147:8080/cpm/performance/getPerformanceById?talentId=${currentUser.talentId}`, {
           headers: {
-            Authorization: `Basic ${token}`
+            Authorization: `Bearer ${token}`
           }
         });
         setData(response.data);

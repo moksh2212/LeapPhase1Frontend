@@ -87,7 +87,7 @@ const Attendance = () => {
         axios
           .post('http://192.168.0.147:8080/cpm/leaves/addLeave', formData, {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           })
           .then(response => {
@@ -135,7 +135,7 @@ const Attendance = () => {
             dataToSend,
             {
               headers: {
-                Authorization: `Basic ${token}`,
+                Authorization: `Bearer ${token}`,
               },
             },
           )

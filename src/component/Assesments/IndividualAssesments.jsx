@@ -56,7 +56,7 @@ const IndividualAssessments = () => {
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
-          'Authorization': `Basic ${token}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
   
@@ -143,7 +143,7 @@ const IndividualAssessments = () => {
           `${baseUrl}/assessments/viewassessment/${talentId}`,
           {
             headers: {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             }
           }
         );
@@ -176,7 +176,7 @@ const IndividualAssessments = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(newTalent),
         },
@@ -206,7 +206,7 @@ const IndividualAssessments = () => {
         {
           method: 'DELETE',
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         },
       );
@@ -348,6 +348,12 @@ const IndividualAssessments = () => {
     data: talentList,
     isLoading,
     createDisplayMode: 'modal',
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     editDisplayMode: 'modal',
     enableEditing: true,
     initialState: { columnVisibility: { reason: false } },

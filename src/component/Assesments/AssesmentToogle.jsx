@@ -123,7 +123,7 @@ const AssesmentToogle = () => {
       try {
         const response = await fetch(`${tanBaseUrl}/assessments/assementwiseview`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         })
         const data = await response.json()
@@ -149,7 +149,7 @@ const AssesmentToogle = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newTalent),
       })
@@ -179,7 +179,7 @@ const AssesmentToogle = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(talentToUpdate),
         },
@@ -212,7 +212,7 @@ const AssesmentToogle = () => {
       const response = await fetch(`${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         }
       })
 
@@ -410,6 +410,12 @@ const AssesmentToogle = () => {
     isLoading,
     createDisplayMode: 'modal',
     editDisplayMode: 'modal',
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     enableRowActions: true,
 
     renderRowActionMenuItems: ({ closeMenu, row }) => [
@@ -471,7 +477,7 @@ const AssesmentToogle = () => {
             method: 'POST',
             body: formData,
             headers: {
-              'Authorization': `Basic ${token}`,
+              'Authorization': `Bearer ${token}`,
             },
           })
           console.log(response)

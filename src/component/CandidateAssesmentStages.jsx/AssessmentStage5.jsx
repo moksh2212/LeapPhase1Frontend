@@ -111,7 +111,7 @@ const AssesTable = () => {
         const collegeId = urlParams.get('collegeId');
         const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         let jsonData = await response.json();
@@ -259,7 +259,7 @@ const AssesTable = () => {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
 
             },
             body: JSON.stringify(values),
@@ -312,7 +312,7 @@ const AssesTable = () => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
 
             },
             body: JSON.stringify(arr),

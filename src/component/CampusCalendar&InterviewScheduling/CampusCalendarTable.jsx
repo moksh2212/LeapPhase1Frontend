@@ -94,7 +94,7 @@ const CampusCalendarTable = () => {
           const response = await fetch(`${baseUrl}/api/admin/interviewschedule/read`,{
             headers:
             {
-              Authorization: `Basic ${token}`,
+              Authorization: `Bearer ${token}`,
             }
           })
           if (response.ok) {
@@ -134,7 +134,7 @@ const CampusCalendarTable = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(newSchedule),
       })
@@ -167,7 +167,7 @@ const CampusCalendarTable = () => {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(scheduleToUpdate),
         },
@@ -205,7 +205,7 @@ const CampusCalendarTable = () => {
         {
           method: 'DELETE',
           headers:{
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           }
         },
       )
@@ -314,6 +314,12 @@ const CampusCalendarTable = () => {
     initialState: { columnVisibility: { scheduleId: false } },
     isLoading,
     enableEditing: false,
+    muiTableHeadCellProps:{
+      align: 'center',
+    },
+    muiTableBodyCellProps:{
+      align: 'center',
+    },
     enableRowActions: true,
     onRowSelectionChange: setRowSelection,
 

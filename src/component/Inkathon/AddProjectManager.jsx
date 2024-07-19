@@ -52,7 +52,7 @@
       try {
         const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`, {
           headers: {
-            Authorization: `Basic ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         })
         if (!response.ok) {
@@ -98,6 +98,9 @@
                 onChange={e => setSelectedTalentId(e.target.value)}
                 size='sm'
               >
+                            <option value='' disabled selected>
+              Select a member
+            </option>
                 {filteredTalentList.map(talent => (
                   <option key={talent.talentId} value={talent.talentId}>
                     INC{talent.talentId} - {talent.ekYear} - {talent.talentName} -{' '}

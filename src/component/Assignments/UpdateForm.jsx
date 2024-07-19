@@ -52,7 +52,7 @@ export function UpdateForm({ openModal, setOpenModal, createAssignment, assnForm
     try {
       const response = await fetch('http://localhost:8080/cpm/talents/alltalent', {
         headers: {
-          Authorization: `Basic ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
       if (!response.ok) {
