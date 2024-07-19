@@ -32,6 +32,8 @@ const Attendance = () => {
   const token = useSelector(state => state.user.token)
   const [isOtherReason, setIsOtherReason] = useState(false)
 
+  const today = new Date();
+
   const handleReasonChange = value => {
     setIsOtherReason(value === 'other')
   }
@@ -215,9 +217,6 @@ const Attendance = () => {
           >
             <DatePicker
               style={{ width: '100%' }}
-              inputProps={{
-                min: new Date().toISOString().split('T')[0],
-              }}
             />
           </Form.Item>
           <Form.Item
@@ -227,9 +226,6 @@ const Attendance = () => {
           >
             <DatePicker
               style={{ width: '100%' }}
-              inputProps={{
-                min: new Date().toISOString().split('T')[0],
-              }}
             />
           </Form.Item>
           <Form.Item

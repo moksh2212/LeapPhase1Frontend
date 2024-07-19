@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AccountCircle } from '@mui/icons-material';
-import { Link } from 'react-router-dom'; // Import Link
-import  IndividualAssesments  from './IndividualAssesments';
-import Modal from '@mui/material/Modal';
-import Switch from '@mui/material/Switch';
-import { useNavigate } from 'react-router-dom';
+import { AccountCircle } from '@mui/icons-material'
+import { Link } from 'react-router-dom' // Import Link
+import IndividualAssesments from './IndividualAssesments'
+import Modal from '@mui/material/Modal'
+import Switch from '@mui/material/Switch'
+import { useNavigate } from 'react-router-dom'
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
   useMaterialReactTable,
   MRT_GlobalFilterTextField,
-  MRT_ToggleFiltersButton
+  MRT_ToggleFiltersButton,
 } from 'material-react-table'
 import {
   Alert,
@@ -37,13 +37,13 @@ const style = {
   border: '2px solid white',
   boxShadow: 24,
   p: 4,
-  borderRadius: '20px'
-};
+  borderRadius: '20px',
+}
 import CircularProgress from '@mui/material/CircularProgress'
-import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux'
 
 const TalentAssessment = () => {
-  let navigate = useNavigate();
+  let navigate = useNavigate()
   const [talentList, setTalentList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
@@ -53,14 +53,14 @@ const TalentAssessment = () => {
   const [talentIdToDelete, setTalentIdToDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([])
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
-  const label = { inputProps: { 'aria-label': 'Switch demo' } };
+  const label = { inputProps: { 'aria-label': 'Switch demo' } }
   const tanBaseUrl = process.env.BASE_URL2
-  const token = useSelector(state=>state.user.token)
+  const token = useSelector(state => state.user.token)
   const handleToggle = () => {
-    navigate('/dashboard?tab=assessmenttoogle');
-  };
+    navigate('/dashboard?tab=assessmenttoogle')
+  }
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -121,9 +121,9 @@ const TalentAssessment = () => {
       setIsLoading(true)
       try {
         const response = await fetch(`${tanBaseUrl}/cpm/talents/alltalent`, {
-          headers:{
+          headers: {
             Authorization: `Basic ${token}`,
-          }
+          },
         })
         const data = await response.json()
         setTalentList(data)
@@ -208,13 +208,16 @@ const TalentAssessment = () => {
     setError(null)
     setOpenSnackbar(null)
     try {
-      const response = await fetch(`${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`, {
-        method: 'DELETE',
-        headers:{
-          Authorization: `Basic ${token}`,
-        }
-      })
-  
+      const response = await fetch(
+        `${tanBaseUrl}/cpm/talents/deletetalent/${talentId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+        },
+      )
+
       if (response.ok) {
         setTalentList(prevTalents =>
           prevTalents.filter(talent => talent.talentId !== talentId),
@@ -254,16 +257,16 @@ const TalentAssessment = () => {
   const columns = useMemo(
     () => [
       {
-        id: 'talent', 
+        id: 'talent',
         columns: [
           {
-            accessorKey: 'talentId', 
+            accessorKey: 'talentId',
             header: 'Talent Id',
             enableEditing: false,
             size: 100,
           },
           {
-            accessorKey: 'talentName', 
+            accessorKey: 'talentName',
             header: 'Name',
             enableSorting: false,
             size: 100,
@@ -276,7 +279,7 @@ const TalentAssessment = () => {
                   ...validationErrors,
                   talentName: undefined,
                 }),
-    
+
               onBlur: event => {
                 const { value } = event.target
                 if (!value) {
@@ -303,7 +306,7 @@ const TalentAssessment = () => {
                   ...validationErrors,
                   currentLocation: undefined,
                 }),
-    
+
               onBlur: event => {
                 const { value } = event.target
                 if (!value) {
@@ -329,7 +332,7 @@ const TalentAssessment = () => {
                   ...validationErrors,
                   ekYear: undefined,
                 }),
-    
+
               onBlur: event => {
                 const { value } = event.target
                 if (!value) {
@@ -436,26 +439,27 @@ const TalentAssessment = () => {
     editDisplayMode: 'modal',
     enableRowActions: true,
 
-    renderRowActionMenuItems: ({ closeMenu ,row}) => [
+    renderRowActionMenuItems: ({ closeMenu, row }) => [
       <MenuItem
         key={0}
         onClick={() => {
-          handleModalOpen();
-          closeMenu();
+          closeMenu()
         }}
         sx={{ m: 0 }}
       >
         <ListItemIcon>
           <AccountCircle />
         </ListItemIcon>
-        <Link to={`/dashboard?tab=IndividualAssesments&talentId=${row.original.talentId}`}>
-          <Typography variant="inherit">Assessments</Typography>
+        <Link
+          to={`/dashboard?tab=IndividualAssesments&talentId=${row.original.talentId}`}
+        >
+          <Typography variant='inherit'>Assessments</Typography>
         </Link>
       </MenuItem>,
     ],
- renderTopToolbar: ({ table }) => {
-      const [hasSelectedRows, setHasSelectedRows] = useState(false);
-  const [openConvertModal, setOpenConvertModal] = useState(false);
+    renderTopToolbar: ({ table }) => {
+      const [hasSelectedRows, setHasSelectedRows] = useState(false)
+      const [openConvertModal, setOpenConvertModal] = useState(false)
       const handleDeactivate = () => {
         const confirmed = window.confirm(
           'Are you sure you want to delete the data?',
@@ -474,8 +478,7 @@ const TalentAssessment = () => {
         }
       }
 
-      
-   // eslint-disable-next-line react-hooks/rules-of-hooks
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [selectedFile, setSelectedFile] = useState(null)
       const handleFileChange = event => {
         setSelectedFile(event.target.files[0])
@@ -491,13 +494,16 @@ const TalentAssessment = () => {
           const formData = new FormData()
           formData.append('file', selectedFile)
 
-          const response = await fetch(`${tanBaseUrl}/assessments/uploadexcel`, {
-            headers: {
-              Authorization: `Basic ${token}`,
+          const response = await fetch(
+            `${tanBaseUrl}/assessments/uploadexcel`,
+            {
+              headers: {
+                Authorization: `Basic ${token}`,
+              },
+              method: 'POST',
+              body: formData,
             },
-            method: 'POST',
-            body: formData,
-          })
+          )
           console.log(response)
           if (response.ok) {
             alert('File uploaded successfully.')
@@ -510,14 +516,14 @@ const TalentAssessment = () => {
         }
       }
 
-        // Update the state variable based on the selected rows
-  const selectedRowCount = table.getSelectedRowModel().flatRows.length;
-  useEffect(() => {
-    setHasSelectedRows(selectedRowCount > 0);
-  }, [selectedRowCount]);
+      // Update the state variable based on the selected rows
+      const selectedRowCount = table.getSelectedRowModel().flatRows.length
+      useEffect(() => {
+        setHasSelectedRows(selectedRowCount > 0)
+      }, [selectedRowCount])
 
       return (
-        <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300">
+        <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
           <div className='flex justify-between mb-2 rounded-md'>
             <div className='my-auto mr-2'></div>
           </div>
@@ -550,9 +556,9 @@ const TalentAssessment = () => {
                           onChange={handleFileChange}
                         />
                       </label>
-                    </Button> 
+                    </Button>
                     <Button
-                    style={{marginLeft: '10px'}}
+                      style={{ marginLeft: '10px' }}
                       onClick={handleUpload}
                       color='success'
                       variant='contained'
@@ -566,26 +572,21 @@ const TalentAssessment = () => {
               </Box>
             </Box>
           </Box>
-           {/* Render the snackbar conditionally */}
-      {hasSelectedRows && (
-        <Snackbar
-          open={hasSelectedRows}
-          message="Rows are selected"
-          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        />
-      )}
-
+          {/* Render the snackbar conditionally */}
+          {hasSelectedRows && (
+            <Snackbar
+              open={hasSelectedRows}
+              message='Rows are selected'
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            />
+          )}
         </div>
       )
     },
-    
   })
-
-    
 
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
-   
       {isLoading && (
         <div className='flex min-h-[70vh] justify-center items-center'>
           <CircularProgress className='w-full mx-auto my-auto' />
@@ -632,8 +633,7 @@ const TalentAssessment = () => {
           {error}
         </Alert>
       </Snackbar>
-      
     </div>
   )
 }
-export default TalentAssessment;
+export default TalentAssessment

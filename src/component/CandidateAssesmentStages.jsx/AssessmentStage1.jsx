@@ -323,7 +323,9 @@ const AssesTable = () => {
 
       return (
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
-          <h2 className={`text-2xl text-[#0087D5] font-bold mb-3 flex items-center`}>
+          <h2
+            className={`text-2xl text-[#0087D5] font-bold mb-3 flex items-center`}
+          >
             {' '}
             <Button
               color='primary'
@@ -359,7 +361,11 @@ const AssesTable = () => {
                 </Button>
                 <div>
                   <ButtonGroup>
-                    <Button variant='contained' component='label' disabled={rows.length!==0}>
+                    <Button
+                      variant='contained'
+                      component='label'
+                      disabled={count !== 0}
+                    >
                       <label htmlFor='excelFile' className='excel-file-label'>
                         {selectedFile
                           ? `File Selected: ${selectedFile.name}`
