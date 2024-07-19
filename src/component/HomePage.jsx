@@ -3,10 +3,10 @@ import TabPane from 'antd/es/tabs/TabPane'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import DashHome from './DashHome'
-import Authorize from './AuthorizationRequests'
+import Authorize from './UsersList/AuthorizationRequests'
 
 const HomePage = () => {
-  const {currentUser} = useSelector(state => state.user)
+  const { currentUser } = useSelector(state => state.user)
 
   return (
     <>
@@ -17,7 +17,7 @@ const HomePage = () => {
               <DashHome />
             </TabPane>
             <TabPane tab='User Approval Requests' key='2'>
-              <Authorize/>
+              <Authorize />
             </TabPane>
             {/* <TabPane tab='Interviewer Table' key='3'>
        <InterviewerTable />

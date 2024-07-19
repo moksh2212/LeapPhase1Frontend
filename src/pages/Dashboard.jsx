@@ -30,9 +30,13 @@ import CollegeDBView from '../component/CollegeDB/CollegeDBView'
 import CombinedTalent from '../component/Assesments/CombinedTalent'
 import AssesmentCollege from '../component/CandidateAssesmentStages.jsx/AssesmentCollege'
 import CollegeTable from '../component/CollegeDB/CollegeDatabase'
+import UserListView from '../component/UsersList/UserListView'
+import DashHome from '../component/DashHome'
+import { useSelector } from 'react-redux'
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
+  const {currentUser} = useSelector(state=>state.user)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
@@ -52,7 +56,7 @@ export default function Dashboard() {
         </div>
 
         <div className='overflow-auto w-full'>
-          {tab === 'home' && <HomePage />}
+          {tab === 'home' && <DashHome />}
           {tab === 'college-and-contact' && <CollegeDBView />}
           {tab === 'candidates' && <CandidateDatabase />}
           {tab === 'assignments' && <FinalAssignmentview />}
@@ -85,6 +89,8 @@ export default function Dashboard() {
           {tab === 'candidate-assessment' && <CandidateAssesmentsCombined />}
           {tab === 'CombinedTalent' && <CombinedTalent />}
           {tab === 'AssesmentCollege' && <AssesmentCollege />}
+
+          {currentUser.roles.includes('SUPERADMIN') && tab==='users' && <UserListView/>}
         </div>
       </div>
     </>

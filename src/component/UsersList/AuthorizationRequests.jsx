@@ -32,8 +32,7 @@ const HistoryDialog = ({ open, onClose, history }) => {
         )}
         {history.map((entry, index) => (
           <Typography key={index} gutterBottom>
-            {entry.logEntry}{' '}
-            {moment(entry.timestamp).format('MMMM Do YYYY, h:mm:ss a')}
+            {entry.logEntry}
           </Typography>
         ))}
       </DialogContent>
@@ -84,7 +83,7 @@ const UserApprovalTable = ({ requests, onApprove, onReject, isPendingTab }) => {
     },
     {
       field: 'roles',
-      headerName: 'Roles',
+      headerName: 'Role(s)',
       flex: 1,
       minWidth: 150,
       renderCell: params => params.value.join(', '),
@@ -195,12 +194,12 @@ const Authorize = () => {
       const data = await response.json()
       // Transform the data to match the expected format
       const transformedData = data.map(item => ({
-        id: item.userDto.id,
-        inctureId: item.userDto.inctureId,
-        email: item.userDto.email,
-        talentName: item.userDto.talentName,
-        status: item.userDto.status,
-        roles: item.userDto.roles,
+        id: item.user.id,
+        inctureId: item.user.inctureId,
+        email: item.user.email,
+        talentName: item.user.talentName,
+        status: item.user.status,
+        roles: item.user.roles,
         history: item.history,
         // latestLogEntry: item.history.length > 0
         //   ? `${item.history[item.history.length-1].logEntry} ${moment(item.history[0].timestamp).format('MMMM Do YYYY, h:mm:ss a')}`
