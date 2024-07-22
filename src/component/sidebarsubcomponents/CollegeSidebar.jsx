@@ -29,7 +29,7 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
       >
         <Sidebar.Items>
           <Sidebar.ItemGroup>
-            <Sidebar.Item as={'div'} label={currentUser.roles.includes('ROLE_ADMIN')? 'Admin':'User'} labelColor='dark'>
+            <Sidebar.Item as={'div'} label={(currentUser.roles.includes('ADMIN') || currentUser.roles.includes('SUPERADMIN'))? 'Admin':'User'} labelColor='dark'>
               {currentUser.talentName}
             </Sidebar.Item>
             <Link to='?tab=college-and-contact'>
@@ -54,7 +54,7 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
             </Link>
             <Link to='?tab=AssesmentCollege'>
               <Sidebar.Item as={'div'} active={tab === 'AssesmentCollege'}>
-                Assessments
+                Assements & Interviews
               </Sidebar.Item>
             </Link>
             
