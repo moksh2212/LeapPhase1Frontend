@@ -33,7 +33,7 @@ const Example = () => {
   const aadhaarRegex = /^[0-9]{12}$/
   const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  const dobRegex = /^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2}$/
+  const dobRegex = /^\d{4}-\d{2}-\d{2}$/
   const [openSnackbar, setOpenSnackbar] = useState(null)
 
   const token = useSelector(state => state.user.token)
