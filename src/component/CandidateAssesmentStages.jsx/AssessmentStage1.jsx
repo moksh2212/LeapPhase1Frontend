@@ -110,15 +110,23 @@ const AssesTable = () => {
           },
         )
         let jsonData = await response.json()
-        jsonData = jsonData.slice(0, jsonData.length)
-        let arr = []
-        jsonData.forEach(asses => {
-          arr.push(asses['assessmentLevelOne'])
-        })
-        setData(arr)
-        console.log(jsonData)
+        console.log('Raw API response:', jsonData)
+    
+        if (Array.isArray(jsonData)) {
+          let arr = jsonData
+            .filter(asses => asses && asses.assessmentLevelOne)
+            .map(asses => asses.assessmentLevelOne)
+            .filter(item => item && item.candidateName) // Ensure each item has a candidateName
+    
+          console.log('Filtered and transformed data:', arr)
+          setData(arr)
+        } else {
+          console.error('Received data is not an array:', jsonData)
+          setData([])
+        }
       } catch (error) {
         console.error('Error fetching data:', error)
+        setData([])
       }
     }
 
@@ -295,9 +303,12 @@ const AssesTable = () => {
           }
 
           const formData = new FormData()
+          const urlParams = new URLSearchParams(window.location.search)
+          const collegeId = urlParams.get('collegeId')
           formData.append('file', selectedFile)
+          formData.append('collegeId', collegeId)
 
-          const response = await fetch(`${canBaseUrl}/cpm2/assessment/upload`, {
+          const response = await fetch(`${canBaseUrl}/cpm2/assessment/uploadLevelOne`, {
             method: 'POST',
             body: formData,
             headers: {

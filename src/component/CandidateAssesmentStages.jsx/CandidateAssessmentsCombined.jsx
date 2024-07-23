@@ -7,6 +7,7 @@ import CandidatesAssesmentsStage2 from './AssessmentStage2';
 import CandidatesAssesmentsStage3 from './AssessmentStage3';
 import CandidatesAssesmentsStage4 from './AssessmentStage4';
 import CandidatesAssesmentsStage5 from './AssessmentStage5';
+import CandidatesAssesmentsStage0 from './AssessmentStage0';
 import AssesmentFinalSelected from './AssesmentFinalSelected';
 
 export const CandidateAssesmentsCombined = () => {
@@ -26,6 +27,7 @@ export const CandidateAssesmentsCombined = () => {
             aria-label="simple tabs example"
             className="mt-1 text-black"
           >
+            <Tab label="Level 0" />
             <Tab label="Level 1" />
             <Tab label="Level 2" />
             <Tab label="Level 3" />
@@ -35,12 +37,13 @@ export const CandidateAssesmentsCombined = () => {
           </Tabs>
         </Box>
       </div>
-      {value === 0 && <CandidatesAssesmentsStage1 />}
-      {value === 1 && <CandidatesAssesmentsStage2 />}
-      {value === 2 && <CandidatesAssesmentsStage3 />}
-      {value === 3 && <CandidatesAssesmentsStage4 />}
-      {value === 4 && <CandidatesAssesmentsStage5 />}
-      {value === 5 && <AssesmentFinalSelected />}
+      {value === 0 && <CandidatesAssesmentsStage0 />}
+      {value === 1 && <CandidatesAssesmentsStage1 />}
+      {value === 2 && <CandidatesAssesmentsStage2 />}
+      {value === 3 && <CandidatesAssesmentsStage3 />}
+      {value === 4 && <CandidatesAssesmentsStage4 />}
+      {value === 5 && <CandidatesAssesmentsStage5 />}
+      {value === 6 && <AssesmentFinalSelected />}
     </>
   );
 };
