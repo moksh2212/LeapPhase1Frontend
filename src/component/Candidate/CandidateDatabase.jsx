@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
 import Modal from '@mui/material/Modal'
+import { Label, Select } from 'flowbite-react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 //MRT Imports
+import { AddCandidates } from './AddCandidates'
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -11,23 +13,18 @@ import {
 } from 'material-react-table'
 import PropTypes from 'prop-types'
 //Material UI Imports
-import {
-  Alert,
-  Button,
-  ButtonGroup,
-  Snackbar,
-  lighten,
-} from '@mui/material'
-
-//Mock Data
-//import { data } from './makeData';
-
+import { Alert, Button, ButtonGroup, Snackbar, lighten } from '@mui/material'
 
 const Example = () => {
   const [error, setError] = useState()
   const [data, setData] = useState([])
+  const [ekYear, setEkYear] = useState('')
+  const [ekYearOptions, setEkYearOptions] = useState([])
+  const [filteredCandidateList, setFilteredCandidateList] = useState([])
   const [validationErrors, setValidationErrors] = useState({})
-  const [hasSelectedRows, setHasSelectedRows] = useState(false)
+
+  const [openAddCandidates, setOpenAddCandidates] = useState(false)
+
   const [text, setText] = useState('')
   const phoneRegex = /^[0-9]{10}$/
   const aadhaarRegex = /^[0-9]{12}$/
@@ -38,91 +35,136 @@ const Example = () => {
 
   const token = useSelector(state => state.user.token)
   const canBaseUrl = process.env.BASE_URL2
-const style = {
-  position: 'absolute',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'green',
-  border: '2px solid white',
-  boxShadow: 24,
-  p: 4,
-  borderRadius: '20px'
-};
+  useEffect(() => {
+    console.log('hello')
+    fetchCandidateList()
+  }, [])
+  useEffect(() => {
+    if (!ekYear) {
+      setFilteredCandidateList(data)
+      return
+    }
 
-const SalaryCell = ({ cell }) => {
-  return (
-    <Box
-      component='span'
-      sx={theme => ({
-        backgroundColor:
-          cell.getValue() < 0
-            ? theme.palette.error.dark
-            : cell.getValue() >= 0 && cell.getValue() < 70
-            ? theme.palette.warning.dark
-            : theme.palette.success.dark,
-        borderRadius: '0.25rem',
-        color: '#fff',
-        maxWidth: '9ch',
-        p: '0.25rem',
-      })}
-    >
-      {cell.getValue()?.toLocaleString?.('en-US', {})}
-    </Box>
-  )
-}
-SalaryCell.propTypes = {
-  cell: PropTypes.shape({
-    getValue: PropTypes.func.isRequired,
-  }).isRequired,
-}
+    const filteredList = data.filter(candidate => {
+      if (!candidate.ekYear) return false
+      const requiredYear = candidate.ekYear
+      return requiredYear.includes(ekYear)
+    })
+    setFilteredCandidateList(filteredList)
+  }, [ekYear, data])
 
-const DateHeader = ({ column }) => {
-  return <em>{column.columnDef.header}</em>
-}
+  useEffect(() => {
+    const distinctEkYears = [
+      ...new Set(data.map(candidate => candidate.ekYear).filter(Boolean)),
+    ]
+    setEkYearOptions(distinctEkYears)
+  }, [data])
 
-DateHeader.propTypes = {
-  column: PropTypes.shape({
-    columnDef: PropTypes.shape({
-      header: PropTypes.node.isRequired,
+  const handleUpload = async formData => {
+    setOpenAddCandidates(false)
+    console.log(formData)
+    try {
+      const response = await fetch(
+        `${canBaseUrl}/candidates/upload/${formData.get('collegeId')}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        },
+      )
+      console.log(response)
+      if (response.ok) {
+        setOpenSnackbar('File uploaded successfully.')
+        window.location.reload()
+      } else {
+        setError('Failed to upload file.')
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error)
+    }
+  }
+  const style = {
+    position: 'absolute',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'green',
+    border: '2px solid white',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: '20px',
+  }
+
+  const SalaryCell = ({ cell }) => {
+    return (
+      <Box
+        component='span'
+        sx={theme => ({
+          backgroundColor:
+            cell.getValue() < 0
+              ? theme.palette.error.dark
+              : cell.getValue() >= 0 && cell.getValue() < 70
+              ? theme.palette.warning.dark
+              : theme.palette.success.dark,
+          borderRadius: '0.25rem',
+          color: '#fff',
+          maxWidth: '9ch',
+          p: '0.25rem',
+        })}
+      >
+        {cell.getValue()?.toLocaleString?.('en-US', {})}
+      </Box>
+    )
+  }
+  SalaryCell.propTypes = {
+    cell: PropTypes.shape({
+      getValue: PropTypes.func.isRequired,
     }).isRequired,
-  }).isRequired,
-}
+  }
+
+  const DateHeader = ({ column }) => {
+    return <em>{column.columnDef.header}</em>
+  }
+
+  DateHeader.propTypes = {
+    column: PropTypes.shape({
+      columnDef: PropTypes.shape({
+        header: PropTypes.node.isRequired,
+      }).isRequired,
+    }).isRequired,
+  }
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
     }
-  
+
     if (error) {
       setError(null)
     }
-  
+
     setOpenSnackbar(false)
   }
 
+  // Make API call to fetch data
+  const fetchCandidateList = async () => {
+    try {
+      const response = await fetch(`${canBaseUrl}/candidates/getAll`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
-
-  useEffect(() => {
-    // Make API call to fetch data
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${canBaseUrl}/candidates/getAll`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        let jsonData = await response.json()
-        jsonData = jsonData.slice(0, jsonData.length)
-        setData(jsonData)
-        console.log(jsonData) // Log the fetched data
-      } catch (error) {
-        setError(error)
-        console.error('Error fetching data:', error)
-      }
+      const jsonData = await response.json()
+      setData(jsonData)
+      setFilteredCandidateList(jsonData)
+      console.log(jsonData) // Log the fetched data
+    } catch (error) {
+      setError(error)
+      console.error('Error fetching data:', error)
     }
-
-    fetchData()
-  }, [])
+  }
 
   const columns = useMemo(
     () => [
@@ -139,6 +181,12 @@ DateHeader.propTypes = {
           {
             accessorKey: 'candidateName', //accessorFn used to join multiple data into a single cell
             header: 'Name',
+            enableSorting: false,
+            size: 100,
+          },
+          {
+            accessorKey: 'ekYear', //hey a simple column for once
+            header: 'EK Year',
             enableSorting: false,
             size: 100,
           },
@@ -404,7 +452,7 @@ DateHeader.propTypes = {
 
   const table = useMaterialReactTable({
     columns,
-    data, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    data: filteredCandidateList, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
     enableGrouping: true,
@@ -413,10 +461,10 @@ DateHeader.propTypes = {
     enableRowActions: true,
     enableRowSelection: true,
     enableEditing: true,
-    muiTableHeadCellProps:{
+    muiTableHeadCellProps: {
       align: 'center',
     },
-    muiTableBodyCellProps:{
+    muiTableBodyCellProps: {
       align: 'center',
     },
     onEditingRowSave: async ({ table, values }) => {
@@ -519,9 +567,9 @@ DateHeader.propTypes = {
               `${canBaseUrl}/candidates/${row.getValue('candidateId')}`,
               {
                 method: 'DELETE',
-                headers:{
+                headers: {
                   Authorization: `Bearer ${token}`,
-                }
+                },
               },
             )
             window.location.reload()
@@ -533,36 +581,6 @@ DateHeader.propTypes = {
       const handleFileChange = event => {
         setSelectedFile(event.target.files[0])
       }
-
-      const handleUpload = async () => {
-        try {
-          if (!selectedFile) {
-            setError('Please select a file.')
-            return
-          }
-
-          const formData = new FormData()
-          formData.append('file', selectedFile)
-
-          const response = await fetch(`${canBaseUrl}/candidates/upload`, {
-            method: 'POST',
-            headers:{
-              Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-          })
-          console.log(response)
-          if (response.ok) {
-            setOpenSnackbar('File uploaded successfully.')
-            window.location.reload()
-          } else {
-            setError('Failed to upload file.')
-          }
-        } catch (error) {
-          console.error('Error uploading file:', error)
-        }
-      }
-
       // Update the state variable based on the selected rows
       const selectedRowCount = table.getSelectedRowModel().flatRows.length
       useEffect(() => {
@@ -590,6 +608,24 @@ DateHeader.propTypes = {
               {/* import MRT sub-components */}
               <MRT_GlobalFilterTextField table={table} />
               <MRT_ToggleFiltersButton table={table} />
+              <div>
+                <div className='mb-0 block'>
+                  <Label htmlFor='selectedto' value='Select EK Year' />
+                </div>
+                <Select
+                  id='ekYearFiltered'
+                  value={ekYear}
+                  onChange={e => setEkYear(e.target.value)}
+                  size='sm'
+                >
+                  <option value=''>All</option>
+                  {ekYearOptions.map(year => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </Select>
+              </div>
             </Box>
             <Box>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
@@ -601,33 +637,15 @@ DateHeader.propTypes = {
                 >
                   Delete
                 </Button>
-                <div>
-                  <ButtonGroup>
-                    <Button variant='contained' component='label'>
-                      <label htmlFor='excelFile' className='excel-file-label'>
-                        {selectedFile
-                          ? `File Selected: ${selectedFile.name}`
-                          : 'Add via Excel'}
-                        <input
-                          type='file'
-                          id='excelFile'
-                          style={{ display: 'none' }}
-                          onChange={handleFileChange}
-                        />
-                      </label>
-                    </Button>
-                    <Button
-                      style={{ marginLeft: '10px' }}
-                      onClick={handleUpload}
-                      color='success'
-                      variant='contained'
-                      disabled={!selectedFile}
-                      sx={{ ml: 2 }} // Add some margin-left to create space
-                    >
-                      Upload File
-                    </Button>
-                  </ButtonGroup>
-                </div>
+                <Button
+                  color='success'
+                  onClick={() => {
+                    setOpenAddCandidates(true)
+                  }}
+                  variant='contained'
+                >
+                  Add Candidates
+                </Button>
               </Box>
             </Box>
           </Box>
@@ -655,37 +673,44 @@ DateHeader.propTypes = {
             </Box>
           </Modal>
           <Snackbar
-        open={!!openSnackbar} // Convert openSnackbar to a boolean value
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleClose}
-          severity='success'
-          variant='filled'
-          sx={{ width: '100%' }}
-        >
-          {openSnackbar}
-        </Alert>
-      </Snackbar>
+            open={!!openSnackbar} // Convert openSnackbar to a boolean value
+            autoHideDuration={2000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={handleClose}
+              severity='success'
+              variant='filled'
+              sx={{ width: '100%' }}
+            >
+              {openSnackbar}
+            </Alert>
+          </Snackbar>
 
-      <Snackbar
-        open={error}
-        autoHideDuration={5000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleClose}
-          severity='error'
-          variant='filled'
-          color='error'
-          sx={{ width: '100%' }}
-        >
-          {error}
-        </Alert>
-      </Snackbar>
+          <Snackbar
+            open={error}
+            autoHideDuration={5000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={handleClose}
+              severity='error'
+              variant='filled'
+              color='error'
+              sx={{ width: '100%' }}
+            >
+              {error}
+            </Alert>
+          </Snackbar>
+          {openAddCandidates && (
+            <AddCandidates
+              openModal={openAddCandidates}
+              setOpenModal={setOpenAddCandidates}
+              handleUpload={handleUpload}
+            />
+          )}
         </div>
       )
     },
