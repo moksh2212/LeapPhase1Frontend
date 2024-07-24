@@ -29,7 +29,7 @@ export default function EmployeesSidebar({ setShowEmployeesSidebar }) {
       >
         <Sidebar.Items>
           <Sidebar.ItemGroup>
-            <Sidebar.Item as={'div'} label={currentUser.roles.includes('ROLE_ADMIN')? 'Admin':'User'} labelColor='dark'>
+            <Sidebar.Item as={'div'} label={(currentUser.roles.includes('ADMIN') || currentUser.roles.includes('SUPERADMIN'))? 'Admin':'User'} labelColor='dark'>
               {currentUser.talentName}
             </Sidebar.Item>
             <Link to='/dashboard?tab=attendance'>

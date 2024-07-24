@@ -10,4 +10,8 @@ export default defineConfig({
 
     'process.env.BASE_URL2': '"http://192.168.0.147:8080"',
   },
+  server: {
+    host: '0.0.0.0', // Listen on all IP addresses
+    port: 3000,      // Specify the port you want to use (e.g., 3000)
+  }
 })

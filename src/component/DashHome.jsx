@@ -20,7 +20,7 @@ export default function DashHome() {
         <h2 className='text-3xl font-bold text-center mb-12'>Our Comprehensive Process</h2>
         <div className='flex flex-wrap justify-center items-start gap-4'>
           {[
-            "College Database", "→", "Candidate Pool", "→", "5-Stage Interviews", 
+            "College Database", "→", "Candidate Pool", "→", "5-Stage Assessments & Interviews", 
             "→", "Talent Selection", "→", "Training & Development"
           ].map((step, index) => (
             <div key={index} className={`text-center ${step === "→" ? "flex items-center" : "bg-white p-4 rounded-lg shadow-md"}`}>
@@ -99,11 +99,11 @@ export default function DashHome() {
           <Link to="/dashboard?tab=candidates" className='bg-blue-600 text-white font-medium py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300'>
             Candidates
           </Link>
-          <Link to="/dashboard?tab=campus-calendar" className='bg-blue-600 text-white font-medium py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300'>
-            Interviews
-          </Link>
           <Link to="/dashboard?tab=talent" className='bg-blue-600 text-white font-medium py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300'>
             Talents
+          </Link>
+          <Link to="/dashboard?tab=performance" className='bg-blue-600 text-white font-medium py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300'>
+            Performance
           </Link>
         </div>
       </section>
