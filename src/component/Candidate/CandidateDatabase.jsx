@@ -5,6 +5,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 //MRT Imports
 import { AddCandidates } from './AddCandidates'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -12,8 +13,21 @@ import {
   MRT_ToggleFiltersButton,
 } from 'material-react-table'
 import PropTypes from 'prop-types'
+import { mkConfig, generateCsv, download } from 'export-to-csv'
 //Material UI Imports
-import { Alert, Button, ButtonGroup, Snackbar, lighten } from '@mui/material'
+import {
+  Alert,
+  Button,
+  ButtonGroup,
+  Snackbar,
+  lighten,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormHelperText,
+  Tooltip,
+} from '@mui/material'
 
 const Example = () => {
   const [error, setError] = useState()
@@ -22,6 +36,7 @@ const Example = () => {
   const [ekYearOptions, setEkYearOptions] = useState([])
   const [filteredCandidateList, setFilteredCandidateList] = useState([])
   const [validationErrors, setValidationErrors] = useState({})
+  const [isLoading, setIsLoading] = useState(true)
 
   const [openAddCandidates, setOpenAddCandidates] = useState(false)
 
@@ -35,6 +50,50 @@ const Example = () => {
 
   const token = useSelector(state => state.user.token)
   const canBaseUrl = process.env.BASE_URL2
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
+  const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
+
+  const renderDeleteModal = () => (
+    <Dialog open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
+      <DialogTitle>Delete Selected</DialogTitle>
+      <DialogContent>
+        <p>Are you sure you want to delete?</p>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setOpenDeleteModal(false)}>Cancel</Button>
+        <Button onClick={handleDeactivate} color='error'>
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+  const handleDeactivate = () => {
+    table.getSelectedRowModel().flatRows.map(async row => {
+      setIsLoading(true)
+      setError(null)
+      setOpenSnackbar(null)
+      //alert('deactivating ' + row.getValue('name'))
+      const response = await fetch(
+        `${canBaseUrl}/candidates/${row.getValue('candidateId')}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      if (response.ok) {
+        setData(prevCandidates =>
+          prevCandidates.filter(
+            Candidates =>
+              Candidates.candidateId !== row.getValue('candidateId'),
+          ),
+        )
+        setOpenSnackbar('Candidate deleted successfully!')
+        setIsLoading(false)
+      }
+    })
+  }
   useEffect(() => {
     console.log('hello')
     fetchCandidateList()
@@ -59,6 +118,23 @@ const Example = () => {
     ]
     setEkYearOptions(distinctEkYears)
   }, [data])
+
+  const csvConfig = mkConfig({
+    fieldSeparator: ',',
+    decimalSeparator: '.',
+    useKeysAsHeaders: true,
+  })
+
+  const handleExportRows = rows => {
+    const rowData = rows.map(row => row.original)
+    const csv = generateCsv(csvConfig)(rowData)
+    download(csvConfig)(csv)
+  }
+
+  const handleExportData = () => {
+    const csv = generateCsv(csvConfig)(data)
+    download(csvConfig)(csv)
+  }
 
   const handleUpload = async formData => {
     setOpenAddCandidates(false)
@@ -149,6 +225,7 @@ const Example = () => {
 
   // Make API call to fetch data
   const fetchCandidateList = async () => {
+    setIsLoading(true)
     try {
       const response = await fetch(`${canBaseUrl}/candidates/getAll`, {
         headers: {
@@ -159,7 +236,7 @@ const Example = () => {
       const jsonData = await response.json()
       setData(jsonData)
       setFilteredCandidateList(jsonData)
-      console.log(jsonData) // Log the fetched data
+      setIsLoading(false)
     } catch (error) {
       setError(error)
       console.error('Error fetching data:', error)
@@ -455,11 +532,15 @@ const Example = () => {
     data: filteredCandidateList, //data must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
     enableColumnFilterModes: true,
     enableColumnOrdering: true,
+    enableSelectAll: true,
+    selectAllMode: 'all',
     enableGrouping: true,
     enableColumnPinning: true,
     enableFacetedValues: true,
+    isLoading,
     enableRowActions: true,
     enableRowSelection: true,
+    state: { isLoading },
     enableEditing: true,
     muiTableHeadCellProps: {
       align: 'center',
@@ -556,31 +637,6 @@ const Example = () => {
     renderTopToolbar: ({ table }) => {
       const [hasSelectedRows, setHasSelectedRows] = useState(false)
       const [openConvertModal, setOpenConvertModal] = useState(false)
-      const handleDeactivate = () => {
-        const confirmed = window.confirm(
-          'Are you sure you want to delete the data?',
-        )
-        if (confirmed) {
-          table.getSelectedRowModel().flatRows.map(async row => {
-            //alert('deactivating ' + row.getValue('name'))
-            const response = await fetch(
-              `${canBaseUrl}/candidates/${row.getValue('candidateId')}`,
-              {
-                method: 'DELETE',
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              },
-            )
-            window.location.reload()
-          })
-        }
-      }
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const [selectedFile, setSelectedFile] = useState(null)
-      const handleFileChange = event => {
-        setSelectedFile(event.target.files[0])
-      }
       // Update the state variable based on the selected rows
       const selectedRowCount = table.getSelectedRowModel().flatRows.length
       useEffect(() => {
@@ -632,7 +688,9 @@ const Example = () => {
                 <Button
                   color='error'
                   disabled={selectedRowCount === 0}
-                  onClick={handleDeactivate}
+                  onClick={() => {
+                    setOpenDeleteModal(true)
+                  }}
                   variant='contained'
                 >
                   Delete
@@ -646,6 +704,28 @@ const Example = () => {
                 >
                   Add Candidates
                 </Button>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: '16px',
+                    padding: '8px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <Button
+                    disabled={
+                      !table.getIsSomeRowsSelected() &&
+                      !table.getIsAllRowsSelected()
+                    }
+                    //only export selected rows
+                    onClick={() =>
+                      handleExportRows(table.getSelectedRowModel().rows)
+                    }
+                    startIcon={<FileDownloadIcon />}
+                  >
+                    Export Selected Rows
+                  </Button>
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -711,6 +791,7 @@ const Example = () => {
               handleUpload={handleUpload}
             />
           )}
+          {renderDeleteModal()}
         </div>
       )
     },
