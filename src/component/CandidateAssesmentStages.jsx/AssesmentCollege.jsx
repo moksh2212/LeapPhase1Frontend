@@ -355,6 +355,22 @@ const columns = useMemo(
       },
     },
     {
+      accessorKey: 'assessmentList',
+      header: 'Assessment Status',
+      size: 150,
+      Cell: ({ row }) => {
+        const assessments = row.original.assessmentList;    
+        // Determine the assessment status based on the assessment list
+        const status = assessments.length > 0 ? 'Started' : 'Not Started';
+    
+        return (
+          <div>
+            <span className='ml-6'>{status}</span>
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: 'viewAssessment',
       header: 'View Assessment',
       size: 150,
@@ -372,6 +388,8 @@ const columns = useMemo(
         </div>
       ),
     },
+   
+    
   ],
   [validationErrors]
 );
