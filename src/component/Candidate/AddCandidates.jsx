@@ -29,7 +29,6 @@ export function AddCandidates({ openModal, setOpenModal, handleUpload }) {
     console.log('that is selected ', selectedFile1.name)
     formData.append('file', selectedFile1)
     formData.append('collegeId', collegeId)
-    formData.append('ekbatch', ekYear)
     console.log('college id in form', formData.get('collegeId'))
 
     try {
@@ -65,16 +64,6 @@ export function AddCandidates({ openModal, setOpenModal, handleUpload }) {
       <Modal.Body>
         <form onSubmit={handleSubmit} className='flex max-w-md flex-col gap-4'>
           <div>
-            <div className='mb-2 block'>
-              <Label htmlFor='selectedto' value='Enter EK Year' />
-            </div>
-            <TextInput
-              id='otherReason'
-              value={ekYear}
-              onChange={e => setEkYear(e.target.value)}
-              placeholder='Enter EK Year'
-              size={'sm'}
-            />
             <div className='mb-2 block'>
               <Label
                 htmlFor='selectedto'
