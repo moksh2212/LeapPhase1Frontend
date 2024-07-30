@@ -9,12 +9,17 @@ import {
 } from 'material-react-table'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import { Button, Snackbar, lighten } from '@mui/material'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
-
 const canBaseUrl = process.env.BASE_URL2
 const tanBaseUrl = process.env.BASE_URL2
+
+
+  const urlParams = new URLSearchParams(window.location.search)
+  const collegeName = urlParams.get('collegeName')
+
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -45,8 +50,8 @@ const SalaryCell = ({ cell }) => {
           cell.getValue() < 0
             ? theme.palette.error.dark
             : cell.getValue() >= 0 && cell.getValue() < 70
-            ? theme.palette.warning.dark
-            : theme.palette.success.dark,
+              ? theme.palette.warning.dark
+              : theme.palette.success.dark,
         borderRadius: '0.25rem',
         color: '#fff',
         maxWidth: '9ch',
@@ -83,6 +88,10 @@ const AssesTable = () => {
   const token = useSelector(state => state.user.token)
   const [count, setCount] = useState(0)
   const navigate = useNavigate()
+  const [x, setx] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
+
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -91,9 +100,12 @@ const AssesTable = () => {
 
     setOpen(false)
   }
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
   const transformAssessmentData = (jsonData) => {
     const assessmentList = jsonData || [];
-    
+
     return assessmentList.map(candidate => {
       return {
         name: candidate.candidateName,
@@ -102,17 +114,19 @@ const AssesTable = () => {
         levelTwo: candidate.assessmentLevelTwo ? candidate.assessmentLevelTwo.totalScore : "Not Assessed",
         levelThree: candidate.assessmentLevelThree ? candidate.assessmentLevelThree.totalScore : "Not Assessed",
         levelFour: candidate.assessmentLevelFour ? candidate.assessmentLevelFour.totalScore : "Not Assessed",
-        levelFive: candidate.assessmentLevelFive ? candidate.assessmentLevelFive.totalScore : "Not Assessed",
-        levelFinal: candidate.assessmentLevelFinal ? candidate.assessmentLevelFinal.totalScore : "Not Assessed"
+        levelFive: candidate.assessmentLevelFive ? candidate.assessmentLevelFive.hrScore : "Not Assessed",
+        levelFinal: candidate.assessmentLevelFinal ? "Selected" : "Not Selected"
       };
     });
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const urlParams = new URLSearchParams(window.location.search)
         const collegeId = urlParams.get('collegeId')
+        setLoading(true)
+
         const response = await fetch(
           `${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`,
           {
@@ -123,19 +137,22 @@ const AssesTable = () => {
         )
         let jsonData = await response.json()
         console.log(jsonData)
-            const transformedData = transformAssessmentData(jsonData);
-        
-   
+        const transformedData = transformAssessmentData(jsonData);
+
+
 
         setData(transformedData)
-       
+        setLoading(false)
+
       } catch (error) {
         console.error('Error fetching data:', error)
+        setSnackbar({ open: true, message: 'Error fetching data', severity: 'error' })
+
       }
     }
 
     fetchData()
-  }, [])
+  }, [x])
 
   const validate = values => {
     const errors = {}
@@ -171,12 +188,12 @@ const AssesTable = () => {
 
     return errors
   }
-
+console.log(collegeName)
   const columns = useMemo(
     () => [
       {
-        id: 'candidate',
-        header: 'Candidate',
+        id: collegeName,
+        header: collegeName,
         columns: [
 
           {
@@ -227,7 +244,7 @@ const AssesTable = () => {
             enableSorting: true,
             enableColumnFilter: true,
             size: 100,
-      
+
             Cell: ({ cell }) => <div className='ml-4'>{cell.getValue()}</div>,
           },
           {
@@ -236,7 +253,7 @@ const AssesTable = () => {
             enableSorting: true,
             enableColumnFilter: true,
             size: 100,
-      
+
             Cell: ({ cell }) => <div className='ml-4'>{cell.getValue()}</div>,
           },
           {
@@ -245,10 +262,10 @@ const AssesTable = () => {
             enableSorting: true,
             enableColumnFilter: true,
             size: 100,
-       
+
             Cell: ({ cell }) => <div className='ml-4'>{cell.getValue()}</div>,
           },
-         
+
         ],
       },
     ],
@@ -264,7 +281,7 @@ const AssesTable = () => {
     enableColumnPinning: true,
     enableFacetedValues: true,
     enableRowActions: false,
-    enableRowSelection: true,
+    enableRowSelection: false,
     enableEditing: false,
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
@@ -333,37 +350,38 @@ const AssesTable = () => {
         const formData = new FormData();
         const urlParams = new URLSearchParams(window.location.search);
         const collegeId = urlParams.get('collegeId');
-        
-        formData.append('collegeId', collegeId);
-        
-        try {
-            const response = await fetch(
-                `${tanBaseUrl}/cpm2/assessment/loadCandidates`,
-                {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`, // No Content-Type header required
-                    },
-                    body: formData,
-                }
-            );
-            
-            if (!response.ok) {
-                // Handle error response
-                console.error('Failed to fetch:', response.status, response.statusText);
-                return;
-            }
-            
-            // Process the response if needed
-            window.location.reload();
-            setOpen(true);
-        } catch (error) {
-            console.error('Error during fetch:', error);
-        }
-    }
-    
 
- 
+        formData.append('collegeId', collegeId);
+
+        try {
+          const response = await fetch(
+            `${tanBaseUrl}/cpm2/assessment/loadCandidates`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`, // No Content-Type header required
+              },
+              body: formData,
+            }
+          );
+
+          if (!response.ok) {
+            // Handle error response
+            console.error('Failed to fetch:', response.status, response.statusText);
+            
+            return;
+          }
+
+          // Process the response if needed
+          setx(!x)
+          setOpen(true);
+        } catch (error) {
+          console.error('Error during fetch:', error);
+        }
+      }
+
+
+
 
       return (
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
@@ -399,7 +417,7 @@ const AssesTable = () => {
                   onClick={handleActivate}
                   variant='contained'
                 >
-                  Load Candidates
+                  Add Candidates
                 </Button>
               </Box>
             </Box>
@@ -421,13 +439,48 @@ const AssesTable = () => {
               </Alert>
             </Snackbar>
           )}
+               <Snackbar
+            open={snackbar.open}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity={snackbar.severity}
+              variant='filled'
+              sx={{ width: '100%' }}
+            >
+              {snackbar.message}
+            </Alert>
+          </Snackbar>
         </div>
       )
     },
   })
 
-  return <MaterialReactTable table={table} />
-}
+  return (
+    <>
+      {loading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <MaterialReactTable table={table} />
+      )}
+    </>
+  );}
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'

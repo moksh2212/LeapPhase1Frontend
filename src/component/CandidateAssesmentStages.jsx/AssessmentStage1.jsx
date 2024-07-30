@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
 import { useSelector } from 'react-redux'
-
+import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -12,6 +12,7 @@ import {
   MRT_ToggleFiltersButton,
 } from 'material-react-table'
 import PropTypes from 'prop-types'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import { Button, ButtonGroup, Snackbar, lighten } from '@mui/material'
 
@@ -49,8 +50,8 @@ const SalaryCell = ({ cell }) => {
           cell.getValue() < 0
             ? theme.palette.error.dark
             : cell.getValue() >= 0 && cell.getValue() < 70
-            ? theme.palette.warning.dark
-            : theme.palette.success.dark,
+              ? theme.palette.warning.dark
+              : theme.palette.success.dark,
         borderRadius: '0.25rem',
         color: '#fff',
         maxWidth: '9ch',
@@ -85,6 +86,12 @@ const AssesTable = () => {
   const [open, setOpen] = useState(false)
   const [x, setx] = useState(0)
   const [count, setCount] = useState(0)
+  const [snackbarOpen, setSnackbarOpen] = useState(false)
+  const [errorSnackbarOpen, setErrorSnackbarOpen] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
+
   const navigate = useNavigate()
 
   const handleClose = (event, reason) => {
@@ -94,10 +101,30 @@ const AssesTable = () => {
 
     setOpen(false)
   }
+  const handleSnackBarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setSnackbarOpen(false)
+  }
+
+  const handleErrorSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    setErrorSnackbarOpen(false)
+  }
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
   const token = useSelector(state => state.user.token)
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
+
       try {
         const urlParams = new URLSearchParams(window.location.search)
         const collegeId = urlParams.get('collegeId')
@@ -111,21 +138,26 @@ const AssesTable = () => {
         )
         let jsonData = await response.json()
         console.log('Raw API response:', jsonData)
-    
+
         if (Array.isArray(jsonData)) {
           let arr = jsonData
             .filter(asses => asses && asses.assessmentLevelOne)
             .map(asses => asses.assessmentLevelOne)
             .filter(item => item && item.candidateName) // Ensure each item has a candidateName
-    
+
           console.log('Filtered and transformed data:', arr)
           setData(arr)
+
+          setLoading(false)
+
         } else {
           console.error('Received data is not an array:', jsonData)
           setData([])
         }
       } catch (error) {
         console.error('Error fetching data:', error)
+        setErrorMessage('Error fetching data')
+        setErrorSnackbarOpen(true)
         setData([])
       }
     }
@@ -133,11 +165,14 @@ const AssesTable = () => {
     fetchData()
   }, [x])
 
+  const urlParams = new URLSearchParams(window.location.search)
+  const collegeName = urlParams.get('collegeName')
+
   const columns = useMemo(
     () => [
       {
-        id: 'candidate',
-        header: 'Candidate',
+        id: 'candidateName',
+        header: collegeName,
         columns: [
           {
             accessorKey: 'candidateName',
@@ -266,8 +301,7 @@ const AssesTable = () => {
           arr.push(row.original)
         })
         const response = await fetch(
-          `${tanBaseUrl}/cpm2/assessment
-/selectLevelOne`,
+          `${tanBaseUrl}/cpm2/assessment/selectLevelOne`,
           {
             method: 'POST',
             headers: {
@@ -290,9 +324,18 @@ const AssesTable = () => {
         setHasSelectedRows(false)
         table.toggleAllRowsSelected(false)
       }
+
       const [selectedFile, setSelectedFile] = useState(null)
       const handleFileChange = event => {
         setSelectedFile(event.target.files[0])
+      }
+      const handleFileDeselect = () => {
+        setSelectedFile(null)
+        // Reset the file input
+        const fileInput = document.getElementById('excelFile')
+        if (fileInput) {
+          fileInput.value = ''
+        }
       }
 
       const handleUpload = async () => {
@@ -317,13 +360,16 @@ const AssesTable = () => {
           })
           console.log(response)
           if (response.ok) {
-            alert('File uploaded successfully.')
-            setx(1)
+            setx(!x);
+            setSnackbarOpen(true)
           } else {
-            alert('Failed to upload file.')
+            setErrorMessage('Failed to upload file')
+            setErrorSnackbarOpen(true)
           }
         } catch (error) {
           console.error('Error uploading file:', error)
+          setErrorMessage('Error uploading file')
+          setErrorSnackbarOpen(true)
         }
       }
 
@@ -372,10 +418,10 @@ const AssesTable = () => {
                 </Button>
                 <div>
                   <ButtonGroup>
-                    <Button variant='contained' component='label' >
+                    <Button variant='contained' component='label'>
                       <label htmlFor='excelFile' className='excel-file-label'>
                         {selectedFile
-                          ? `File Selected: ${selectedFile.name}`
+                          ? ` ${selectedFile.name}`
                           : 'Add via Excel'}
                         <input
                           type='file'
@@ -385,6 +431,21 @@ const AssesTable = () => {
                         />
                       </label>
                     </Button>
+                    {selectedFile && (
+                      <Button
+                        onClick={handleFileDeselect}
+
+                        variant='contained'
+                        sx={{
+                          backgroundColor: 'red',
+                          '&:hover': {
+                            backgroundColor: 'darkred',
+                          },
+                        }}
+                      >
+                        <CloseSharpIcon />
+                      </Button>
+                    )}
                     <Button
                       style={{ marginLeft: '10px' }}
                       onClick={handleUpload}
@@ -407,6 +468,26 @@ const AssesTable = () => {
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             />
           )}
+          {
+            snackbarOpen && (
+              <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleErrorSnackbarClose}
+
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              >
+                   <Alert
+                onClose={handleErrorSnackbarClose}
+                severity='success'
+                variant='filled'
+                sx={{ width: '100%' }}
+              >
+                File uploaded Successfully
+              </Alert>
+              </Snackbar>
+            )
+          }
           {open && (
             <Snackbar
               open={open}
@@ -421,17 +502,69 @@ const AssesTable = () => {
                 sx={{ width: '100%' }}
               >
                 {count === 1
-                  ? `${count} candiadate selected successfully for stage 2 `
-                  : `${count} candiadates selected successfully for stage  2`}
+                  ? `${count} candidate selected successfully for stage 2 `
+                  : `${count} candidates selected successfully for stage  2`}
               </Alert>
             </Snackbar>
           )}
+          {errorSnackbarOpen && (
+            <Snackbar
+              open={errorSnackbarOpen}
+              autoHideDuration={6000}
+              onClose={handleErrorSnackbarClose}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+              <Alert
+                onClose={handleErrorSnackbarClose}
+                severity='error'
+                variant='filled'
+                sx={{ width: '100%' }}
+              >
+                {errorMessage}
+              </Alert>
+            </Snackbar>
+          )}
+                   <Snackbar
+            open={snackbar.open}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity={snackbar.severity}
+              variant='filled'
+              sx={{ width: '100%' }}
+            >
+              {snackbar.message}
+            </Alert>
+          </Snackbar>
         </div>
       )
     },
   })
-  return <MaterialReactTable table={table} />
-}
+  return (
+    <>
+      {loading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <MaterialReactTable table={table} />
+      )}
+    </>
+  );}
 
 //Date Picker Imports - these should just be in your Context Provider
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'

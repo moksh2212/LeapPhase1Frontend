@@ -27,7 +27,7 @@ export const CandidateAssesmentsCombined = () => {
             aria-label="simple tabs example"
             className="mt-1 text-black"
           >
-            <Tab label="Level 0" />
+            <Tab label="Combined" />
             <Tab label="Level 1" />
             <Tab label="Level 2" />
             <Tab label="Level 3" />

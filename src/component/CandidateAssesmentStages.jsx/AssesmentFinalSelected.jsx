@@ -9,6 +9,7 @@ import {
 } from 'material-react-table'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import { Button, Snackbar, lighten } from '@mui/material'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
@@ -82,6 +83,7 @@ const AssesTable = () => {
   const [open, setOpen] = useState(false)
   const token = useSelector(state => state.user.token)
   const [count, setCount] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
 
@@ -93,6 +95,8 @@ const AssesTable = () => {
     setOpen(false)
   }
   useEffect(() => {
+    setLoading(true)
+
     const fetchData = async () => {
       try {
         const urlParams = new URLSearchParams(window.location.search)
@@ -115,6 +119,8 @@ const AssesTable = () => {
 
         setData(arr)
         console.log(jsonData)
+        setLoading(false)
+
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -384,8 +390,24 @@ const AssesTable = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <MaterialReactTable table={table} />
-    </div>
+     {loading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <MaterialReactTable table={table} />
+      )}    </div>
   )
 }
 

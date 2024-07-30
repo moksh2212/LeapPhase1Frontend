@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux'
 
 import { Button, Snackbar, lighten } from '@mui/material'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
-
+import CircularProgress from '@mui/material/CircularProgress'
 const canBaseUrl = process.env.BASE_URL2
 const tanBaseUrl = process.env.BASE_URL2
 
@@ -45,8 +45,8 @@ const SalaryCell = ({ cell }) => {
           cell.getValue() < 0
             ? theme.palette.error.dark
             : cell.getValue() >= 0 && cell.getValue() < 70
-            ? theme.palette.warning.dark
-            : theme.palette.success.dark,
+              ? theme.palette.warning.dark
+              : theme.palette.success.dark,
         borderRadius: '0.25rem',
         color: '#fff',
         maxWidth: '9ch',
@@ -82,6 +82,9 @@ const AssesTable = () => {
   const [open, setOpen] = useState(false)
   const token = useSelector(state => state.user.token)
   const [count, setCount] = useState(0)
+  const [x, setx] = useState(0)
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleClose = (event, reason) => {
@@ -91,8 +94,13 @@ const AssesTable = () => {
 
     setOpen(false)
   }
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       try {
         const urlParams = new URLSearchParams(window.location.search)
         const collegeId = urlParams.get('collegeId')
@@ -116,11 +124,14 @@ const AssesTable = () => {
         console.log(jsonData)
       } catch (error) {
         console.error('Error fetching data:', error)
+        setSnackbar({ open: true, message: 'Error fetching data', severity: 'error' })
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchData()
-  }, [])
+  }, [x])
 
   const validate = values => {
     const errors = {}
@@ -156,12 +167,14 @@ const AssesTable = () => {
 
     return errors
   }
+  const urlParams = new URLSearchParams(window.location.search)
+  const collegeName = urlParams.get('collegeName')
 
   const columns = useMemo(
     () => [
       {
         id: 'candidate',
-        header: 'Candidate',
+        header: collegeName,
         columns: [
           {
             accessorKey: 'levelTwoId',
@@ -398,9 +411,12 @@ const AssesTable = () => {
           },
         )
         if (!response.ok) {
+          setSnackbar({ open: true, message: 'Failed to update candidate', severity: 'error' });
+
           throw new Error('Failed to update candidate')
         } else {
-          alert('Edited successfully')
+          setSnackbar({ open: true, message: 'Edited successfully', severity: 'success' });
+          setx(!x);
         }
         table.setEditingRow(null)
       } catch (error) {
@@ -489,9 +505,12 @@ const AssesTable = () => {
               justifyContent: 'space-between',
             })}
           >
+
             <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <MRT_GlobalFilterTextField table={table} />
               <MRT_ToggleFiltersButton table={table} />
+     
+
             </Box>
             <Box>
               <Box sx={{ display: 'flex', gap: '0.5rem' }}>
@@ -506,6 +525,7 @@ const AssesTable = () => {
               </Box>
             </Box>
           </Box>
+       
           {hasSelectedRows && (
             <Snackbar
               open={hasSelectedRows}
@@ -532,12 +552,48 @@ const AssesTable = () => {
               </Alert>
             </Snackbar>
           )}
+          <Snackbar
+            open={snackbar.open}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity={snackbar.severity}
+              variant='filled'
+              sx={{ width: '100%' }}
+            >
+              {snackbar.message}
+            </Alert>
+          </Snackbar>
         </div>
       )
     },
   })
 
-  return <MaterialReactTable table={table} />
+  return (
+    <>
+      {loading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <MaterialReactTable table={table} />
+      )}
+    </>
+  );
 }
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'

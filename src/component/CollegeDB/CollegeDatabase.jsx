@@ -18,7 +18,8 @@ import {
   Tooltip,
 } from '@mui/material'
 import { useSelector } from 'react-redux'
- 
+import CloseSharpIcon from '@mui/icons-material/CloseSharp';
+
 //Module completed testing done
  
 const CollegeTable = () => {
@@ -892,7 +893,14 @@ const CollegeTable = () => {
         const handleFileChange = event => {
           setSelectedFile(event.target.files[0])
         }
- 
+        const handleFileDeselect = () => {
+          setSelectedFile(null)
+          // Reset the file input
+          const fileInput = document.getElementById('excelFile')
+          if (fileInput) {
+            fileInput.value = ''
+          }
+        }
         const handleUpload = async () => {
           try {
             if (!selectedFile) {
@@ -915,11 +923,10 @@ const CollegeTable = () => {
             })
             console.log(response)
             if (response.ok) {
-              alert('File uploaded successfully.')
-              setx(1)
+              setOpenSnackbar('College added successfully!')
+              setx(!x)
             } else {
-              alert('Failed to upload file.')
-            }
+              setError("Fail to upload")            }
           } catch (error) {
             console.error('Error uploading file:', error)
           }
@@ -935,10 +942,10 @@ const CollegeTable = () => {
           >
             Create New College
           </Button>
-          <Button variant='contained' component='label' >
+          <Button variant='contained' component='label'>
                       <label htmlFor='excelFile' className='excel-file-label'>
                         {selectedFile
-                          ? `File Selected: ${selectedFile.name}`
+                          ? ` ${selectedFile.name}`
                           : 'Add via Excel'}
                         <input
                           type='file'
@@ -948,6 +955,21 @@ const CollegeTable = () => {
                         />
                       </label>
                     </Button>
+                    {selectedFile && (
+                      <Button
+                        onClick={handleFileDeselect}
+
+                        variant='contained'
+                        sx={{
+                          backgroundColor: 'red',
+                          '&:hover': {
+                            backgroundColor: 'darkred',
+                          },
+                        }}
+                      >
+                        <CloseSharpIcon />
+                      </Button>
+                    )}
                     <Button
                       style={{ marginLeft: '10px' }}
                       onClick={handleUpload}
