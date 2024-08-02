@@ -179,10 +179,10 @@ const AssesTable = () => {
             header: 'Candidate Name',
             size: 100,
             enableEditing: false,
-            Cell: ({ cell }) => <div className='ml-8'>{cell.getValue()}</div>,
+            Cell: ({ cell }) => <div className='mr-8'>{cell.getValue()}</div>,
           },
           {
-            accessorKey: 'email', //accessorKey used to define `data` column. `id` gets set to accessorKey automatically
+            accessorKey: 'email', 
             enableClickToCopy: true,
             enableSorting: false,
             filterVariant: 'autocomplete',
@@ -207,6 +207,12 @@ const AssesTable = () => {
                 }
               },
             }),
+            Cell: ({ cell }) => <div className='mr-'>{cell.getValue()}</div>,
+            Header: ({ column }) => (
+              <div className='ml-10'>
+                {column.columnDef.header}
+              </div>
+            ),
           },
           {
             accessorKey: 'quantitativeScore',

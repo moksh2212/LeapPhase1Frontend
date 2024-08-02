@@ -182,6 +182,11 @@ const AssesTable = () => {
             size: 100,
             enableEditing: false,
             Cell: ({ cell }) => <div className='ml-32'>{cell.getValue()}</div>,
+            Header: ({ column }) => (
+              <div className='ml-16'>
+                {column.columnDef.header}
+              </div>
+            ),
           },
         ],
       },

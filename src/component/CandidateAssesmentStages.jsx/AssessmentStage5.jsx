@@ -194,6 +194,11 @@ const AssesTable = () => {
             header: 'Email',
             size: 100,
             enableEditing: false,
+            Header: ({ column }) => (
+              <div className='ml-10'>
+                {column.columnDef.header}
+              </div>
+            ),
           },
           {
             accessorKey: 'candidateName',
@@ -203,6 +208,11 @@ const AssesTable = () => {
             Cell: ({ cell }) => (
               <div className='ml-11'>
                 {cell.getValue()}
+              </div>
+            ),
+            Header: ({ column }) => (
+              <div className='ml-10'>
+                {column.columnDef.header}
               </div>
             ),
           },

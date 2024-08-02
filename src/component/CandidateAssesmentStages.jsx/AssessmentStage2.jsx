@@ -188,7 +188,7 @@ const AssesTable = () => {
             header: 'Candiate Name',
             size: 100,
             enableEditing: false,
-            Cell: ({ cell }) => <div className='ml-6'>{cell.getValue()}</div>,
+            Cell: ({ cell }) => <div className='mr-3'>{cell.getValue()}</div>,
           },
           {
             accessorKey: 'email',
@@ -196,11 +196,17 @@ const AssesTable = () => {
             size: 100,
             enableEditing: false,
             Cell: ({ cell }) => (
-              <div className='flex items-center justify-center '>
+              <div className='mr-4'>
                 {cell.getValue()}
               </div>
             ),
+            Header: ({ column }) => (
+              <div className='ml-8'>
+                {column.columnDef.header}
+              </div>
+            ),
           },
+          
           {
             accessorKey: 'problemStatement',
             header: 'Problem Statement',

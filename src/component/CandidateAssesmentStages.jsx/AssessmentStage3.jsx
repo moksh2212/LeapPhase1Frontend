@@ -97,6 +97,7 @@ const AssesTable = () => {
 
         jsonData = jsonData.filter(
           (assessment) => assessment && assessment.assessmentLevelThree,
+          (assessment) => assessment && assessmecountnt.assessmentLevelThree,
         );
         const arr = jsonData.map((assessment) => assessment.assessmentLevelThree);
         setData(arr);
@@ -156,13 +157,18 @@ const AssesTable = () => {
             header: 'Candidate Name',
             size: 100,
             enableEditing: false,
-            Cell: ({ cell }) => <div className='ml-11'>{cell.getValue()}</div>,
+            Cell: ({ cell }) => <div className=''>{cell.getValue()}</div>,
           },
           {
             accessorKey: 'email',
             header: 'Email',
             size: 100,
             enableEditing: false,
+            Header: ({ column }) => (
+              <div className='ml-10'>
+                {column.columnDef.header}
+              </div>
+            ),
           },
           {
             accessorKey: 'problemSolving',
@@ -315,7 +321,7 @@ const AssesTable = () => {
 
         setSnackbar({
           open: true,
-          message: `${count} candidate${count > 1 ? 's' : ''} selected successfully for stage 4`,
+          message: `${table.getSelectedRowModel().rows.length} candidate${table.getSelectedRowModel().rows.length > 1 ? 's' : ''} selected successfully for stage 4`,
           severity: 'success',
         });
         table.toggleAllRowsSelected(false);

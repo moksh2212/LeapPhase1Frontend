@@ -190,7 +190,7 @@ const AssesTable = () => {
             size: 100,
             enableEditing: false,
             Cell: ({ cell }) => (
-              <div className='ml-11'>
+              <div className='mr-8'>
                 {cell.getValue()}
               </div>
             ),
@@ -200,6 +200,11 @@ const AssesTable = () => {
             header: 'Email',
             size: 100,
             enableEditing: false,
+            Header: ({ column }) => (
+              <div className='ml-16'>
+                {column.columnDef.header}
+              </div>
+            ),
           },
 
           {
