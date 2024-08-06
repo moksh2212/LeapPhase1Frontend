@@ -355,20 +355,10 @@ const columns = useMemo(
       },
     },
     {
-      accessorKey: 'assessmentList',
+      accessorKey: 'assessmentStatus',
       header: 'Assessment Status',
       size: 150,
-      Cell: ({ row }) => {
-        const assessments = row.original.assessmentList;    
-        // Determine the assessment status based on the assessment list
-        const status = assessments.length > 0 ? 'Started' : 'Not Started';
-    
-        return (
-          <div>
-            <span className='ml-6'>{status}</span>
-          </div>
-        );
-      },
+   
     },
     {
       accessorKey: 'viewAssessment',
@@ -379,7 +369,8 @@ const columns = useMemo(
         <Button
           onClick={() => {
             const collegeId = row.original.collegeId;
-            window.location.href = `?tab=candidate-assessment&collegeId=${collegeId}`;
+            const collegeName=row.original.collegeName;
+            window.location.href = `?tab=candidate-assessment&collegeId=${collegeId}&collegeName=${collegeName}`;
           }}
            variant='contained'
         >

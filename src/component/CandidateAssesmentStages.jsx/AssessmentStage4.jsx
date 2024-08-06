@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress'
 
 import {
   MaterialReactTable,
@@ -90,9 +91,16 @@ const AssesTable = () => {
   const [text, setText] = useState('')
   const [open, setOpen] = useState(false);
   const [count, setCount] = useState(0);
+  const [x, setx] = useState(0)
+  const [loading, setLoading] = useState(false)
+
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
   const navigate = useNavigate()
   const token = useSelector(state => state.user.token)
 
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -102,6 +110,7 @@ const AssesTable = () => {
     setOpen(false);
   };
   useEffect(() => {
+    setLoading(true)
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const collegeId = urlParams.get('collegeId');
@@ -119,13 +128,15 @@ const AssesTable = () => {
 
         setData(arr);
         console.log(jsonData);
+        setLoading(false)
+
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [x]);
   const validate = (values) => {
     const errors = {};
     const requiredFields = [
@@ -153,12 +164,13 @@ const AssesTable = () => {
 
     return errors;
   };
-
+  const urlParams = new URLSearchParams(window.location.search)
+  const collegeName = urlParams.get('collegeName')
   const columns = useMemo(
     () => [
       {
         id: 'candidate',
-        header: 'Candidate',
+        header: collegeName,
         columns: [
           {
             accessorKey: 'levelFourId',
@@ -178,7 +190,7 @@ const AssesTable = () => {
             size: 100,
             enableEditing: false,
             Cell: ({ cell }) => (
-              <div className='ml-11'>
+              <div className='mr-8'>
                 {cell.getValue()}
               </div>
             ),
@@ -188,6 +200,11 @@ const AssesTable = () => {
             header: 'Email',
             size: 100,
             enableEditing: false,
+            Header: ({ column }) => (
+              <div className='ml-16'>
+                {column.columnDef.header}
+              </div>
+            ),
           },
 
           {
@@ -374,9 +391,10 @@ const AssesTable = () => {
         )
         if (!response.ok) {
           console.log(text)
-          throw new Error('Failed to update candidate')
+          setSnackbar({ open: true, message: 'Failed to update candidate', severity: 'error' });
         } else {
-          alert('Edited successfully')
+          setSnackbar({ open: true, message: 'Edited successfully', severity: 'success' });
+          setx(!x);
         }
         table.setEditingRow(null)
       } catch (error) {
@@ -502,11 +520,47 @@ const AssesTable = () => {
               {count=== 1 ? `${count} candiadate selected successfully for stage 3 ` : `${count} candiadates selected successfully for stage  5`}
             </Alert>
           </Snackbar>}
+          <Snackbar
+            open={snackbar.open}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          >
+            <Alert
+              onClose={handleCloseSnackbar}
+              severity={snackbar.severity}
+              variant='filled'
+              sx={{ width: '100%' }}
+            >
+              {snackbar.message}
+            </Alert>
+          </Snackbar>
         </div>
       )
     },
   })
-  return <MaterialReactTable table={table} />
+  return (
+    <>
+      {loading ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <MaterialReactTable table={table} />
+      )}
+    </>
+  );
 }
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'

@@ -20,7 +20,6 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid'
 import { useSelector } from 'react-redux'
 import { Spinner } from 'flowbite-react'
 import HistoryIcon from '@mui/icons-material/History'
-import moment from 'moment'
 
 const HistoryDialog = ({ open, onClose, history }) => {
   return (
