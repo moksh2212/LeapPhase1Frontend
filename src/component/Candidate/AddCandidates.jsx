@@ -87,19 +87,22 @@ export function AddCandidates({ openModal, setOpenModal, handleUpload }) {
               ))}
             </Select>
           </div>
-          <Button variant='contained' component='label' size='sm'>
-            <label htmlFor='excelFile2' className='excel-file-label2'>
-              {selectedFile1
-                ? `File Selected: ${selectedFile1.name}`
-                : 'Add via Excel'}
-              <input
-                type='file'
-                id='excelFile2'
-                style={{ display: 'none' }}
-                onChange={handleFileChange}
-              />
-            </label>
+          <Button
+            variant='contained'
+            size='sm'
+            onClick={() => document.getElementById('excelFile2').click()}
+          >
+            {selectedFile1
+              ? `File Selected: ${selectedFile1.name}`
+              : 'Add via Excel'}
+            <input
+              type='file'
+              id='excelFile2'
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
           </Button>
+
           <Button type='submit' color={'blue'} size={'sm'}>
             Submit
           </Button>

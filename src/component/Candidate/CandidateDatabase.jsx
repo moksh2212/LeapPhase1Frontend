@@ -68,6 +68,8 @@ const Example = () => {
     </Dialog>
   )
   const handleDeactivate = () => {
+    setIsLoading(true)
+    setOpenDeleteModal(false)
     table.getSelectedRowModel().flatRows.map(async row => {
       setIsLoading(true)
       setError(null)
@@ -90,9 +92,10 @@ const Example = () => {
           ),
         )
         setOpenSnackbar('Candidate deleted successfully!')
-        setIsLoading(false)
+        
       }
     })
+    setIsLoading(false)
   }
   useEffect(() => {
     console.log('hello')
@@ -264,12 +267,14 @@ const Example = () => {
           {
             accessorKey: 'ekYear', //hey a simple column for once
             header: 'EK Year',
+            filterVariant: 'select',
             enableSorting: false,
             size: 100,
           },
           {
             accessorKey: 'candidateCollege', //hey a simple column for once
             header: 'College Name',
+            filterVariant: 'select',
             enableSorting: false,
             size: 100,
           },

@@ -50,6 +50,9 @@ const userSlice = createSlice({
     setErrorNull: state => {
       state.error = null
     },
+    setSessionExpired: (state, action) => {
+      state.sessionExpired = action.payload;
+    },
   },
 })
 
@@ -64,6 +67,7 @@ export const {
   signoutSuccess,
 
   setErrorNull,
+  setSessionExpired,
 } = userSlice.actions
 
 export default userSlice.reducer
