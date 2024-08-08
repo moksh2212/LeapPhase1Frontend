@@ -324,7 +324,7 @@ const AssessmentTable = () => {
           }}
           startIcon={<AddIcon />}
         >
-          Create New Assessment
+          Create New Process
         </Button>
       </Box>
     ),
@@ -335,7 +335,7 @@ const AssessmentTable = () => {
       <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
         <div className='flex justify-between mt-2'>
           <h2 className={`text-2xl text-[#0087D5] font-bold mb-3`}>
-            Assessments & Interviews
+            Recruitment Process
           </h2>
         </div>
         <MaterialReactTable table={table} />

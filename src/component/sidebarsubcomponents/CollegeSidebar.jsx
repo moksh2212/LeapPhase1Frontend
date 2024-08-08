@@ -56,14 +56,14 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
                 Candidates
               </Sidebar.Item>
             </Link>
+            <Link to='?tab=AssesmentCollege' onClick={()=>setShowCollegeSidebar(false)}>
+              <Sidebar.Item as={'div'} active={tab === 'AssesmentCollege'}>
+                Recruitment Process
+              </Sidebar.Item>
+            </Link>
             <Link to='?tab=alumni'onClick={()=>setShowCollegeSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'alumni'}>
                 Alumni
-              </Sidebar.Item>
-            </Link>
-            <Link to='?tab=AssesmentCollege' onClick={()=>setShowCollegeSidebar(false)}>
-              <Sidebar.Item as={'div'} active={tab === 'AssesmentCollege'}>
-                Screening & Interviews
               </Sidebar.Item>
             </Link>
           </Sidebar.ItemGroup>
