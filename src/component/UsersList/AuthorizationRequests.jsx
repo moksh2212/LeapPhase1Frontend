@@ -20,6 +20,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid'
 import { useSelector } from 'react-redux'
 import { Spinner } from 'flowbite-react'
 import HistoryIcon from '@mui/icons-material/History'
+import moment from 'moment'
 
 const HistoryDialog = ({ open, onClose, history }) => {
   return (
@@ -193,13 +194,13 @@ const Authorize = () => {
       const data = await response.json()
       // Transform the data to match the expected format
       const transformedData = data.map(item => ({
-        id: item.user.id,
-        inctureId: item.user.inctureId,
-        email: item.user.email,
-        talentName: item.user.talentName,
-        status: item.user.status,
-        roles: item.user.roles,
-        history: item.history,
+        id: item.id,
+        inctureId: item.inctureId,
+        email: item.email,
+        talentName: item.talentName,
+        status: item.status,
+        roles: item.roles,
+        history: item.authenticationHistory,
       }))
       setRequests(transformedData)
       setLoading(false)

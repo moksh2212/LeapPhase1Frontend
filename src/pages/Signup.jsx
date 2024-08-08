@@ -157,6 +157,9 @@ function Signup() {
             src='https://incture.com/wp-content/uploads/2022/02/Incture-Logo-Blue-150x34-px.svg'
             alt='Incture Logo'
           />
+          <h2 className='text-center mt-4 text-3xl font-semibold'>
+            Campus Program Management
+          </h2>
           <h4 className='mt-4 text-center text-xl text-gray-900'>
             Create your account
           </h4>

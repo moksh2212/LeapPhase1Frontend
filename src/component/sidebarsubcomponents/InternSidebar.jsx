@@ -36,7 +36,7 @@ export default function InternSidebar({ setShowInternSidebar }) {
               >
                 {currentUser.talentName}
               </Sidebar.Item>
-            <Link to='?tab=attendance-academic'>
+            <Link to='?tab=attendance-academic' onClick={() => setShowInternSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'attendance-academic'}>
               Attendance
               </Sidebar.Item>

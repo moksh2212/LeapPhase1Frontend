@@ -42,7 +42,7 @@ function Signin() {
   }, [])
 
   const setLogoutTimer = () => {
-    const LOGOUT_TIME = 60 * 60 * 1000 
+    const LOGOUT_TIME = 60 * 60 * 1000
     const logoutTime = Date.now() + LOGOUT_TIME
     localStorage.setItem('logoutTime', logoutTime.toString())
 
@@ -80,7 +80,7 @@ function Signin() {
       setErrorMessage('All fields are required.')
       return
     }
-    
+
     setIsLoading(true)
     try {
       dispatch(signInStart())
@@ -93,7 +93,7 @@ function Signin() {
       })
 
       if (response.ok) {
-        const token = response.headers.get('authorization');
+        const token = response.headers.get('authorization')
         const user = await response.json()
         dispatch(signInSuccess({ user: user, token: token }))
         setLogoutTimer() // Set the logout timer after successful login
@@ -107,8 +107,10 @@ function Signin() {
         } else {
           navigate('/')
         }
-      } else if (response.status === 401 || response.status===400) {
-        setErrorMessage('Email or Password not correct or your account is pending from admin approval')
+      } else if (response.status === 401 || response.status === 400) {
+        setErrorMessage(
+          'Email or Password not correct or your account is pending from admin approval',
+        )
       } else {
         dispatch(signInFailure())
       }
@@ -128,7 +130,10 @@ function Signin() {
             src='https://incture.com/wp-content/uploads/2022/02/Incture-Logo-Blue-150x34-px.svg'
             alt='Incture Logo'
           />
-          <h4 className='mt-4 text-center text-xl text-gray-900'>
+          <h2 className='text-center mt-4 text-3xl font-semibold'>
+            Campus Program Management
+          </h2>
+          <h4 className='mt-6 text-center text-xl text-gray-900'>
             Sign in to your account
           </h4>
         </div>
@@ -185,13 +190,13 @@ function Signin() {
           </div>
 
           <p className='text-end text-sm mt-1 space-y-[-8]'>
-              <Link
-                to='/forgotpassword'
-                className='text-indigo-600 hover:text-indigo-500'
-              >
-                Forgot Password?{' '}
-              </Link>
-            </p>
+            <Link
+              to='/forgotpassword'
+              className='text-indigo-600 hover:text-indigo-500'
+            >
+              Forgot Password?{' '}
+            </Link>
+          </p>
         </form>
 
         {errorMessage && (

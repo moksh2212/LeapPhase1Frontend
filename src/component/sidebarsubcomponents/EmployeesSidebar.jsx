@@ -32,39 +32,39 @@ export default function EmployeesSidebar({ setShowEmployeesSidebar }) {
             <Sidebar.Item as={'div'} label={(currentUser.roles.includes('ADMIN') || currentUser.roles.includes('SUPERADMIN'))? 'Admin':'User'} labelColor='dark'>
               {currentUser.talentName}
             </Sidebar.Item>
-            <Link to='/dashboard?tab=attendance'>
+            <Link to='/dashboard?tab=attendance' onClick={()=>setShowEmployeesSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'attendance'}>
                 Attendance
               </Sidebar.Item>
             </Link>
           
-            <Link to='?tab=performance'>
+            <Link to='?tab=performance' onClick={()=>setShowEmployeesSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'performance'}>
                 Performance
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=talent'>
+            <Link to='?tab=talent' onClick={()=>setShowEmployeesSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'talent'}>
                 Talent
               </Sidebar.Item>
             </Link>
            
-            <Link to='?tab=assignments'>
+            <Link to='?tab=assignments' onClick={()=>setShowEmployeesSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'assignments'}>
                 Assignments
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=CombinedTalent'>
+            <Link to='?tab=CombinedTalent' onClick={()=>setShowEmployeesSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'CombinedTalent'}>
                 Assessments
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=training'>
+            <Link to='?tab=training' onClick={()=>setShowEmployeesSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'training'}>
                 Training
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=trainers'>
+            <Link to='?tab=trainers' onClick={()=>setShowEmployeesSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'trainers'}>
                 Trainers
               </Sidebar.Item>
