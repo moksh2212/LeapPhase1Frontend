@@ -694,6 +694,7 @@ const CollegeTable = () => {
     columns,
     data: collegeList,
     enableRowSelection: true,
+    enableGlobalFilter:true,
     initialState: { columnVisibility: { collegeId: false } },
     isLoading,
     createDisplayMode: 'modal',
@@ -999,7 +1000,7 @@ const CollegeTable = () => {
  
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
-      <h2 className='text-3xl text-[#0087D5] font-bold mb-3'>College Schedules</h2>
+      {/* <h2 className='text-3xl text-[#0087D5] font-bold mb-3'>College Schedules</h2> */}
       <MaterialReactTable
         table={table}
         updateCollege={updateCollege}

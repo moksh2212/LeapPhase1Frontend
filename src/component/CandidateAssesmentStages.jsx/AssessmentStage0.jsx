@@ -16,10 +16,8 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 const canBaseUrl = process.env.BASE_URL2
 const tanBaseUrl = process.env.BASE_URL2
 
-
-  const urlParams = new URLSearchParams(window.location.search)
-  const collegeName = urlParams.get('collegeName')
-
+const urlParams = new URLSearchParams(window.location.search)
+const collegeName = urlParams.get('collegeName')
 
 const NameCell = ({ renderedCellValue }) => {
   return (
@@ -50,8 +48,8 @@ const SalaryCell = ({ cell }) => {
           cell.getValue() < 0
             ? theme.palette.error.dark
             : cell.getValue() >= 0 && cell.getValue() < 70
-              ? theme.palette.warning.dark
-              : theme.palette.success.dark,
+            ? theme.palette.warning.dark
+            : theme.palette.success.dark,
         borderRadius: '0.25rem',
         color: '#fff',
         maxWidth: '9ch',
@@ -90,8 +88,11 @@ const AssesTable = () => {
   const navigate = useNavigate()
   const [x, setx] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
-
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: '',
+  })
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -101,24 +102,36 @@ const AssesTable = () => {
     setOpen(false)
   }
   const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-  const transformAssessmentData = (jsonData) => {
-    const assessmentList = jsonData || [];
+    setSnackbar({ ...snackbar, open: false })
+  }
+  const transformAssessmentData = jsonData => {
+    const assessmentList = jsonData || []
 
     return assessmentList.map(candidate => {
       return {
         name: candidate.candidateName,
         email: candidate.email,
-        levelOne: candidate.assessmentLevelOne ? candidate.assessmentLevelOne.totalScore : "Not Assessed",
-        levelTwo: candidate.assessmentLevelTwo ? candidate.assessmentLevelTwo.totalScore : "Not Assessed",
-        levelThree: candidate.assessmentLevelThree ? candidate.assessmentLevelThree.totalScore : "Not Assessed",
-        levelFour: candidate.assessmentLevelFour ? candidate.assessmentLevelFour.totalScore : "Not Assessed",
-        levelFive: candidate.assessmentLevelFive ? candidate.assessmentLevelFive.hrScore : "Not Assessed",
-        levelFinal: candidate.assessmentLevelFinal ? "Selected" : "Not Selected"
-      };
-    });
-  };
+        levelOne: candidate.assessmentLevelOne
+          ? candidate.assessmentLevelOne.totalScore
+          : 'Not Assessed',
+        levelTwo: candidate.assessmentLevelTwo
+          ? candidate.assessmentLevelTwo.totalScore
+          : 'Not Assessed',
+        levelThree: candidate.assessmentLevelThree
+          ? candidate.assessmentLevelThree.totalScore
+          : 'Not Assessed',
+        levelFour: candidate.assessmentLevelFour
+          ? candidate.assessmentLevelFour.totalScore
+          : 'Not Assessed',
+        levelFive: candidate.assessmentLevelFive
+          ? candidate.assessmentLevelFive.hrScore
+          : 'Not Assessed',
+        levelFinal: candidate.assessmentLevelFinal
+          ? 'Selected'
+          : 'Not Selected',
+      }
+    })
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,7 +141,7 @@ const AssesTable = () => {
         setLoading(true)
 
         const response = await fetch(
-          `${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`,
+          `${canBaseUrl}/cpm2/assessment/getAllAssessmentByEkYear?ekYear=2024`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -137,17 +150,17 @@ const AssesTable = () => {
         )
         let jsonData = await response.json()
         console.log(jsonData)
-        const transformedData = transformAssessmentData(jsonData);
-
-
+        const transformedData = transformAssessmentData(jsonData)
 
         setData(transformedData)
         setLoading(false)
-
       } catch (error) {
         console.error('Error fetching data:', error)
-        setSnackbar({ open: true, message: 'Error fetching data', severity: 'error' })
-
+        setSnackbar({
+          open: true,
+          message: 'Error fetching data',
+          severity: 'error',
+        })
       }
     }
 
@@ -188,14 +201,13 @@ const AssesTable = () => {
 
     return errors
   }
-console.log(collegeName)
+  console.log(collegeName)
   const columns = useMemo(
     () => [
       {
         id: collegeName,
         header: collegeName,
         columns: [
-
           {
             accessorKey: 'name',
             header: 'Candiate Name',
@@ -208,11 +220,7 @@ console.log(collegeName)
             header: 'Email',
             size: 100,
             enableEditing: false,
-            Cell: ({ cell }) => (
-              <div className=' '>
-                {cell.getValue()}
-              </div>
-            ),
+            Cell: ({ cell }) => <div className=' '>{cell.getValue()}</div>,
           },
           {
             accessorKey: 'levelOne',
@@ -265,7 +273,6 @@ console.log(collegeName)
 
             Cell: ({ cell }) => <div className='ml-4'>{cell.getValue()}</div>,
           },
-
         ],
       },
     ],
@@ -347,11 +354,11 @@ console.log(collegeName)
       const [hasSelectedRows, setHasSelectedRows] = useState(false)
 
       const handleActivate = async () => {
-        const formData = new FormData();
-        const urlParams = new URLSearchParams(window.location.search);
-        const collegeId = urlParams.get('collegeId');
+        const formData = new FormData()
+        const urlParams = new URLSearchParams(window.location.search)
+        const collegeId = urlParams.get('collegeId')
 
-        formData.append('collegeId', collegeId);
+        formData.append('collegeId', collegeId)
 
         try {
           const response = await fetch(
@@ -359,29 +366,30 @@ console.log(collegeName)
             {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${token}`, // No Content-Type header required
+                Authorization: `Bearer ${token}`, // No Content-Type header required
               },
               body: formData,
-            }
-          );
+            },
+          )
 
           if (!response.ok) {
             // Handle error response
-            console.error('Failed to fetch:', response.status, response.statusText);
-            
-            return;
+            console.error(
+              'Failed to fetch:',
+              response.status,
+              response.statusText,
+            )
+
+            return
           }
 
           // Process the response if needed
           setx(!x)
-          setOpen(true);
+          setOpen(true)
         } catch (error) {
-          console.error('Error during fetch:', error);
+          console.error('Error during fetch:', error)
         }
       }
-
-
-
 
       return (
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-300 scrollbarr-thumb-slate-300'>
@@ -439,7 +447,7 @@ console.log(collegeName)
               </Alert>
             </Snackbar>
           )}
-               <Snackbar
+          <Snackbar
             open={snackbar.open}
             autoHideDuration={6000}
             onClose={handleCloseSnackbar}
@@ -480,7 +488,8 @@ console.log(collegeName)
         <MaterialReactTable table={table} />
       )}
     </>
-  );}
+  )
+}
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'

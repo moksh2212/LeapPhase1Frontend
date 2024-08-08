@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import CandidateDatabase from '../component/Candidate/CandidateDatabase'
 import TalentDatabase from '../component/Talent/TalentDatabase'
 import DashSidebar from '../component/DashSidebar'
@@ -24,27 +24,35 @@ import InkathonDatabase from '../component/Inkathon/InkathonDatabase'
 import CreateInkathon from '../component/Inkathon/CreateInkathon'
 import TeamTabInkathon from '../component/Inkathon/TeamTabInkathon'
 import TSView from '../component/TrainingSchedule/TSView'
-import HomePage from '../component/HomePage'
 import CollegeDBView from '../component/CollegeDB/CollegeDBView'
 
 import CombinedTalent from '../component/Assesments/CombinedTalent'
-import AssesmentCollege from '../component/CandidateAssesmentStages.jsx/AssesmentCollege'
-import CollegeTable from '../component/CollegeDB/CollegeDatabase'
 import UserListView from '../component/UsersList/UserListView'
 import DashHome from '../component/DashHome'
 import { useSelector } from 'react-redux'
+import AssessmentTable from '../component/ScreeningAssessments/AssessmentTable'
+import ProcessView from '../component/ScreeningAssessments/ProcessView'
 export default function Dashboard() {
   const location = useLocation()
   const [tab, setTab] = useState('')
-  const {currentUser} = useSelector(state=>state.user)
+  const [id, setId] = useState('')
+  
+  const { currentUser } = useSelector(state => state.user)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
     const tabFromUrl = urlParams.get('tab')
+    const idFromUrl = urlParams.get('id')
+    if (idFromUrl) {
+      setId(idFromUrl)
+    }
     if (tabFromUrl) {
       setTab(tabFromUrl)
     }
   }, [location.search])
+
+  console.log(id);
+  
   return (
     <>
       <div
@@ -86,11 +94,13 @@ export default function Dashboard() {
           {tab === 'campus-calendar' && <CampusCalendarView />}
           {tab === 'candidate-assesment' && <CandidateAssesmentsCombined />}
           {tab === 'training' && <TSView />}
-          {tab === 'candidate-assessment' && <CandidateAssesmentsCombined />}
           {tab === 'CombinedTalent' && <CombinedTalent />}
-          {tab === 'AssesmentCollege' && <AssesmentCollege />}
+          {tab === 'AssesmentCollege' && <AssessmentTable />}
+          {tab === 'college-process' && id && <ProcessView />}
 
-          {currentUser.roles.includes('SUPERADMIN') && tab==='users' && <UserListView/>}
+          {currentUser.roles.includes('SUPERADMIN') && tab === 'users' && (
+            <UserListView />
+          )}
         </div>
       </div>
     </>

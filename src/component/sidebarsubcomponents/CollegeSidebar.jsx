@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 
 export default function CollegeSidebar({ setShowCollegeSidebar }) {
   const [tab, setTab] = useState('')
-  const {currentUser} = useSelector(state=>state.user)
+  const { currentUser } = useSelector(state => state.user)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search)
@@ -29,35 +29,43 @@ export default function CollegeSidebar({ setShowCollegeSidebar }) {
       >
         <Sidebar.Items>
           <Sidebar.ItemGroup>
-            <Sidebar.Item as={'div'} label={(currentUser.roles.includes('ADMIN') || currentUser.roles.includes('SUPERADMIN'))? 'Admin':'User'} labelColor='dark'>
+            <Sidebar.Item
+              as={'div'}
+              label={
+                currentUser.roles.includes('ADMIN') ||
+                currentUser.roles.includes('SUPERADMIN')
+                  ? 'Admin'
+                  : 'User'
+              }
+              labelColor='dark'
+            >
               {currentUser.talentName}
             </Sidebar.Item>
-            <Link to='?tab=college-and-contact'>
+            <Link to='?tab=college-and-contact' onClick={()=>setShowCollegeSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'college-and-contact'}>
                 College and contact
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=campus-calendar'>
+            <Link to='?tab=campus-calendar' onClick={()=>setShowCollegeSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'campus-calendar'}>
                 Campus Calendar
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=candidates'>
+            <Link to='?tab=candidates'onClick={()=>setShowCollegeSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'candidates'}>
                 Candidates
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=alumni'>
+            <Link to='?tab=alumni'onClick={()=>setShowCollegeSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'alumni'}>
                 Alumni
               </Sidebar.Item>
             </Link>
-            <Link to='?tab=AssesmentCollege'>
+            <Link to='?tab=AssesmentCollege' onClick={()=>setShowCollegeSidebar(false)}>
               <Sidebar.Item as={'div'} active={tab === 'AssesmentCollege'}>
-                Assessments & Interviews
+                Screening & Interviews
               </Sidebar.Item>
             </Link>
-            
           </Sidebar.ItemGroup>
         </Sidebar.Items>
       </Sidebar>
