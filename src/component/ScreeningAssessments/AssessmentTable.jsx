@@ -108,7 +108,7 @@ const AssessmentTable = () => {
           message: 'New assessment created',
           severity: 'success',
         })
-    
+
         fetchAssessments()
         setIsLoading(false)
       } else {
@@ -136,8 +136,12 @@ const AssessmentTable = () => {
     setSnackbar({ open: false, message: '', severity: '' })
   }
 
-  const handleViewCollegeDetails = assessmentId => {
-    navigate(`/dashboard?tab=college-process&id=${assessmentId}`)
+  const handleViewCollegeDetails = (assessmentId, collegeName) => {
+    navigate(
+      `/dashboard?tab=college-process&id=${assessmentId}&collegeName=${encodeURIComponent(
+        collegeName,
+      )}`,
+    )
   }
 
   const handleDeleteCollege = async assessmentId => {
@@ -193,7 +197,7 @@ const AssessmentTable = () => {
       <FiberManualRecordIcon
         sx={{
           color: value ? 'green' : 'orange',
-          fontSize: '12px', 
+          fontSize: '12px',
         }}
       />
       {value ? 'Completed' : 'Pending'}
@@ -238,7 +242,10 @@ const AssessmentTable = () => {
           <Button
             variant='contained'
             onClick={() =>
-              handleViewCollegeDetails(row.original.assessmentId)
+              handleViewCollegeDetails(
+                row.original.assessmentId,
+                row.original.collegeName,
+              )
             }
             startIcon={<VisibilityIcon />}
           >
