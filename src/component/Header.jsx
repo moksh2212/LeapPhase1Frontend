@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 export default function Header() {
   const path = useLocation().pathname
   const { currentUser } = useSelector(state => state.user)
-  console.log(currentUser)
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [imageUrl, setImageUrl] = useState('')

@@ -14,6 +14,9 @@ import {
   Alert,
   CircularProgress,
   Typography,
+  ButtonGroup,
+  Tooltip,
+  styled,
 } from '@mui/material'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -29,11 +32,29 @@ import {
 
 const baseUrl = process.env.BASE_URL2
 
-const showLockedTableNotification = () => {
-  alert('The table is locked. You cannot make changes.');
-}
+const CustomButton = styled(Button)(({ theme }) => ({
+  height: '40px', 
+}))
 
-const AssessmentTable = () => {
+const FileUploadButton = styled(Button)(({ theme }) => ({
+  height: '40px', 
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  '&:hover': {
+    backgroundColor: theme.palette.primary.dark,
+  },
+}))
+
+const UploadButton = styled(Button)(({ theme }) => ({
+  height: '40px', 
+  backgroundColor: theme.palette.secondary.main,
+  color: theme.palette.secondary.contrastText,
+  '&:hover': {
+    backgroundColor: theme.palette.secondary.dark,
+  },
+}))
+
+const Stage1Component = () => {
   const [data, setData] = useState([])
   const [validationErrors, setValidationErrors] = useState({})
   const [snackbar, setSnackbar] = useState({
@@ -45,27 +66,27 @@ const AssessmentTable = () => {
   const [selectedFile, setSelectedFile] = useState(null)
   const [locked, setLocked] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [clickNotification, setClickNotification] = useState(false)
   const [lockSnackbar, setLockSnackbar] = useState(false)
   const navigate = useNavigate()
   const token = useSelector(state => state.user.token)
   const urlParams = new URLSearchParams(window.location.search)
   const assessmentId = urlParams.get('id')
 
+  
+
   useEffect(() => {
     fetchData()
   }, [])
 
-
   useEffect(() => {
-    const handleClick = (event) => {
+    const handleClick = event => {
       if (locked) {
         event.stopPropagation()
-        setLockSnackbar(true) 
+        setLockSnackbar(true)
       }
     }
 
-    const tableBody = document.querySelector('.MuiTableBody-root')
+    const tableBody = document.querySelector('.MuiTable-root')
     if (tableBody) {
       tableBody.addEventListener('click', handleClick)
     }
@@ -76,7 +97,6 @@ const AssessmentTable = () => {
       }
     }
   }, [locked])
-
 
   const fetchData = async () => {
     setLoading(true)
@@ -231,6 +251,16 @@ const AssessmentTable = () => {
         severity: 'error',
       })
     }
+  }
+
+  const handleFileSelect = event => {
+    const file = event.target.files[0]
+    setSelectedFile(file)
+    setSnackbar({
+      open: true,
+      message: `File "${file.name}" selected`,
+      severity: 'info',
+    })
   }
 
   const handleFileUpload = async () => {
@@ -465,31 +495,41 @@ const AssessmentTable = () => {
             >
               Select for Stage 2
             </Button>
+            <ButtonGroup
+              variant='contained'
+              disabled={selectedRowCount > 0 || locked}
+            >
+              <Tooltip
+                title={
+                  selectedFile
+                    ? `Selected: ${selectedFile.name}`
+                    : 'Select Excel File'
+                }
+              >
+                <label htmlFor='file-upload'>
+                  <FileUploadButton
+                    component='span'
+                    startIcon={<FileUploadIcon />}
+                  >
+                    {selectedFile
+                      ? selectedFile.name.length > 10
+                        ? selectedFile.name.slice(0, 10) + '...'
+                        : selectedFile.name
+                      : 'Select Excel File'}
+                  </FileUploadButton>
+                </label>
+              </Tooltip>
+              <UploadButton onClick={handleFileUpload} disabled={!selectedFile}>
+                Upload
+              </UploadButton>
+            </ButtonGroup>
             <input
               accept='.xlsx,.xls'
               id='file-upload'
               type='file'
               style={{ display: 'none' }}
-              onChange={e => setSelectedFile(e.target.files[0])}
+              onChange={handleFileSelect}
             />
-            <label htmlFor='file-upload'>
-              <Button
-                variant='contained'
-                component='span'
-                startIcon={<FileUploadIcon />}
-                disabled={selectedRowCount > 0 || locked}
-              >
-                Select Excel File
-              </Button>
-            </label>
-            <Button
-              color='secondary'
-              onClick={handleFileUpload}
-              variant='contained'
-              disabled={!selectedFile || selectedRowCount > 0}
-            >
-              Upload
-            </Button>
             <Button
               color='warning'
               onClick={handleDialogOpen}
@@ -497,7 +537,7 @@ const AssessmentTable = () => {
               disabled={locked}
               startIcon={<LockIcon />}
             >
-              Lock Table
+              Mark as Complete
             </Button>
           </Box>
         </Box>
@@ -540,7 +580,7 @@ const AssessmentTable = () => {
         open={lockSnackbar}
         autoHideDuration={1000}
         onClose={() => setLockSnackbar(false)}
-        anchorOrigin={{vertical:'top', horizontal:'center'}}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert
           onClose={() => setLockSnackbar(false)}
@@ -558,10 +598,10 @@ const AssessmentTable = () => {
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
-        <DialogTitle id='alert-dialog-title'>{'Confirm Lock'}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{'Confirm Marking as Complete'}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            Are you sure you want to lock the table? This action cannot be
+            Are you sure you want to complete this stage? This action cannot be
             undone.
           </DialogContentText>
         </DialogContent>
@@ -578,4 +618,4 @@ const AssessmentTable = () => {
   )
 }
 
-export default AssessmentTable
+export default Stage1Component

@@ -54,7 +54,7 @@ const UploadButton = styled(Button)(({ theme }) => ({
   },
 }))
 
-const Stage2Component = () => {
+const Stage4Component = () => {
   const [data, setData] = useState([])
   const [validationErrors, setValidationErrors] = useState({})
   const [snackbar, setSnackbar] = useState({
@@ -65,6 +65,7 @@ const Stage2Component = () => {
   const [loading, setLoading] = useState(false)
   const [selectedFile, setSelectedFile] = useState(null)
   const [locked, setLocked] = useState(false)
+  const [dialogSkipOpen, setDialogSkipOpen] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [lockSnackbar, setLockSnackbar] = useState(false)
   const navigate = useNavigate()
@@ -78,16 +79,14 @@ const Stage2Component = () => {
 
   useEffect(() => {
     const handleClick = event => {
-      console.log(locked)
       if (locked) {
         event.stopPropagation()
         setLockSnackbar(true)
       }
     }
 
-    const tableBody = document.querySelector('.MuiTable-root')
+    const tableBody = document.querySelector('.MuiTableBody-root')
     if (tableBody) {
-      
       tableBody.addEventListener('click', handleClick)
     }
 
@@ -102,7 +101,7 @@ const Stage2Component = () => {
     setLoading(true)
     try {
       const response = await fetch(
-        `${baseUrl}/cpm/assessment/getAssessmentLevel?assessmentId=${assessmentId}&level=levelTwo`,
+        `${baseUrl}/cpm/assessment/getAssessmentLevel?assessmentId=${assessmentId}&level=levelOptional`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -111,9 +110,9 @@ const Stage2Component = () => {
       )
       const jsonData = await response.json()
 
-      setLocked(jsonData.isLevelTwoCompleted)
+      setLocked(jsonData.isLevelOptionalCompleted)
 
-      const dataList = jsonData.levelTwoList
+      const dataList = jsonData.levelOptionalList
 
       setData(dataList)
     } catch (error) {
@@ -134,6 +133,7 @@ const Stage2Component = () => {
 
   const handleDialogClose = () => {
     setDialogOpen(false)
+    setDialogSkipOpen(false)
   }
 
   const handleConfirmLock = () => {
@@ -145,11 +145,11 @@ const Stage2Component = () => {
     if (!Object.keys(validationErrors).length) {
       const formData = new FormData()
       formData.append('assessmentId', assessmentId)
-      formData.append('level', 'levelTwo')
+      formData.append('level', 'levelOptional')
 
       const updatedValues = {
         ...values,
-        levelTwoId: row.original.levelTwoId,
+        levelOptionalId: row.original.levelOptionalId,
         selected: row.original.selected,
       }
 
@@ -173,7 +173,7 @@ const Stage2Component = () => {
         if (response.ok) {
           setData(prev =>
             prev.map(item =>
-              item.levelTwoId === row.original.levelTwoId
+              item.levelOptionalId === row.original.levelOptionalId
                 ? updatedValues
                 : item,
             ),
@@ -205,7 +205,7 @@ const Stage2Component = () => {
 
     const formData = new FormData()
     formData.append('assessmentId', assessmentId)
-    formData.append('level', 'levelTwo')
+    formData.append('level', 'levelOptional')
 
     const selectionListBlob = new Blob([JSON.stringify(selectedRows)], {
       type: 'application/json',
@@ -265,7 +265,7 @@ const Stage2Component = () => {
     const formData = new FormData()
     formData.append('file', selectedFile)
     formData.append('assessmentId', assessmentId)
-    formData.append('level', 'levelTwo')
+    formData.append('level', 'levelOptional')
 
     try {
       const response = await fetch(
@@ -303,7 +303,7 @@ const Stage2Component = () => {
   const handleLockTable = async () => {
     const formData = new FormData()
     formData.append('assessmentId', assessmentId)
-    formData.append('level', 'leveltwo')
+    formData.append('level', 'leveloptional')
 
     try {
       const response = await fetch(
@@ -336,10 +336,41 @@ const Stage2Component = () => {
     }
   }
 
+  const handleSkipRound = async()=>{
+    try {
+      const response = await fetch(
+        `${baseUrl}/cpm/assessment/skipOptionalLevel?assessmentId=${assessmentId}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      if (response.ok) {
+        setSnackbar({
+          open: true,
+          message: 'Round skipped successfully, Candidates moved to final selection',
+          severity: 'success',
+        })
+        setLocked(true)
+      } else {
+        throw new Error('Failed to skip round')
+      }
+    } catch (error) {
+      console.error('Error skipping round:', error)
+      setSnackbar({
+        open: true,
+        message: 'Error skipping round',
+        severity: 'error',
+      })
+    }
+  }
+
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'levelTwoId',
+        accessorKey: 'levelOptionalId',
         header: 'ID',
         size: 100,
         enableEditing: false,
@@ -380,78 +411,11 @@ const Stage2Component = () => {
         enableEditing: false,
       },
       {
-        accessorKey: 'problemStatement',
-        header: 'Problem Statement',
+        accessorKey: 'customScore',
+        header: 'Score',
         size: 150,
         muiTableBodyCellEditTextFieldProps: {
           type: 'number',
-        },
-      },
-      {
-        accessorKey: 'processWorkflow',
-        header: 'Process Workflow',
-        size: 150,
-        muiTableBodyCellEditTextFieldProps: {
-          type: 'number',
-        },
-      },
-      {
-        accessorKey: 'useOfAlgorithms',
-        header: 'Use of Algorithms',
-        size: 150,
-        muiTableBodyCellEditTextFieldProps: {
-          type: 'number',
-        },
-      },
-      {
-        accessorKey: 'techStacks',
-        header: 'Tech Stacks',
-        size: 150,
-        muiTableBodyCellEditTextFieldProps: {
-          type: 'number',
-        },
-      },
-      {
-        accessorKey: 'recommendedSolution',
-        header: 'Recommended Solution',
-        size: 150,
-        muiTableBodyCellEditTextFieldProps: {
-          type: 'number',
-        },
-      },
-      {
-        accessorKey: 'languageAndGrammar',
-        header: 'Language & Grammar',
-        size: 150,
-        muiTableBodyCellEditTextFieldProps: {
-          type: 'number',
-        },
-      },
-      {
-        accessorKey: 'logicalFlow',
-        header: 'Logical Flow',
-        size: 150,
-        muiTableBodyCellEditTextFieldProps: {
-          type: 'number',
-        },
-      },
-      {
-        accessorKey: 'totalScore',
-        header: 'Total Score',
-        size: 150,
-        enableEditing: false,
-        Cell: ({ row }) => {
-          const total = [
-            'problemStatement',
-            'processWorkflow',
-            'useOfAlgorithms',
-            'techStacks',
-            'recommendedSolution',
-            'languageAndGrammar',
-            'logicalFlow',
-          ].reduce((sum, key) => sum + (parseFloat(row.original[key]) || 0), 0)
-          const percentage = (total / 700) * 100 // Assuming max score is 100 for each of the 7 categories
-          return `${percentage.toFixed(2)}%`
         },
       },
     ],
@@ -465,7 +429,7 @@ const Stage2Component = () => {
     enableRowSelection: !locked,
     editDisplayMode: 'row',
     initialState: {
-      columnVisibility: { levelTwoId: false, selected: false },
+      columnVisibility: { levelOptionalId: false, selected: false },
     },
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
@@ -503,17 +467,25 @@ const Stage2Component = () => {
             <MRT_GlobalFilterTextField table={table} />
             <MRT_ToggleFiltersButton table={table} />
             <h2 className='text-xl my-auto text-blue-500 font-semibold'>
-              Stage 2 : Design Round
+              Stage 4 : Optional Round
             </h2>
           </Box>
           <Box sx={{ display: 'flex', gap: '0.5rem' }}>
             <Button
               color='success'
-              disabled={selectedRowCount === 0}
+              disabled={locked}
+              onClick={()=>setDialogSkipOpen(true)}
+              variant='contained'
+            >
+              Skip Round
+            </Button>
+            <Button
+              color='success'
+              disabled={selectedRowCount === 0 || locked}
               onClick={handleSelectForNextStage}
               variant='contained'
             >
-              Select for Stage 3
+              Finalize Selection
             </Button>
             <ButtonGroup
               variant='contained'
@@ -627,8 +599,29 @@ const Stage2Component = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={dialogSkipOpen}
+        onClose={handleDialogClose}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>{'Confirm Skip Round'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            All the candidates in this round will be finally selected. Are you sure you want to skip this Round?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color='primary'>
+            Cancel
+          </Button>
+          <Button onClick={handleSkipRound} color='primary' autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }
 
-export default Stage2Component
+export default Stage4Component
