@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import {
@@ -72,6 +72,7 @@ const Stage4Component = () => {
   const token = useSelector(state => state.user.token)
   const urlParams = new URLSearchParams(window.location.search)
   const assessmentId = urlParams.get('id')
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     fetchData()
@@ -125,6 +126,16 @@ const Stage4Component = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleFileSelect = event => {
+    const file = event.target.files[0]
+    setSelectedFile(file)
+    setSnackbar({
+      open: true,
+      message: `File "${file.name}" selected`,
+      severity: 'info',
+    })
   }
 
   const handleDialogOpen = () => {
@@ -336,7 +347,7 @@ const Stage4Component = () => {
     }
   }
 
-  const handleSkipRound = async()=>{
+  const handleSkipRound = async () => {
     try {
       const response = await fetch(
         `${baseUrl}/cpm/assessment/skipOptionalLevel?assessmentId=${assessmentId}`,
@@ -350,7 +361,8 @@ const Stage4Component = () => {
       if (response.ok) {
         setSnackbar({
           open: true,
-          message: 'Round skipped successfully, Candidates moved to final selection',
+          message:
+            'Round skipped successfully, Candidates moved to final selection',
           severity: 'success',
         })
         setLocked(true)
@@ -474,7 +486,7 @@ const Stage4Component = () => {
             <Button
               color='success'
               disabled={locked}
-              onClick={()=>setDialogSkipOpen(true)}
+              onClick={() => setDialogSkipOpen(true)}
               variant='contained'
             >
               Skip Round
@@ -498,23 +510,29 @@ const Stage4Component = () => {
                     : 'Select Excel File'
                 }
               >
-                <label htmlFor='file-upload'>
-                  <FileUploadButton
-                    component='span'
-                    startIcon={<FileUploadIcon />}
-                  >
-                    {selectedFile
-                      ? selectedFile.name.length > 10
-                        ? selectedFile.name.slice(0, 10) + '...'
-                        : selectedFile.name
-                      : 'Select Excel File'}
-                  </FileUploadButton>
-                </label>
+                <Button
+                  component='span'
+                  startIcon={<FileUploadIcon />}
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  {selectedFile
+                    ? selectedFile.name.length > 10
+                      ? selectedFile.name.slice(0, 10) + '...'
+                      : selectedFile.name
+                    : 'Select Excel File'}
+                </Button>
               </Tooltip>
               <UploadButton onClick={handleFileUpload} disabled={!selectedFile}>
                 Upload
               </UploadButton>
             </ButtonGroup>
+            <input
+              ref={fileInputRef}
+              accept='.xlsx,.xls'
+              type='file'
+              style={{ display: 'none' }}
+              onChange={handleFileSelect}
+            />
             <Button
               color='warning'
               onClick={handleDialogOpen}
@@ -605,10 +623,13 @@ const Stage4Component = () => {
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
-        <DialogTitle id='alert-dialog-title'>{'Confirm Skip Round'}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>
+          {'Confirm Skip Round'}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            All the candidates in this round will be finally selected. Are you sure you want to skip this Round?
+            All the candidates in this round will be finally selected. Are you
+            sure you want to skip this Round?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

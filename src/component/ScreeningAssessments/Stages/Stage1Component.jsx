@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import {
@@ -33,11 +33,11 @@ import {
 const baseUrl = process.env.BASE_URL2
 
 const CustomButton = styled(Button)(({ theme }) => ({
-  height: '40px', 
+  height: '40px',
 }))
 
 const FileUploadButton = styled(Button)(({ theme }) => ({
-  height: '40px', 
+  height: '40px',
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.contrastText,
   '&:hover': {
@@ -46,7 +46,7 @@ const FileUploadButton = styled(Button)(({ theme }) => ({
 }))
 
 const UploadButton = styled(Button)(({ theme }) => ({
-  height: '40px', 
+  height: '40px',
   backgroundColor: theme.palette.secondary.main,
   color: theme.palette.secondary.contrastText,
   '&:hover': {
@@ -71,8 +71,7 @@ const Stage1Component = () => {
   const token = useSelector(state => state.user.token)
   const urlParams = new URLSearchParams(window.location.search)
   const assessmentId = urlParams.get('id')
-
-  
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     fetchData()
@@ -507,26 +506,25 @@ const Stage1Component = () => {
                     : 'Select Excel File'
                 }
               >
-                <label htmlFor='file-upload'>
-                  <FileUploadButton
-                    component='span'
-                    startIcon={<FileUploadIcon />}
-                  >
-                    {selectedFile
-                      ? selectedFile.name.length > 10
-                        ? selectedFile.name.slice(0, 10) + '...'
-                        : selectedFile.name
-                      : 'Select Excel File'}
-                  </FileUploadButton>
-                </label>
+                <Button
+                  component='span'
+                  startIcon={<FileUploadIcon />}
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  {selectedFile
+                    ? selectedFile.name.length > 10
+                      ? selectedFile.name.slice(0, 10) + '...'
+                      : selectedFile.name
+                    : 'Select Excel File'}
+                </Button>
               </Tooltip>
               <UploadButton onClick={handleFileUpload} disabled={!selectedFile}>
                 Upload
               </UploadButton>
             </ButtonGroup>
             <input
+              ref={fileInputRef}
               accept='.xlsx,.xls'
-              id='file-upload'
               type='file'
               style={{ display: 'none' }}
               onChange={handleFileSelect}
@@ -599,7 +597,9 @@ const Stage1Component = () => {
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'
       >
-        <DialogTitle id='alert-dialog-title'>{'Confirm Marking as Complete'}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>
+          {'Confirm Marking as Complete'}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
             Are you sure you want to complete this stage? This action cannot be

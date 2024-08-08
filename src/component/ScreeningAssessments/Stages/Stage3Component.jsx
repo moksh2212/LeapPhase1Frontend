@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import {
@@ -71,7 +71,11 @@ const Stage3Component = () => {
   const token = useSelector(state => state.user.token)
   const urlParams = new URLSearchParams(window.location.search)
   const assessmentId = urlParams.get('id')
+  const fileInputRef = useRef(null);
 
+  console.log('====================================')
+  console.log(selectedFile)
+  console.log('====================================')
   useEffect(() => {
     fetchData()
   }, [])
@@ -124,6 +128,16 @@ const Stage3Component = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleFileSelect = event => {
+    const file = event.target.files[0]
+    setSelectedFile(file)
+    setSnackbar({
+      open: true,
+      message: `File "${file.name}" selected`,
+      severity: 'info',
+    })
   }
 
   const handleDialogOpen = () => {
@@ -462,9 +476,8 @@ const Stage3Component = () => {
         },
       },
     ],
-    []
+    [],
   )
-  
 
   const table = useMaterialReactTable({
     columns,
@@ -515,7 +528,7 @@ const Stage3Component = () => {
             </h2>
           </Box>
           <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-          <Button
+            <Button
               color='success'
               disabled={selectedRowCount === 0}
               onClick={handleSelectForNextStage}
@@ -534,23 +547,29 @@ const Stage3Component = () => {
                     : 'Select Excel File'
                 }
               >
-                <label htmlFor='file-upload'>
-                  <FileUploadButton
-                    component='span'
-                    startIcon={<FileUploadIcon />}
-                  >
-                    {selectedFile
-                      ? selectedFile.name.length > 10
-                        ? selectedFile.name.slice(0, 10) + '...'
-                        : selectedFile.name
-                      : 'Select Excel File'}
-                  </FileUploadButton>
-                </label>
+                <Button
+                  component='span'
+                  startIcon={<FileUploadIcon />}
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  {selectedFile
+                    ? selectedFile.name.length > 10
+                      ? selectedFile.name.slice(0, 10) + '...'
+                      : selectedFile.name
+                    : 'Select Excel File'}
+                </Button>
               </Tooltip>
               <UploadButton onClick={handleFileUpload} disabled={!selectedFile}>
                 Upload
               </UploadButton>
             </ButtonGroup>
+            <input
+              ref={fileInputRef}
+              accept='.xlsx,.xls'
+              type='file'
+              style={{ display: 'none' }}
+              onChange={handleFileSelect}
+            />
             <Button
               color='warning'
               onClick={handleDialogOpen}
