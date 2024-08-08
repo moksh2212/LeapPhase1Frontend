@@ -14,9 +14,14 @@ import {
   signInSuccess,
   signInFailure,
   signoutSuccess,
+  setSessionExpired,
 } from '../redux/user/userSlice'
+import {jwtDecode} from 'jwt-decode';
+import { Alert as Alert2 ,Snackbar, Backdrop, CircularProgress ,Box } from '@mui/material'
 
 function Signin() {
+  const [openSnackbar, setOpenSnackbar] = useState(null)
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
@@ -24,8 +29,15 @@ function Signin() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [decodedToken, setDecodedToken] = useState(null)
+  const sessionExpired = useSelector(state => state.user.sessionExpired);
   const signBaseUrl = process.env.BASE_URL2
 
+  useEffect(() => {
+    if (sessionExpired) {
+      showSessionExpired();
+    }
+    
   useEffect(() => {
     const logoutTime = localStorage.getItem('logoutTime')
     if (logoutTime && Date.now() > parseInt(logoutTime, 10)) {
@@ -41,16 +53,35 @@ function Signin() {
     }
   }, [])
 
-  const setLogoutTimer = () => {
-    const LOGOUT_TIME = 60 * 60 * 1000
+  const setLogoutTimer = async() => {
+
+    const LOGOUT_TIME = await calculateLogoutTime(decodedToken);
+    console.log(LOGOUT_TIME)
     const logoutTime = Date.now() + LOGOUT_TIME
     localStorage.setItem('logoutTime', logoutTime.toString())
 
     return setTimeout(() => {
-      handleLogout()
+      handleExpireLogout()     
     }, LOGOUT_TIME)
   }
-
+  const calculateLogoutTime = async (decodedToken) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          // Ensure decodedToken.exp is available
+          if (!decodedToken || !decodedToken.exp) {
+            throw new Error('Invalid decoded token');
+          }
+          
+          const logoutTime = decodedToken.exp * 1000 - Date.now();
+          resolve(logoutTime);
+        } catch (error) {
+          reject(error);
+        }
+      }, 100); // Adjust delay as needed
+    });
+  };
+  
   const checkLogoutTime = () => {
     const logoutTime = localStorage.getItem('logoutTime')
     if (logoutTime && Date.now() > parseInt(logoutTime, 10)) {
@@ -62,13 +93,40 @@ function Signin() {
     dispatch(signoutSuccess())
     localStorage.removeItem('logoutTime')
   }
+  const showSessionExpired =() => {
+    setOpenSnackbar('Session expired: logging out. Please sign in again.');
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      console.log('Session expired')
+    }, 10000);
+  }
+
+
+  const handleExpireLogout = () => {
+    dispatch(signoutSuccess())
+    dispatch(setSessionExpired(true));
+    localStorage.removeItem('logoutTime')
+    navigate('/signin')
+  }
 
   const handleLogout = () => {
     dispatch(signoutSuccess())
     localStorage.removeItem('logoutTime')
     navigate('/signin')
   }
-
+  const decodeTokenAsync = async (token) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        try {
+          const decoded = jwtDecode(token);
+          resolve(decoded);
+        } catch (error) {
+          reject(error);
+        }
+      }, 100); // Adjust delay as needed
+    });
+  };
   const handleSubmit = async e => {
     e.preventDefault()
 
@@ -80,7 +138,7 @@ function Signin() {
       setErrorMessage('All fields are required.')
       return
     }
-
+    
     setIsLoading(true)
     try {
       dispatch(signInStart())
@@ -93,7 +151,25 @@ function Signin() {
       })
 
       if (response.ok) {
-        const token = response.headers.get('authorization')
+        const token = response.headers.get('authorization');
+        
+        if (typeof token === 'string' && token.trim() !== '') {
+          try {
+            const decodedToken = await decodeTokenAsync(token);
+            setDecodedToken(decodedToken);
+            
+            // Set logout timer if decodedToken is valid
+            if (decodedToken && decodedToken.exp) {
+              await setLogoutTimer(); 
+            }
+          } catch (decodeError) {
+            console.error('Error decoding token:', decodeError);
+            setErrorMessage('Failed to decode token.');
+          }
+        } else {
+          throw new Error('No valid token found in response');
+        }
+
         const user = await response.json()
         dispatch(signInSuccess({ user: user, token: token }))
         setLogoutTimer() // Set the logout timer after successful login
@@ -107,10 +183,8 @@ function Signin() {
         } else {
           navigate('/')
         }
-      } else if (response.status === 401 || response.status === 400) {
-        setErrorMessage(
-          'Email or Password not correct or your account is pending from admin approval',
-        )
+      } else if (response.status === 401 || response.status===400) {
+        setErrorMessage('Email or Password not correct or your account is pending from admin approval')
       } else {
         dispatch(signInFailure())
       }
@@ -119,6 +193,12 @@ function Signin() {
     } finally {
       setIsLoading(false)
     }
+  }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+    setOpenSnackbar(false)
   }
 
   return (
@@ -130,10 +210,7 @@ function Signin() {
             src='https://incture.com/wp-content/uploads/2022/02/Incture-Logo-Blue-150x34-px.svg'
             alt='Incture Logo'
           />
-          <h2 className='text-center mt-4 text-3xl font-semibold'>
-            Campus Program Management
-          </h2>
-          <h4 className='mt-6 text-center text-xl text-gray-900'>
+          <h4 className='mt-4 text-center text-xl text-gray-900'>
             Sign in to your account
           </h4>
         </div>
@@ -190,13 +267,13 @@ function Signin() {
           </div>
 
           <p className='text-end text-sm mt-1 space-y-[-8]'>
-            <Link
-              to='/forgotpassword'
-              className='text-indigo-600 hover:text-indigo-500'
-            >
-              Forgot Password?{' '}
-            </Link>
-          </p>
+              <Link
+                to='/forgotpassword'
+                className='text-indigo-600 hover:text-indigo-500'
+              >
+                Forgot Password?{' '}
+              </Link>
+            </p>
         </form>
 
         {errorMessage && (
@@ -219,6 +296,41 @@ function Signin() {
           </Link>
         </p>
       </div>
+      <Snackbar
+          open={openSnackbar}
+          autoHideDuration={5000}
+          onClose={handleClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <Alert2
+            onClose={handleClose}
+            severity='success'
+            variant='filled'
+            sx={{ width: '100%' }}
+          >
+            {openSnackbar}
+          </Alert2>
+        </Snackbar>
+      <Backdrop
+        open={loading}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          color: '#fff',
+          backdropFilter: 'blur(5px)',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100vh',
+            width: '100vw',
+          }}
+        >
+          <CircularProgress color="inherit" />
+        </Box>
+      </Backdrop>
     </div>
   )
 }

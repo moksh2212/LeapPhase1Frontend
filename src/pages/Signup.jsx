@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { TextInput, Button, Label, Spinner } from 'flowbite-react'
-import { Alert, Snackbar } from '@mui/material'
+import { Alert, Snackbar, Backdrop, CircularProgress ,Box } from '@mui/material'
 import OtpInput from '../component/OTPInput'
 
 function Signup() {
@@ -11,6 +11,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [inctureId, setInctureId] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [passwordMatchError, setPasswordMatchError] = useState(false)
@@ -88,13 +89,15 @@ function Signup() {
       })
 
       if (response.ok) {
-        setOpenSnackbar('Account created successfully. Redirecting to signin')
+        setOpenSnackbar('Account created successfully. Redirecting to sign in...');
+        setLoading(true);
         setTimeout(() => {
-          navigate('/signin')
-        }, 3000)
+          setLoading(false);
+          navigate('/signin');
+        }, 3000);
       } else if (response.status === 418) {
         setOpenSnackbar(
-          'Account registered successfully, pending from admin approval',
+          'Account registeration request sent, pending admin approval',
         )
         setTimeout(() => {
           navigate('/signin')
@@ -301,6 +304,26 @@ function Signup() {
           </Alert>
         </Snackbar>
       </div>
+      <Backdrop
+        open={loading}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          color: '#fff',
+          backdropFilter: 'blur(5px)',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100vh',
+            width: '100vw',
+          }}
+        >
+          <CircularProgress color="inherit" />
+        </Box>
+      </Backdrop>
     </div>
   )
 }
