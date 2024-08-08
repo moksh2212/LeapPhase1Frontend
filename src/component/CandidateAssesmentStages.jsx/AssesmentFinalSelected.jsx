@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react'
-import Box from '@mui/material/Box'
 import Alert from '@mui/material/Alert'
 import {
   MaterialReactTable,
@@ -9,9 +8,9 @@ import {
 } from 'material-react-table'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import CircularProgress from '@mui/material/CircularProgress'
+// import { Modal, Button, Input} from 'antd'
 
-import { Button, Snackbar, lighten } from '@mui/material'
+import { Box, Button, Modal, TextField, FormControl, Typography,Snackbar,lighten } from '@mui/material';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 
 const canBaseUrl = process.env.BASE_URL2
@@ -83,9 +82,23 @@ const AssesTable = () => {
   const [open, setOpen] = useState(false)
   const token = useSelector(state => state.user.token)
   const [count, setCount] = useState(0)
-  const [loading, setLoading] = useState(false)
-
+  const [isLOIModalVisible, setIsLOIModalVisible] = useState(false)
   const navigate = useNavigate()
+  //const [loiForm] = Form.useForm()
+  const [values, setValues] = useState({
+    ctc: '',
+    fixedPay: '',
+    bonus: '',
+  });
+  const [errors, setErrors] = useState({
+    ctc: '',
+    fixedPay: '',
+    bonus: '',
+  });
+  const handleChange = (field) => (event) => {
+    setValues({ ...values, [field]: event.target.value });
+    setErrors({ ...errors, [field]: '' });
+  }
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -95,8 +108,6 @@ const AssesTable = () => {
     setOpen(false)
   }
   useEffect(() => {
-    setLoading(true)
-
     const fetchData = async () => {
       try {
         const urlParams = new URLSearchParams(window.location.search)
@@ -119,8 +130,6 @@ const AssesTable = () => {
 
         setData(arr)
         console.log(jsonData)
-        setLoading(false)
-
       } catch (error) {
         console.error('Error fetching data:', error)
       }
@@ -164,6 +173,40 @@ const AssesTable = () => {
     return errors
   }
 
+  const handleGenerateLOI = async (selectedRows) => {
+    const response = await fetch(`${tanBaseUrl}/api/mail/generateLOI`, {
+      method: 'POST',
+      headers: {
+      'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(selectedRows),
+    });
+
+    if (response.ok) {
+      alert('LOI generated successfully');
+    } else {
+      alert('Failed to generate LOI');
+    }
+  }
+
+  const handleSendLOI = async (selectedRows) => {
+    const response = await fetch(`${tanBaseUrl}/sendLOI`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(selectedRows),
+    });
+
+    if (response.ok) {
+      alert('LOI sent successfully');
+    } else {
+      alert('Failed to send LOI');
+    }
+  }
+
   const columns = useMemo(
     () => [
       {
@@ -172,21 +215,23 @@ const AssesTable = () => {
           {
             accessorKey: 'candidateName',
             header: 'Candiate Name',
-            size: 100,
+            size: 80,
             enableEditing: false,
-            Cell: ({ cell }) => <div className='ml-32'>{cell.getValue()}</div>,
+            Cell: ({ cell }) => <div className='ml-14'>{cell.getValue()}</div>,
           },
           {
             accessorKey: 'email',
             header: 'Email',
-            size: 100,
+            size: 80,
             enableEditing: false,
-            Cell: ({ cell }) => <div className='ml-32'>{cell.getValue()}</div>,
-            Header: ({ column }) => (
-              <div className='ml-16'>
-                {column.columnDef.header}
-              </div>
-            ),
+            Cell: ({ cell }) => <div className='ml-14'>{cell.getValue()}</div>,
+          },
+          {
+            accessorKey: 'loiStatus',
+            header: 'LOI Status',
+            size: 80,
+            enableEditing: false,
+            Cell: ({ cell }) => <div className='ml-1'>{cell.getValue()}</div>,
           },
         ],
       },
@@ -203,35 +248,35 @@ const AssesTable = () => {
     enableColumnPinning: true,
     enableFacetedValues: true,
     enableRowActions: false,
-    enableRowSelection: false,
+    enableRowSelection: true, 
     enableEditing: false,
-    layoutMode: 'grid',
-    muiTablePaperProps: {
-      elevation: 0,
-      sx: {
-        maxWidth: '800px',
-        margin: '0 auto',
-        borderRadius: '8px',
-        border: '1px solid #e0e0e0',
-      },
-    },
-    muiTableProps: {
-      sx: {
-        tableLayout: 'fixed',
-      },
-    },
-    muiTableBodyCellProps: {
-      sx: {
-        padding: '16px',
-        textAlign: 'center', // Center the content horizontally
-      },
-    },
-    muiTableHeadCellProps: {
-      sx: {
-        textAlign: 'center', // Center the header text
-        marginLeft: '120px',
-      },
-    },
+    // layoutMode: 'grid',
+    // muiTablePaperProps: {
+    //   elevation: 0,
+    //   sx: {
+    //     maxWidth: '800px',
+    //     margin: '0 auto',
+    //     borderRadius: '8px',
+    //     border: '1px solid #e0e0e0',
+    //   },
+    // },
+    // muiTableProps: {
+    //   sx: {
+    //     tableLayout: 'fixed',
+    //   },
+    // },
+    // muiTableBodyCellProps: {
+    //   sx: {
+    //     padding: '16px',
+    //     textAlign: 'center', // Center the content horizontally
+    //   },
+    // },
+    // muiTableHeadCellProps: {
+    //   sx: {
+    //     textAlign: 'center', // Center the header text
+    //     marginLeft: '120px',
+    //   },
+    // },
     muiTableBodyRowProps: ({ row }) => ({
       sx: {
         '&:hover': {
@@ -294,37 +339,51 @@ const AssesTable = () => {
 
     renderTopToolbar: ({ table }) => {
       const [hasSelectedRows, setHasSelectedRows] = useState(false)
+      const [loisGenerated, setLoisGenerated] = useState(false)
+      
 
-      const handleActivate = async () => {
-        let arr = []
-        table.getSelectedRowModel().flatRows.map(row => {
-          arr.push(row.original)
-        })
-        const response = await fetch(
-          `${tanBaseUrl}/cpm2/assessment/selectLevelTwo`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(arr),
-          },
-        )
-        setData(prevData =>
-          prevData.map(row => ({
-            ...row,
-            selectedForNextStage: arr.some(
-              selectedRow => selectedRow.id === row.id,
-            ),
-          })),
-        )
-        setCount(table.getSelectedRowModel().rows.length)
-
-        setOpen(true)
-        table.toggleAllRowsSelected(false)
+      const showLOIModal = () => {
+        setIsLOIModalVisible(true)
       }
+      const handleClose = () => {
+        setIsLOIModalVisible(false);
+        setErrors({
+          ctc: '',
+          fixedPay: '',
+          bonus: '',
+        });
+      }
+      const handleGenerateLOIClick = () => {
+        let hasError = false;
+        let newErrors = { ctc: '', fixedPay: '', bonus: '' };
+    
+        if (!values.ctc) {
+          newErrors.ctc = 'CTC is required';
+          hasError = true;
+        }
+        if (!values.fixedPay) {
+          newErrors.fixedPay = 'Fixed Pay is required';
+          hasError = true;
+        }
+        if (!values.bonus) {
+          newErrors.bonus = 'Bonus Amount is required';
+          hasError = true;
+        }
+    
+        if (hasError) {
+          setErrors(newErrors);
+        } else {
+          const selectedRows = table.getSelectedRowModel().flatRows.map(row => row.original);
+          handleGenerateLOI(selectedRows);
+          setLoisGenerated(true);
+          setIsLOIModalVisible(false);
+        }
+      };
 
+      const handleSendLOIClick = () => {
+        const selectedRows = table.getSelectedRowModel().flatRows.map(row => row.original);
+        handleSendLOI(selectedRows);
+      }
       const selectedRowCount = table.getSelectedRowModel().flatRows.length
       useEffect(() => {
         setHasSelectedRows(selectedRowCount > 0)
@@ -359,9 +418,92 @@ const AssesTable = () => {
               <MRT_ToggleFiltersButton table={table} />
             </Box>
             <Box>
-              <Box sx={{ display: 'flex', gap: '0.5rem' }}></Box>
+              <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  onClick={showLOIModal}
+                  disabled={!hasSelectedRows}
+                >
+                  Generate LOI
+                </Button>
+                <Button
+                  variant='contained'
+                  color='primary'
+                  onClick={handleSendLOIClick}
+                  disabled={!hasSelectedRows || !loisGenerated}
+                >
+                  Send LOI
+                </Button>
+              </Box>
             </Box>
           </Box>
+          {isLOIModalVisible && (
+        <Modal
+          open={isLOIModalVisible}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}>
+            <Typography id="modal-modal-title" variant="h6" component="h2" gutterBottom>
+              LOI Generation
+            </Typography>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Fixed CTC(INR per annum)"
+                name="ctc"
+                required
+                variant="outlined"
+                value={values.ctc}
+              onChange={handleChange('ctc')}
+              error={!!errors.ctc}
+              helperText={errors.ctc}
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Performance Pay"
+                name="performancePay"
+                required
+                variant="outlined"
+                alue={values.fixedPay}
+              onChange={handleChange('fixedPay')}
+              error={!!errors.fixedPay}
+              helperText={errors.fixedPay}
+              />
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <TextField
+                label="Bonus Amount"
+                name="bonus"
+                required
+                variant="outlined"
+                alue={values.bonus}
+              onChange={handleChange('bonus')}
+              error={!!errors.bonus}
+              helperText={errors.bonus}
+              />
+            </FormControl>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button variant="contained" color="primary" onClick={handleGenerateLOIClick}>
+                Generate
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+      )}
           {hasSelectedRows && (
             <Snackbar
               open={hasSelectedRows}
@@ -395,24 +537,8 @@ const AssesTable = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-     {loading ? (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-        <MaterialReactTable table={table} />
-      )}    </div>
+      <MaterialReactTable table={table} />
+    </div>
   )
 }
 

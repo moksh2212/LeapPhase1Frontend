@@ -10,11 +10,13 @@ import {
   Button,
   ButtonGroup,
   Dialog,
+  FormControl, InputLabel, MenuItem, Select ,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormHelperText,
   Snackbar,
+
 } from '@mui/material'
 import { Group } from '@mui/icons-material'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -24,14 +26,14 @@ import { PieChart } from '@mui/x-charts/PieChart'
 import { useDrawingArea } from '@mui/x-charts/hooks'
 import { styled } from '@mui/material/styles'
 import { StatusForm } from './StatusForm'
-
 const TalentTable = () => {
   const [talentList, setTalentList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [error, setError] = useState()
-
+  const [selectedEKYear, setSelectedEKYear] = useState('All');
+  const [filteredTalentList, setFilteredTalentList] = useState([]);
   const [talentToStatus, setTalentToStatus] = useState(false)
   const [openStatusForm, setOpenStatusForm] = useState(false)
   const [summary, setSummary] = useState({
@@ -88,7 +90,16 @@ const TalentTable = () => {
       </StyledText>
     )
   }
-
+  useEffect(() => {
+    if (selectedEKYear === 'All') {
+      setFilteredTalentList(talentList);
+    } else {
+      const filtered = talentList.filter(talent => talent.ekYear === selectedEKYear);
+      setFilteredTalentList(filtered);
+    }
+  }, [selectedEKYear, talentList]);
+  
+  const ekYears = ['All', ...new Set(talentList.map(talent => talent.ekYear))].sort();
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -117,7 +128,7 @@ const TalentTable = () => {
       marginRight: '5px',
       color: status === 'ACTIVE' ? 'green' : 'red',
     }
-
+    
     return (
       <button
         style={statusButtonStyle}
@@ -1285,6 +1296,7 @@ const TalentTable = () => {
                 ),
             )}
           </DialogContent>
+          
           <DialogActions>
             <MRT_EditActionButtons
               variant='text'
@@ -1306,6 +1318,7 @@ const TalentTable = () => {
 
       return (
         <>
+        
           <DialogTitle variant='h5' sx={{ textAlign: 'center' }}>
             Edit Talent Details
           </DialogTitle>
@@ -1344,6 +1357,24 @@ const TalentTable = () => {
 
       return (
         <div className='flex gap-5'>
+       
+
+<FormControl fullWidth>
+  <InputLabel id="ek-year-select-label">Select EK Year</InputLabel>
+  <Select
+    labelId="ek-year-select-label"
+    id="ek-year-select"
+    value={selectedEKYear}
+    label="Select EK Year"
+    onChange={(event) => setSelectedEKYear(event.target.value)}
+  >
+    {ekYears.map((year) => (
+      <MenuItem key={year} value={year}>
+        {year}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
           <Button
             variant='contained'
             onClick={() => {
@@ -1378,17 +1409,17 @@ const TalentTable = () => {
           <div className='flex flex-row gap-x-6'>
             <div className='w-1/3 p-4 bg-gray-200'>
               <div>
-                <h3 className='text-3xl text-[#0087D5] font-bold mb-3'>
-                  <Group />
-                  &nbsp;Talents&nbsp;:&nbsp;{summary.totalTalents}
-                </h3>
-              </div>
-              <h3 className='text-2xl text-[#309130] font-bold mb-3'>
-                Active&nbsp;:&nbsp;{summary.activeTalents}
-              </h3>
-              <h3 className='text-2xl text-[#D31C1C] font-bold mb-3'>
-                Inactive&nbsp;:&nbsp;{summary.inactiveTalents}
-              </h3>
+              <h3 className='text-3xl text-[#0087D5] font-bold mb-3'>
+  <Group />
+  &nbsp;Talents&nbsp;:&nbsp;{filteredTalentList.length}
+</h3>
+</div>
+<h3 className='text-2xl text-[#309130] font-bold mb-3'>
+  Active&nbsp;:&nbsp;{filteredTalentList.filter(t => t.talentStatus === 'ACTIVE').length}
+</h3>
+<h3 className='text-2xl text-[#D31C1C] font-bold mb-3'>
+  Inactive&nbsp;:&nbsp;{filteredTalentList.filter(t => t.talentStatus !== 'ACTIVE').length}
+</h3>
               <br />
             </div>
             <div className='w-2/3 p-4 bg-gray-200'>
@@ -1416,6 +1447,7 @@ const TalentTable = () => {
           table={table}
           updateTalent={updateTalent}
           createTalent={createTalent}
+          data={filteredTalentList}
         />
       )}
       {renderDeleteModal()}

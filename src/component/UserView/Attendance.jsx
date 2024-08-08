@@ -31,12 +31,15 @@ const Attendance = () => {
 
   const token = useSelector(state => state.user.token)
   const [isOtherReason, setIsOtherReason] = useState(false)
+  const [isPdfUploadRequired, setIsPdfUploadRequired] = useState(false)
 
-  const today = new Date();
+  const today = new Date()
 
   const handleReasonChange = value => {
     setIsOtherReason(value === 'other')
+    setIsPdfUploadRequired(value === 'College_Related' || value === 'Wedding')
   }
+
   const showLeaveModal = () => {
     setIsLeaveModalVisible(true)
   }
@@ -79,8 +82,8 @@ const Attendance = () => {
           ),
         )
 
-        // Append the PDF file to the FormData object
-        if (values.pdfUpload && values.pdfUpload.length > 0) {
+    
+        if (isPdfUploadRequired && values.pdfUpload && values.pdfUpload.length > 0) {
           formData.append('file', values.pdfUpload[0].originFileObj)
         }
 
@@ -242,6 +245,7 @@ const Attendance = () => {
               <Option value='Sick'>Sick Leave</Option>
               <Option value='Vacation'>Vacation</Option>
               <Option value='Wedding'>Wedding</Option>
+              <Option value='College_Related'>College Related</Option>
               <Option value='Personal'>Personal Reasons</Option>
               <Option value='other'>Others</Option>
             </Select>
@@ -270,22 +274,24 @@ const Attendance = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name='pdfUpload'
-            label='Upload Supporting Document (PDF)'
-            valuePropName='fileList'
-            getValueFromEvent={e => (Array.isArray(e) ? e : e && e.fileList)}
-            rules={[
-              {
-                required: true,
-                message: 'Please upload a supporting document!',
-              },
-            ]}
-          >
-            <Upload accept='.pdf' beforeUpload={() => false}>
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
-            </Upload>
-          </Form.Item>
+          {isPdfUploadRequired && (
+            <Form.Item
+              name='pdfUpload'
+              label='Upload Supporting Document (PDF)'
+              valuePropName='fileList'
+              getValueFromEvent={e => (Array.isArray(e) ? e : e && e.fileList)}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please upload a supporting document!',
+                },
+              ]}
+            >
+              <Upload accept='.pdf' beforeUpload={() => false}>
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
+            </Form.Item>
+          )}
 
           <Form.Item>
             {/* <Button type="primary" htmlType="submit">

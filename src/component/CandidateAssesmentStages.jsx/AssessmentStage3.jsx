@@ -16,7 +16,6 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useNavigate } from 'react-router-dom';
-import CircularProgress from '@mui/material/CircularProgress'
 
 const canBaseUrl = process.env.BASE_URL2;
 const tanBaseUrl = process.env.BASE_URL2;
@@ -77,7 +76,6 @@ const AssesTable = () => {
   const token = useSelector((state) => state.user.token);
   const [count, setCount] = useState(0);
   const [x, setx] = useState(0)
-  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
 
   const handleCloseSnackbar = () => {
@@ -86,7 +84,6 @@ const AssesTable = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true)
       try {
         const response = await fetch(`${canBaseUrl}/cpm2/assessment/getAllAssessments`, {
           headers: {
@@ -97,15 +94,11 @@ const AssesTable = () => {
 
         jsonData = jsonData.filter(
           (assessment) => assessment && assessment.assessmentLevelThree,
-          (assessment) => assessment && assessmecountnt.assessmentLevelThree,
         );
         const arr = jsonData.map((assessment) => assessment.assessmentLevelThree);
         setData(arr);
-        setLoading(false)
         console.log(jsonData);
       } catch (error) {
-       
-
         console.error('Error fetching data:', error);
       }
     };
@@ -157,18 +150,13 @@ const AssesTable = () => {
             header: 'Candidate Name',
             size: 100,
             enableEditing: false,
-            Cell: ({ cell }) => <div className=''>{cell.getValue()}</div>,
+            Cell: ({ cell }) => <div className='ml-11'>{cell.getValue()}</div>,
           },
           {
             accessorKey: 'email',
             header: 'Email',
             size: 100,
             enableEditing: false,
-            Header: ({ column }) => (
-              <div className='ml-10'>
-                {column.columnDef.header}
-              </div>
-            ),
           },
           {
             accessorKey: 'problemSolving',
@@ -298,7 +286,6 @@ const AssesTable = () => {
 
       const handleActivate = async () => {
         const selectedRows = table.getSelectedRowModel().flatRows.map((row) => row.original);
-
         const response = await fetch(
           `${tanBaseUrl}/cpm2/assessment/selectLevelThree`,
           {
@@ -310,7 +297,6 @@ const AssesTable = () => {
             body: JSON.stringify(selectedRows),
           },
         );
-        setCount(table.getSelectedRowModel().rows.length);
 
         setData((prevData) =>
           prevData.map((row) => ({
@@ -318,10 +304,11 @@ const AssesTable = () => {
             selectedForNextStage: selectedRows.some((selectedRow) => selectedRow.id === row.id),
           })),
         );
+        setCount(table.getSelectedRowModel().rows.length);
 
         setSnackbar({
           open: true,
-          message: `${table.getSelectedRowModel().rows.length} candidate${table.getSelectedRowModel().rows.length > 1 ? 's' : ''} selected successfully for stage 4`,
+          message: `${count} candidate${count > 1 ? 's' : ''} selected successfully for stage 4`,
           severity: 'success',
         });
         table.toggleAllRowsSelected(false);
@@ -397,28 +384,7 @@ const AssesTable = () => {
     },
   });
 
-  return (
-    <>
-      {loading ? (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-        <MaterialReactTable table={table} />
-      )}
-    </>
-  );
+  return <MaterialReactTable table={table} />;
 };
 
 const CandidatesAssesmentsStage3 = () => (

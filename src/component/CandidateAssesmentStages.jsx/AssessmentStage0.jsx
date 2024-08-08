@@ -9,7 +9,6 @@ import {
 } from 'material-react-table'
 import PropTypes from 'prop-types'
 import { useSelector } from 'react-redux'
-import CircularProgress from '@mui/material/CircularProgress'
 
 import { Button, Snackbar, lighten } from '@mui/material'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
@@ -89,10 +88,6 @@ const AssesTable = () => {
   const [count, setCount] = useState(0)
   const navigate = useNavigate()
   const [x, setx] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
-
-
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
@@ -100,9 +95,6 @@ const AssesTable = () => {
 
     setOpen(false)
   }
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
   const transformAssessmentData = (jsonData) => {
     const assessmentList = jsonData || [];
 
@@ -125,8 +117,6 @@ const AssesTable = () => {
       try {
         const urlParams = new URLSearchParams(window.location.search)
         const collegeId = urlParams.get('collegeId')
-        setLoading(true)
-
         const response = await fetch(
           `${canBaseUrl}/cpm2/assessment/getAssessmentByCollegeId?collegeId=${collegeId}`,
           {
@@ -142,12 +132,9 @@ const AssesTable = () => {
 
 
         setData(transformedData)
-        setLoading(false)
 
       } catch (error) {
         console.error('Error fetching data:', error)
-        setSnackbar({ open: true, message: 'Error fetching data', severity: 'error' })
-
       }
     }
 
@@ -373,7 +360,7 @@ console.log(collegeName)
           }
 
           // Process the response if needed
-          setx(!x)
+          setx(1)
           setOpen(true);
         } catch (error) {
           console.error('Error during fetch:', error);
@@ -439,48 +426,13 @@ console.log(collegeName)
               </Alert>
             </Snackbar>
           )}
-               <Snackbar
-            open={snackbar.open}
-            autoHideDuration={6000}
-            onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          >
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity={snackbar.severity}
-              variant='filled'
-              sx={{ width: '100%' }}
-            >
-              {snackbar.message}
-            </Alert>
-          </Snackbar>
         </div>
       )
     },
   })
 
-  return (
-    <>
-      {loading ? (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-        <MaterialReactTable table={table} />
-      )}
-    </>
-  );}
+  return <MaterialReactTable table={table} />
+}
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
- 
+
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -18,17 +18,16 @@ import {
   Tooltip,
 } from '@mui/material'
 import { useSelector } from 'react-redux'
-import CloseSharpIcon from '@mui/icons-material/CloseSharp';
 
 //Module completed testing done
- 
+
 const CollegeTable = () => {
   const [collegeList, setCollegeList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [validationErrors, setValidationErrors] = useState({})
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [error, setError] = useState()
- const [x,setx]=useState(0);
+
   const indStates = [
     'Andaman and Nicobar Islands',
     'Andhra Pradesh',
@@ -67,7 +66,7 @@ const CollegeTable = () => {
     'Uttarakhand',
     'West Bengal',
   ]
- 
+
   const selectTier = [
     'Government Tier 1',
     'Government Tier 2',
@@ -75,36 +74,36 @@ const CollegeTable = () => {
     'Private Tier 2',
     'NIT',
   ]
- 
+
   const selectRegion = ['North', 'South', 'East', 'West']
- 
+
   const [collegeIdToDelete, setCollegeIdToDelete] = useState(null)
   const [openSnackbar, setOpenSnackbar] = useState(null)
   const [rowSelection, setRowSelection] = useState({})
   const [selectedRows, setSelectedRows] = useState(null)
   const [openDeleteRowsModal, setOpenDeleteRowsModal] = useState(false)
- 
+
   const token = useSelector(state => state.user.token)
   const baseUrl = process.env.BASE_URL
- 
- 
+
+
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return
     }
- 
+
     if (error) {
       setError(null)
     }
- 
+
     setOpenSnackbar(false)
   }
- 
+
   const handleDelete = async () => {
     await deleteCollege(collegeIdToDelete)
     setOpenDeleteModal(false)
   }
- 
+
   const renderDeleteModal = () => (
     <Dialog open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
       <DialogTitle>Delete College</DialogTitle>
@@ -136,7 +135,7 @@ const CollegeTable = () => {
       </DialogActions>
     </Dialog>
   )
- 
+
   useEffect(() => {
     setTimeout(() => {
       const fetchData = async () => {
@@ -156,16 +155,16 @@ const CollegeTable = () => {
           setIsLoading(false)
         }
       }
- 
+
       fetchData()
     }, 1000)
-  }, [x])
- 
+  }, [])
+
   const createCollege = async newCollege => {
     setIsLoading(true)
     setError(null)
     setOpenSnackbar(null)
- 
+
     try {
       const response = await fetch(`${baseUrl}/admin/insertCollegeData`, {
         method: 'POST',
@@ -189,7 +188,7 @@ const CollegeTable = () => {
       setIsLoading(false)
     }
   }
- 
+
   const updateCollege = async collegeToUpdate => {
     setIsLoading(true)
     setError(null)
@@ -206,7 +205,7 @@ const CollegeTable = () => {
           body: JSON.stringify(collegeToUpdate),
         },
       )
- 
+
       if (response.ok) {
         const data = await response.json()
         setValidationErrors({})
@@ -226,7 +225,7 @@ const CollegeTable = () => {
       setIsLoading(false)
     }
   }
- 
+
   const deleteCollege = async collegeId => {
     setIsLoading(true)
     setError(null)
@@ -238,7 +237,7 @@ const CollegeTable = () => {
           Authorization: `Bearer ${token}`,
         },
       })
- 
+
       if (response.ok) {
         setCollegeList(prevColleges =>
           prevColleges.filter(college => college.collegeId !== collegeId),
@@ -253,13 +252,13 @@ const CollegeTable = () => {
       setIsLoading(false)
     }
   }
- 
+
   const handleDeleteSelectedRows = async () => {
     setOpenSnackbar(null)
     setError(null)
     setIsLoading(true)
     setOpenDeleteRowsModal(false)
- 
+
     let count = 0
     try {
       for (const row of selectedRows) {
@@ -270,11 +269,11 @@ const CollegeTable = () => {
       setError()
       setError(`Failed to delete college(s): ${error.message}`)
     }
- 
+
     setRowSelection([])
     setOpenSnackbar(`${count} college(s) deleted successfully.`)
   }
- 
+
   const columns = useMemo(
     () => [
       {
@@ -297,7 +296,7 @@ const CollegeTable = () => {
               ...validationErrors,
               collegeName: undefined,
             }),
- 
+
           onBlur: event => {
             const { value } = event.target
             if (!value) {
@@ -323,7 +322,7 @@ const CollegeTable = () => {
               ...validationErrors,
               region: undefined,
             }),
- 
+
           onBlur: event => {
             const { value } = event.target
             if (!value) {
@@ -422,7 +421,7 @@ const CollegeTable = () => {
               ...validationErrors,
               tpoName: undefined,
             }),
- 
+
           onBlur: event => {
             const { value } = event.target
             if (!value) {
@@ -518,7 +517,7 @@ const CollegeTable = () => {
               ...validationErrors,
               addressLine1: undefined,
             }),
- 
+
           onBlur: event => {
             const { value } = event.target
             if (!value) {
@@ -542,7 +541,7 @@ const CollegeTable = () => {
               ...validationErrors,
               addressLine2: undefined,
             }),
- 
+
           onBlur: event => {
             const { value } = event.target
             if (!value) {
@@ -689,7 +688,7 @@ const CollegeTable = () => {
       message: 'Compensation must be a non-empty integer.',
     },
   }
- 
+
   const table = useMaterialReactTable({
     columns,
     data: collegeList,
@@ -707,7 +706,7 @@ const CollegeTable = () => {
     enableEditing: false,
     enableRowActions: true,
     onRowSelectionChange: setRowSelection,
- 
+
     state: { rowSelection, isLoading },
     getRowId: row => row.collegeId,
     muiTableContainerProps: {
@@ -721,10 +720,10 @@ const CollegeTable = () => {
     },
     onCreatingRowCancel: () => setValidationErrors({}),
     onEditingRowCancel: () => setValidationErrors({}),
- 
+
     onCreatingRowSave: async ({ values, table }) => {
       const errors = {}
- 
+
       Object.entries(values).forEach(([key, value]) => {
         const rule = validationRules[key]
         if (rule) {
@@ -738,24 +737,24 @@ const CollegeTable = () => {
           }
         }
       })
- 
+
       if (Object.keys(errors).length > 0) {
         setValidationErrors(errors)
         return
       }
- 
+
       setValidationErrors({}) // Clear any previous errors
       await createCollege(values)
       table.setCreatingRow(null)
     },
- 
+
     onEditingRowSave: async ({ values, table }) => {
       const errors = {}
- 
+
       Object.entries(values).forEach(([key, value]) => {
         const temp = value.toString().trim() // Convert value to string and remove leading/trailing whitespaces
         const rule = validationRules[key]
- 
+
         if (rule) {
           if (rule.required && temp.length === 0) {
             errors[key] = `${
@@ -766,17 +765,17 @@ const CollegeTable = () => {
           }
         }
       })
- 
+
       if (Object.keys(errors).length > 0) {
         setValidationErrors(errors)
         return
       }
- 
+
       setValidationErrors({})
       await updateCollege(values)
       table.setEditingRow(null)
     },
- 
+
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => {
       const hasErrors = columns.some(
         accessorKey => validationErrors[accessorKey],
@@ -792,7 +791,7 @@ const CollegeTable = () => {
             {internalEditComponents.map((component, index) => (
               <div key={index}>{component}</div>
             ))}
- 
+
             {columns.map(
               accessorKey =>
                 validationErrors[accessorKey] && (
@@ -820,7 +819,7 @@ const CollegeTable = () => {
           validationRules[column.accessorKey]?.required &&
           !values[column.accessorKey],
       )
- 
+
       return (
         <>
           <DialogTitle variant='h5' sx={{ textAlign: 'center' }}>
@@ -832,7 +831,7 @@ const CollegeTable = () => {
             {internalEditComponents.map((component, index) => (
               <div key={index}>{component}</div>
             ))}
- 
+
             {columns.map(
               accessorKey =>
                 validationErrors[accessorKey] && (
@@ -853,7 +852,7 @@ const CollegeTable = () => {
         </>
       )
     },
- 
+
     renderRowActionMenuItems: ({ row, table, closeMenu }) => (
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         <Box className='flex items-center'>
@@ -888,49 +887,7 @@ const CollegeTable = () => {
       const selectedRows = table
         .getSelectedRowModel()
         .flatRows.map(row => row.original)
- 
-        const [selectedFile, setSelectedFile] = useState(null)
-        const handleFileChange = event => {
-          setSelectedFile(event.target.files[0])
-        }
-        const handleFileDeselect = () => {
-          setSelectedFile(null)
-          // Reset the file input
-          const fileInput = document.getElementById('excelFile')
-          if (fileInput) {
-            fileInput.value = ''
-          }
-        }
-        const handleUpload = async () => {
-          try {
-            if (!selectedFile) {
-              alert('Please select a file.')
-              return
-            }
- 
-            const formData = new FormData()
-            const urlParams = new URLSearchParams(window.location.search)
-            const collegeId = urlParams.get('collegeId')
-            formData.append('file', selectedFile)
-            formData.append('collegeId', collegeId)
- 
-            const response = await fetch(`${baseUrl}/admin/uploadcollegedata/excelsheet`, {
-              method: 'POST',
-              body: formData,
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            })
-            console.log(response)
-            if (response.ok) {
-              setOpenSnackbar('College added successfully!')
-              setx(!x)
-            } else {
-              setError("Fail to upload")            }
-          } catch (error) {
-            console.error('Error uploading file:', error)
-          }
-        }
+
       return (
         <div className='flex gap-5'>
           <Button
@@ -942,45 +899,7 @@ const CollegeTable = () => {
           >
             Create New College
           </Button>
-          <Button variant='contained' component='label'>
-                      <label htmlFor='excelFile' className='excel-file-label'>
-                        {selectedFile
-                          ? ` ${selectedFile.name}`
-                          : 'Add via Excel'}
-                        <input
-                          type='file'
-                          id='excelFile'
-                          style={{ display: 'none' }}
-                          onChange={handleFileChange}
-                        />
-                      </label>
-                    </Button>
-                    {selectedFile && (
-                      <Button
-                        onClick={handleFileDeselect}
 
-                        variant='contained'
-                        sx={{
-                          backgroundColor: 'red',
-                          '&:hover': {
-                            backgroundColor: 'darkred',
-                          },
-                        }}
-                      >
-                        <CloseSharpIcon />
-                      </Button>
-                    )}
-                    <Button
-                      style={{ marginLeft: '10px' }}
-                      onClick={handleUpload}
-                      color='success'
-                      variant='contained'
-                      disabled={!selectedFile}
-                      sx={{ ml: 2 }}
-                    >
-                      Upload File
-                    </Button>
- 
           <Button
             variant='contained'
             color='error'
@@ -996,7 +915,7 @@ const CollegeTable = () => {
       )
     },
   })
- 
+
   return (
     <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
       <h2 className='text-3xl text-[#0087D5] font-bold mb-3'>College Schedules</h2>
@@ -1005,7 +924,7 @@ const CollegeTable = () => {
         updateCollege={updateCollege}
         createCollege={createCollege}
       />
- 
+
       {renderDeleteModal()}
       {renderDeleteRowsModal()}
       <Snackbar
@@ -1023,7 +942,7 @@ const CollegeTable = () => {
           {openSnackbar}
         </Alert>
       </Snackbar>
- 
+
       <Snackbar
         open={error}
         autoHideDuration={5000}
@@ -1043,6 +962,5 @@ const CollegeTable = () => {
     </div>
   )
 }
- 
 
 export default CollegeTable

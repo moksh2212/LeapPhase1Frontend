@@ -10,17 +10,13 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
   const [talentList, setTalentList] = useState([])
   const [filteredTalentList, setFilteredTalentList] = useState([])
   const [selectedTalents, setSelectedTalents] = useState([])
-  const [ekYearOptions, setEkYearOptions] = useState([]);
 
   const tanBaseUrl = process.env.BASE_URL
   const token = useSelector(state => state.user.token)
   useEffect(() => {
     fetchTalentList()
   }, [])
-  useEffect(() => {
-    const distinctEkYears = [...new Set(talentList.map(candidate => candidate.ekYear).filter(Boolean))];
-    setEkYearOptions(distinctEkYears);
-  }, [talentList]);
+
   useEffect(() => {
     if (!ekYear) {
       setFilteredTalentList(talentList)
@@ -143,12 +139,11 @@ export function AddMembers({ openModal, setOpenModal, createMember }) {
               onChange={e => setEkYear(e.target.value)}
               size='sm'
             >
-        <option value=''>All</option>
-        {ekYearOptions.map(year => (
-          <option key={year} value={year}>
-            {year}
-          </option>
-        ))}
+              <option value='' selected>
+                Select EkYear
+              </option>
+              <option>2024</option>
+              <option>2023</option>
             </Select>
           </div>
           <div>

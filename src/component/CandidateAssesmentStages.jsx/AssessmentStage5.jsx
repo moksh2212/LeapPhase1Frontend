@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react'
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import { useSelector } from 'react-redux'
-import CircularProgress from '@mui/material/CircularProgress'
 
 import {
   MaterialReactTable,
@@ -93,10 +92,6 @@ const AssesTable = () => {
   const [text, setText] = useState('')
   const [open, setOpen] = useState(false);
   const [count, setCount] = useState(0);
-  const [x, setx] = useState(0)
-  const [loading, setLoading] = useState(false)
-
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
   const navigate = useNavigate()
 
   const token = useSelector(state => state.user.token)
@@ -110,8 +105,6 @@ const AssesTable = () => {
     setOpen(false);
   };
   useEffect(() => {
-    setLoading(true)
-
     const fetchData = async () => {
       try {
         const urlParams = new URLSearchParams(window.location.search);
@@ -131,19 +124,13 @@ const AssesTable = () => {
 
         setData(arr);
         console.log(jsonData);
-        setLoading(false)
-
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
-  }, [x]);
-  const handleCloseSnackbar = () => {
-    setSnackbar({ ...snackbar, open: false });
-  };
-
+  }, []);
   const validate = (values) => {
     const errors = {};
     const requiredFields = [
@@ -194,11 +181,6 @@ const AssesTable = () => {
             header: 'Email',
             size: 100,
             enableEditing: false,
-            Header: ({ column }) => (
-              <div className='ml-10'>
-                {column.columnDef.header}
-              </div>
-            ),
           },
           {
             accessorKey: 'candidateName',
@@ -208,11 +190,6 @@ const AssesTable = () => {
             Cell: ({ cell }) => (
               <div className='ml-11'>
                 {cell.getValue()}
-              </div>
-            ),
-            Header: ({ column }) => (
-              <div className='ml-10'>
-                {column.columnDef.header}
               </div>
             ),
           },
@@ -291,11 +268,10 @@ const AssesTable = () => {
           },
         )
         if (!response.ok) {
-          setSnackbar({ open: true, message: 'Failed to update candidate', severity: 'error' });
+          console.log(text)
           throw new Error('Failed to update candidate')
         } else {
-          setSnackbar({ open: true, message: 'Edited successfully', severity: 'success' });
-          setx(!x);
+          alert('Edited successfully')
         }
         table.setEditingRow(null)
       } catch (error) {
@@ -421,47 +397,12 @@ const AssesTable = () => {
               {count === 1 ? `${count} candiadate selected successfully  ` : `${table.getSelectedRowModel().rows.length} candiadates selected successfully `}
             </Alert>
           </Snackbar>}
-          <Snackbar
-            open={snackbar.open}
-            autoHideDuration={6000}
-            onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          >
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity={snackbar.severity}
-              variant='filled'
-              sx={{ width: '100%' }}
-            >
-              {snackbar.message}
-            </Alert>
-          </Snackbar>
         </div>
       )
     },
   })
-  return (
-    <>
-      {loading ? (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-        <MaterialReactTable table={table} />
-      )}
-    </>
-  );}
+  return <MaterialReactTable table={table} />
+}
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'

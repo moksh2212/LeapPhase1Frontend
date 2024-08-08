@@ -1,6 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
 import Typography from '@mui/material/Typography'
-import { HistoryDialog } from './HistoryDialog'
 import {
   Alert,
   Box,
@@ -13,7 +12,6 @@ import {
   Snackbar,
   Tooltip,
 } from '@mui/material'
-
 import {
   MRT_EditActionButtons,
   MaterialReactTable,
@@ -65,8 +63,6 @@ const Perfromancetable = () => {
           technicalProficiency: item.technicalProficiency,
           proactiveness: item.proactiveness,
           timeliness: item.timeliness,
-          editHistory: item.editHistory,
-          monthlyHistory: item.monthlyHistory,
         }))
         setError(null)
         setDatax(formattedData)
@@ -372,71 +368,6 @@ const Perfromancetable = () => {
         },
         Cell: ({ cell }) => {
           return <div className='ml-10'>{cell.getValue()}</div>
-        },
-      },
-      {
-        accessorKey: 'editHistory',
-        header: 'Edit History',
-        enableEditing: false,
-        size: 200,
-        Cell: ({ cell }) => {
-          const editHistory = cell.getValue();
-          if (editHistory && editHistory.length > 0) {
-            const lastEdit = editHistory[editHistory.length - 1];
-            return (
-              <div>
-                <Tooltip title={`Last edited by ${lastEdit.userName}`}>
-                </Tooltip>
-                <HistoryDialog 
-                  history={editHistory} 
-                  title="Edit History" 
-                  parseLogEntry={(logEntry) => <div>{logEntry}</div>}
-                />
-              </div>
-            );
-          }
-          return 'No edit history';
-        },
-      },
-      {
-        accessorKey: 'monthlyHistory',
-        header: 'Monthly History',
-        enableEditing: false,
-
-        size: 200,
-        Cell: ({ cell }) => {
-          const monthlyHistory = cell.getValue();
-          if (monthlyHistory && monthlyHistory.length > 0) {
-            const lastMonthly = monthlyHistory[monthlyHistory.length - 1];
-            const logEntry = JSON.parse(lastMonthly.logEntry);
-            return (
-              <div>
-                <Tooltip title={
-                  `Proactiveness: ${logEntry.proactiveness}
-                   Timeliness: ${logEntry.timeliness}
-                   Punctuality: ${logEntry.punctuality}
-                   Technical Proficiency: ${logEntry.technicalProficiency}`
-                }>
-                </Tooltip>
-                <HistoryDialog 
-                  history={monthlyHistory} 
-                  title="Monthly History" 
-                  parseLogEntry={(logEntry) => {
-                    const parsed = JSON.parse(logEntry);
-                    return (
-                      <div>
-                        <div>Proactiveness: {parsed.proactiveness}</div>
-                        <div>Timeliness: {parsed.timeliness}</div>
-                        <div>Punctuality: {parsed.punctuality}</div>
-                        <div>Technical Proficiency: {parsed.technicalProficiency}</div>
-                      </div>
-                    );
-                  }}
-                />
-              </div>
-            );
-          }
-          return 'No monthly history';
         },
       },
     ],
