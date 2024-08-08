@@ -217,22 +217,22 @@ const AssessmentTable = () => {
       },
       {
         accessorKey: 'isLevelOneCompleted',
-        header: 'Level 1',
+        header: 'Online Assessment',
         Cell: ({ cell }) => <StatusCell value={cell.getValue()} />,
       },
       {
         accessorKey: 'isLevelTwoCompleted',
-        header: 'Level 2',
+        header: 'Design Round',
         Cell: ({ cell }) => <StatusCell value={cell.getValue()} />,
       },
       {
         accessorKey: 'isLevelThreeCompleted',
-        header: 'Level 3',
+        header: 'Interview Round',
         Cell: ({ cell }) => <StatusCell value={cell.getValue()} />,
       },
       {
         accessorKey: 'isLevelOptionalCompleted',
-        header: 'Optional Level',
+        header: 'Optional Round',
         Cell: ({ cell }) => <StatusCell value={cell.getValue()} />,
       },
       {
@@ -335,7 +335,7 @@ const AssessmentTable = () => {
       <div className='flex flex-col mx-5 mt-2 overflow-x-auto max-w-100%'>
         <div className='flex justify-between mt-2'>
           <h2 className={`text-2xl text-[#0087D5] font-bold mb-3`}>
-            College Assessments & Interviews
+            Assessments & Interviews
           </h2>
         </div>
         <MaterialReactTable table={table} />

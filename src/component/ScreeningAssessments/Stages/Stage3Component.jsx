@@ -511,7 +511,7 @@ const Stage3Component = () => {
             <MRT_GlobalFilterTextField table={table} />
             <MRT_ToggleFiltersButton table={table} />
             <h2 className='text-xl my-auto text-blue-500 font-semibold'>
-              Stage 3 : Technical & Behavioural Round
+              Round 3 : Technical & Behavioural Round
             </h2>
           </Box>
           <Box sx={{ display: 'flex', gap: '0.5rem' }}>
@@ -521,7 +521,7 @@ const Stage3Component = () => {
               onClick={handleSelectForNextStage}
               variant='contained'
             >
-              Select for Stage 4
+              Select for Optional Round
             </Button>
             <ButtonGroup
               variant='contained'
@@ -599,7 +599,7 @@ const Stage3Component = () => {
       </Snackbar>
       <Snackbar
         open={lockSnackbar}
-        autoHideDuration={1000}
+        autoHideDuration={2000}
         onClose={() => setLockSnackbar(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >

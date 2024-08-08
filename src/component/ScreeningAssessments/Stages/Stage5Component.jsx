@@ -322,7 +322,7 @@ const Stage5Component = () => {
             <MRT_GlobalFilterTextField table={table} />
             <MRT_ToggleFiltersButton table={table} />
             <h2 className='text-xl my-auto text-blue-500 font-semibold'>
-              Level 5 : Final Selection List
+              Round 5 : Final Selection List
             </h2>
           </Box>
         </Box>
@@ -363,7 +363,7 @@ const Stage5Component = () => {
       </Snackbar>
       <Snackbar
         open={lockSnackbar}
-        autoHideDuration={1000}
+        autoHideDuration={2000}
         onClose={() => setLockSnackbar(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >

@@ -76,6 +76,7 @@ const Stage1Component = () => {
 
   useEffect(() => {
     fetchData()
+    setLockSnackbar(false)
   }, [])
 
   useEffect(() => {
@@ -483,7 +484,7 @@ const Stage1Component = () => {
             <MRT_GlobalFilterTextField table={table} />
             <MRT_ToggleFiltersButton table={table} />
             <h2 className='text-xl my-auto text-blue-500 font-semibold'>
-              Stage 1 : Online Assessment
+              Round 1 : Online Assessment
             </h2>
           </Box>
           <Box sx={{ display: 'flex', gap: '0.5rem' }}>
@@ -493,7 +494,7 @@ const Stage1Component = () => {
               onClick={handleSelectForNextStage}
               variant='contained'
             >
-              Select for Stage 2
+              Select for Design Round
             </Button>
             <ButtonGroup
               variant='contained'
@@ -578,7 +579,7 @@ const Stage1Component = () => {
       </Snackbar>
       <Snackbar
         open={lockSnackbar}
-        autoHideDuration={1000}
+        autoHideDuration={2000}
         onClose={() => setLockSnackbar(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >

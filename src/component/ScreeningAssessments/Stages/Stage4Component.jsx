@@ -467,7 +467,7 @@ const Stage4Component = () => {
             <MRT_GlobalFilterTextField table={table} />
             <MRT_ToggleFiltersButton table={table} />
             <h2 className='text-xl my-auto text-blue-500 font-semibold'>
-              Stage 4 : Optional Round
+              Round 4 : Optional Round
             </h2>
           </Box>
           <Box sx={{ display: 'flex', gap: '0.5rem' }}>
@@ -563,7 +563,7 @@ const Stage4Component = () => {
       </Snackbar>
       <Snackbar
         open={lockSnackbar}
-        autoHideDuration={1000}
+        autoHideDuration={2000}
         onClose={() => setLockSnackbar(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
