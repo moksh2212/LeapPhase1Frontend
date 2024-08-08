@@ -101,6 +101,7 @@ const Example = () => {
     console.log('hello')
     fetchCandidateList()
   }, [])
+  
   useEffect(() => {
     if (!ekYear) {
       setFilteredCandidateList(data)

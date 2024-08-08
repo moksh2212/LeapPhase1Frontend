@@ -24,6 +24,7 @@ import { PieChart } from '@mui/x-charts/PieChart'
 import { useDrawingArea } from '@mui/x-charts/hooks'
 import { styled } from '@mui/material/styles'
 import { StatusForm } from './StatusForm'
+import { Label ,Select } from 'flowbite-react'
 
 const TalentTable = () => {
   const [talentList, setTalentList] = useState([])
@@ -32,6 +33,9 @@ const TalentTable = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [error, setError] = useState()
 
+  const [ekYear, setEkYear] = useState('')
+  const [ekYearOptions, setEkYearOptions] = useState([])
+  const [filteredTalentList, setFilteredTalentList] = useState([])
   const [talentToStatus, setTalentToStatus] = useState(false)
   const [openStatusForm, setOpenStatusForm] = useState(false)
   const [summary, setSummary] = useState({
@@ -70,6 +74,64 @@ const TalentTable = () => {
     // { value: summary.talentLeftForPerformanceIssues, label: 'Performance Issues' },
     // { value: summary.talentLeftForOthers, label: 'Others' },
   // ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true)
+      try {
+        const talentResponse = await fetch(
+          `${tanBaseUrl}/cpm/talents/alltalent`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        const summaryResponse = await fetch(
+          `${tanBaseUrl}/cpm/talents/summary`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        )
+        const talData = await talentResponse.json()
+        setTalentList(talData)
+
+        const sumData = await summaryResponse.json()
+        setSummary(sumData)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+        setError(error.message)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  useEffect(() => {
+    if (!ekYear) {
+      setFilteredTalentList(talentList)
+      return
+    }
+
+    const filteredList = talentList.filter(talent => {
+      if (!talent.ekYear) return false
+      const requiredYear = talent.ekYear
+      return requiredYear.includes(ekYear)
+    })
+    setFilteredTalentList(filteredList)
+  }, [ekYear, talentList])
+
+  useEffect(() => {
+    const distinctEkYears = [
+      ...new Set(talentList.map(talent => talent.ekYear).filter(Boolean)),
+    ]
+    setEkYearOptions(distinctEkYears)
+  }, [talentList])
+
   const size = {
     width: 400,
     height: 200,
@@ -478,43 +540,6 @@ const TalentTable = () => {
       setIsLoading(false)
     }
   }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      try {
-        const talentResponse = await fetch(
-          `${tanBaseUrl}/cpm/talents/alltalent`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        )
-        const summaryResponse = await fetch(
-          `${tanBaseUrl}/cpm/talents/summary`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        )
-        const talData = await talentResponse.json()
-        setTalentList(talData)
-
-        const sumData = await summaryResponse.json()
-        setSummary(sumData)
-      } catch (error) {
-        console.error('Error fetching data:', error)
-        setError(error.message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [])
-
   const handleDeleteSelectedRows = async () => {
     setOpenSnackbar(null)
     setError(null)
@@ -535,6 +560,7 @@ const TalentTable = () => {
     setRowSelection([])
     setOpenSnackbar(`${count} talent(s) deleted successfully.`)
   }
+
 
   const columns = useMemo(
     () => [
@@ -1091,7 +1117,6 @@ const TalentTable = () => {
     ],
     [validationErrors],
   )
-
   const validationRules = {
     talentName: {
       required: true,
@@ -1175,7 +1200,7 @@ const TalentTable = () => {
 
   const table = useMaterialReactTable({
     columns,
-    data: talentList,
+    data: filteredTalentList,
     enableRowSelection: true,
     initialState: { columnVisibility: { talentId: true } },
     isLoading,
@@ -1364,6 +1389,24 @@ const TalentTable = () => {
           >
             Delete Selected
           </Button>
+          <div>
+          <div className='mb-0 block'>
+                  <Label htmlFor='selectedto' value='Select EK Year' />
+          </div>
+          <Select
+                  id='ekYearFiltered'
+                  value={ekYear}
+                  onChange={e => setEkYear(e.target.value)}
+                  size='sm'
+                >
+                  <option value=''>All</option>
+                  {ekYearOptions.map(year => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+          </Select>
+          </div>
         </div>
       )
     },
